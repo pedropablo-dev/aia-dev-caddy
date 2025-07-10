@@ -1,0 +1,197 @@
+{
+  "categories": [
+    {
+      "id": "docker",
+      "name": "Docker",
+      "icon": "🐳"
+    },
+    {
+      "id": "git",
+      "name": "Git",
+      "icon": "📝"
+    },
+    {
+      "id": "vps",
+      "name": "VPS",
+      "icon": "🖥️"
+    },
+    {
+      "id": "database",
+      "name": "Database",
+      "icon": "🗄️"
+    },
+    {
+      "id": "deployment",
+      "name": "Deployment",
+      "icon": "🚀"
+    },
+    {
+      "id": "prueba",
+      "name": "Prueba",
+      "icon": "😶"
+    }
+  ],
+  "commands": {
+    "docker": [
+      {
+        "id": "docker-1",
+        "label": "Rebuild and start frontend",
+        "command": "docker-compose up --build gamifyu",
+        "type": "command"
+      },
+      {
+        "id": "docker-2",
+        "label": "Stop all containers",
+        "command": "docker-compose down",
+        "type": "command"
+      },
+      {
+        "id": "docker-3",
+        "label": "View container logs",
+        "command": "docker logs {container_name}",
+        "type": "command",
+        "variables": [
+          {
+            "name": "container_name",
+            "placeholder": "Enter container name"
+          }
+        ]
+      },
+      {
+        "id": "docker-4",
+        "label": "Full Stack Restart Workflow",
+        "command": "workflow",
+        "type": "workflow",
+        "steps": [
+          "docker-compose down",
+          "docker system prune -f",
+          "docker-compose up --build"
+        ]
+      }
+    ],
+    "git": [
+      {
+        "id": "git-1",
+        "label": "Commit with message",
+        "command": "git commit -m \"{message}\"",
+        "type": "command",
+        "variables": [
+          {
+            "name": "message",
+            "placeholder": "Enter commit message"
+          }
+        ]
+      },
+      {
+        "id": "git-2",
+        "label": "Push to origin",
+        "command": "git push origin main",
+        "type": "command"
+      },
+      {
+        "id": "git-3",
+        "label": "Create new branch",
+        "command": "git checkout -b {branch_name}",
+        "type": "command",
+        "variables": [
+          {
+            "name": "branch_name",
+            "placeholder": "Enter branch name"
+          }
+        ]
+      },
+      {
+        "id": "git-4",
+        "label": "Quick Commit & Push Workflow",
+        "command": "workflow",
+        "type": "workflow",
+        "steps": [
+          "git add .",
+          "git commit -m \"{message}\"",
+          "git push origin main"
+        ]
+      }
+    ],
+    "vps": [
+      {
+        "id": "vps-1",
+        "label": "SSH into server",
+        "command": "ssh {username}@{server_ip}",
+        "type": "command",
+        "variables": [
+          {
+            "name": "username",
+            "placeholder": "Username"
+          },
+          {
+            "name": "server_ip",
+            "placeholder": "Server IP"
+          }
+        ]
+      },
+      {
+        "id": "vps-2",
+        "label": "Check disk usage",
+        "command": "df -h",
+        "type": "command"
+      },
+      {
+        "id": "vps-3",
+        "label": "Monitor system resources",
+        "command": "htop",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752172057020",
+        "label": "Comando de prueba",
+        "command": "comando a ejecutar de prueba",
+        "type": "command"
+      }
+    ],
+    "database": [
+      {
+        "id": "db-1",
+        "label": "Connect to PostgreSQL",
+        "command": "psql -h localhost -U {username} -d {database}",
+        "type": "command",
+        "variables": [
+          {
+            "name": "username",
+            "placeholder": "Username"
+          },
+          {
+            "name": "database",
+            "placeholder": "Database name"
+          }
+        ]
+      },
+      {
+        "id": "db-2",
+        "label": "Backup database",
+        "command": "pg_dump {database} > backup.sql",
+        "type": "command",
+        "variables": [
+          {
+            "name": "database",
+            "placeholder": "Database name"
+          }
+        ]
+      }
+    ],
+    "deployment": [
+      {
+        "id": "deploy-1",
+        "label": "Deploy to production",
+        "command": "npm run deploy:prod",
+        "type": "command"
+      },
+      {
+        "id": "deploy-2",
+        "label": "Build for production",
+        "command": "npm run build",
+        "type": "command"
+      }
+    ],
+    "prueba": []
+  }
+}
