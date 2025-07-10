@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, Copy, Check, Play, Terminal, Zap, Settings, PlusCircle, Trash2 } from "lucide-react"
+import { Search, Copy, Check, Play, Terminal, Zap, Settings, PlusCircle, Trash2, HelpCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -65,7 +65,6 @@ export default function BroworksLaunchpad() {
       const jsonData = await response.json();
       setData(jsonData);
       if (jsonData.categories && jsonData.categories.length > 0) {
-        // Seleccionamos la primera categoría por defecto si no hay ninguna seleccionada
         if(!selectedCategory) {
             setSelectedCategory(jsonData.categories[0].id);
         }
@@ -84,8 +83,7 @@ export default function BroworksLaunchpad() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newData)
         });
-        // Refrescamos los datos en toda la app
-        await fetchData(); // Volvemos a cargar desde la fuente de verdad
+        await fetchData(); 
     } catch (error) {
         console.error("Error saving data:", error)
         alert("Error al guardar los datos.");
@@ -102,7 +100,6 @@ export default function BroworksLaunchpad() {
     const icon = prompt("Icono para la nueva categoría (ej: ⚡️):");
     if (name && icon) {
         const newId = name.toLowerCase().replace(/\s+/g, '-');
-        // Evitar IDs duplicados
         if(data.categories.some(c => c.id === newId)) {
             alert("Ya existe una categoría con un ID similar.");
             return;
@@ -218,15 +215,12 @@ export default function BroworksLaunchpad() {
                 </h1>
             </div>
             
-            <div className="flex justify-start mt-3 mb-4">
+            <div className="flex justify-start items-center mt-3 mb-4 gap-2">
                  <Dialog onOpenChange={(open) => !open && setAdminSelectedCategory(null)}>
                     <DialogTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          className="justify-start gap-4 text-gray-400 hover:bg-gray-800/50 hover:text-white"
-                        >
+                        <Button variant="ghost" className="justify-start gap-2 text-gray-400 hover:bg-gray-800/50 hover:text-white px-2">
                           <Settings className="h-5 w-5" />
-                          <span className="font-bold">Administrar Comandos</span>
+                          <span className="font-bold text-sm">Administrar</span>
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-4xl h-[80vh] flex flex-col">
@@ -271,17 +265,75 @@ export default function BroworksLaunchpad() {
                         </div>
                          <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" variant="secondary">Cerrar</Button>
+                                <Button type="button" className="bg-gray-700 text-white hover:bg-gray-600">Cerrar</Button>
                             </DialogClose>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
+
+                {/* --- INICIO DEL NUEVO BOTÓN DE AYUDA --- */}
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost" className="justify-start gap-2 text-gray-400 hover:bg-gray-800/50 hover:text-white px-2">
+                            <HelpCircle className="h-5 w-5" />
+                            <span className="font-bold text-sm">Ayuda</span>
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl h-[80vh] flex flex-col">
+                        <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2"><HelpCircle/> Guía de uso de broWorks dev-caddy</DialogTitle>
+                        </DialogHeader>
+                        <ScrollArea className="flex-1 text-gray-300 pr-4">
+                            <div className="space-y-6 text-sm">
+                                <div>
+                                    <h3 className="font-bold text-lg text-white mb-2">Introducción</h3>
+                                    <p>Esta herramienta está diseñada para ser tu centro de control de comandos, permitiéndote acceder, copiar y gestionar rápidamente todos los comandos que usas en tu día a día.</p>
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-lg text-white mb-2">Interfaz Principal</h3>
+                                    <ul className="list-disc list-inside space-y-1">
+                                        <li><strong className="text-blue-400">Panel Izquierdo:</strong> Navega por tus <code className="bg-gray-800 px-1 rounded">Categorías</code>. Puedes usar el buscador para filtrarlas rápidamente.</li>
+                                        <li><strong className="text-blue-400">Panel Central:</strong> Aquí aparecen los comandos de la categoría seleccionada. Usa la barra de búsqueda superior (o <code className="bg-gray-800 px-1 rounded">Ctrl+K</code>) para encontrar un comando específico por su nombre o contenido.</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-lg text-white mb-2">Tipos de Comandos</h3>
+                                    <ul className="list-disc list-inside space-y-2">
+                                        <li><strong className="text-blue-400">Comando Simple:</strong> Es el tipo más básico. Muestra una descripción y un botón para copiar el comando directamente.</li>
+                                        <li><strong className="text-purple-400">Workflow:</strong> Es una secuencia de comandos. El botón <code className="bg-gray-800 px-1 rounded">Copy Step & Next</code> copia el paso actual y avanza al siguiente, guiándote a través de un proceso complejo.</li>
+                                        <li><strong className="text-green-400">Comando con Variables:</strong> Son plantillas de comandos con "huecos". Rellena los campos de texto que aparecen y luego pulsa "Copy Command" para obtener el comando final con tus datos.</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-lg text-white mb-2">Administración</h3>
+                                    <p>Haz clic en el botón <strong className="text-gray-200">"Administrar"</strong> para abrir el panel de gestión:</p>
+                                    <ul className="list-disc list-inside space-y-1 mt-2">
+                                        <li><strong className="text-blue-400">Gestionar Categorías:</strong> Añade nuevas categorías o selecciona una de la lista y pulsa "Eliminar".</li>
+                                        <li><strong className="text-blue-400">Gestionar Comandos:</strong> Primero, selecciona una categoría de la lista de la izquierda. Luego, en la columna de la derecha, podrás añadir nuevos comandos a esa categoría o eliminar los existentes.</li>
+                                    </ul>
+                                </div>
+                                 <div>
+                                    <h3 className="font-bold text-lg text-white mb-2">Personalización Avanzada</h3>
+                                    <p>Recuerda que la fuente de verdad de toda la aplicación es el fichero <code className="bg-gray-800 px-1 rounded">app/data/commands.json</code>. Puedes abrirlo y editarlo directamente para hacer cambios masivos, reordenar comandos o crear Workflows y Variables complejas.</p>
+                                </div>
+                            </div>
+                        </ScrollArea>
+                         <DialogFooter>
+                            <DialogClose asChild>
+                                <Button type="button" className="bg-gray-700 text-white hover:bg-gray-600">Entendido</Button>
+                            </DialogClose>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+                 {/* --- FIN DEL NUEVO BOTÓN DE AYUDA --- */}
             </div>
+            
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input placeholder="Search categories..." value={categorySearch} onChange={(e) => setCategorySearch(e.target.value)} className="pl-10 bg-gray-800 border-gray-700 focus:border-blue-500" />
             </div>
           </div>
+
           <ScrollArea className="flex-1 overflow-y-auto">
             <div className="p-4">
               <h3 className="text-sm font-medium text-gray-400 mb-3 px-3">Categorías</h3>
