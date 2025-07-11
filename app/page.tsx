@@ -13,6 +13,7 @@ import {
   Trash2,
   HelpCircle,
   PanelLeftClose,
+  Pencil,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -55,16 +56,16 @@ interface AppData {
   commands: Record<string, Command[]>
 }
 
-// --- Componentes para Markdown ---
+// --- Componentes para Markdown (para futura mejora) ---
 const markdownComponents: Components = {
-  h1: ({...props}) => <h1 className="text-2xl font-bold text-white mb-4" {...props} />,
-  h3: ({...props}) => <h3 className="text-lg font-semibold text-blue-400 mt-6 mb-2" {...props} />,
-  hr: ({...props}) => <hr className="my-4 border-gray-700" {...props} />,
-  ul: ({...props}) => <ul className="list-disc list-inside space-y-2 pl-4" {...props} />,
-  li: ({...props}) => <li className="text-gray-300" {...props} />,
-  p: ({...props}) => <p className="text-gray-300 mb-4" {...props} />,
-  strong: ({...props}) => <strong className="font-semibold text-gray-200" {...props} />,
-  code: ({...props}) => <code className="bg-gray-800 text-purple-300 font-mono rounded-md px-1.5 py-0.5 text-sm" {...props} />
+    h1: ({...props}) => <h1 className="text-2xl font-bold text-white mb-4" {...props} />,
+    h3: ({...props}) => <h3 className="text-lg font-semibold text-blue-400 mt-6 mb-2" {...props} />,
+    hr: ({...props}) => <hr className="my-4 border-gray-700" {...props} />,
+    ul: ({...props}) => <ul className="list-disc list-inside space-y-2 pl-4" {...props} />,
+    li: ({...props}) => <li className="text-gray-300" {...props} />,
+    p: ({...props}) => <p className="text-gray-300 mb-4" {...props} />,
+    strong: ({...props}) => <strong className="font-semibold text-gray-200" {...props} />,
+    code: ({...props}) => <code className="bg-gray-800 text-purple-300 font-mono rounded-md px-1.5 py-0.5 text-sm" {...props} />
 }
 
 export default function BroworksLaunchpad() {
@@ -81,7 +82,7 @@ export default function BroworksLaunchpad() {
   // --- Estados de la Barra Lateral ---
   const { isSidebarCollapsed, toggleSidebar } = useUIStore()
 
-  // --- Estados de los Modales ---
+  // --- Estados de los Modales y Edición---
   const [adminOpen, setAdminOpen] = useState(false)
   const [adminSelectedCategory, setAdminSelectedCategory] = useState<string | null>(null)
   
@@ -89,10 +90,12 @@ export default function BroworksLaunchpad() {
   const [helpContent, setHelpContent] = useState("")
 
   const [addCategoryOpen, setAddCategoryOpen] = useState(false)
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [newCategoryName, setNewCategoryName] = useState("")
   const [newCategoryIcon, setNewCategoryIcon] = useState("")
 
   const [addCommandOpen, setAddCommandOpen] = useState(false)
+  const [editingCommand, setEditingCommand] = useState<Command | null>(null)
   const [newCommandLabel, setNewCommandLabel] = useState("")
   const [newCommandType, setNewCommandType] = useState<"simple" | "workflow" | "variables">("simple")
   const [newCommandText, setNewCommandText] = useState("")
@@ -148,31 +151,53 @@ export default function BroworksLaunchpad() {
   }, [isHelpOpen])
 
   // --- Lógica de Administración de Categorías ---
-  const handleSaveNewCategory = () => {
-    if (!newCategoryName || !newCategoryIcon) {
-        alert("El nombre y el icono son obligatorios.")
-        return
+  const handleOpenAddCategory = () => {
+    setEditingCategory(null);
+    setNewCategoryName("");
+    setNewCategoryIcon("");
+    setAddCategoryOpen(true);
+  }
+
+  const handleOpenEditCategory = (category: Category) => {
+    setEditingCategory(category);
+    setNewCategoryName(category.name);
+    setNewCategoryIcon(category.icon);
+    setAddCategoryOpen(true);
+  }
+
+  const handleSaveCategory = () => {
+    let newData: AppData;
+
+    if (editingCategory) { // --- MODO EDICIÓN ---
+        newData = {
+            ...data,
+            categories: data.categories.map(c => c.id === editingCategory.id ? { ...c, name: newCategoryName, icon: newCategoryIcon } : c)
+        }
+    } else { // --- MODO CREACIÓN ---
+        if (!newCategoryName || !newCategoryIcon) {
+            alert("El nombre y el icono son obligatorios.")
+            return
+        }
+        const newId = newCategoryName.toLowerCase().replace(/\s+/g, "-")
+        if (data.categories.some((c) => c.id === newId)) {
+            alert("Ya existe una categoría con un ID similar.")
+            return
+        }
+        const newCategory: Category = { id: newId, name: newCategoryName, icon: newCategoryIcon }
+        newData = {
+            ...data,
+            categories: [...data.categories, newCategory],
+            commands: { ...data.commands, [newId]: [] },
+        }
     }
-    const newId = newCategoryName.toLowerCase().replace(/\s+/g, "-")
-    if (data.categories.some((c) => c.id === newId)) {
-        alert("Ya existe una categoría con un ID similar.")
-        return
-    }
-    const newCategory: Category = { id: newId, name: newCategoryName, icon: newCategoryIcon }
-    const newData: AppData = {
-        ...data,
-        categories: [...data.categories, newCategory],
-        commands: { ...data.commands, [newId]: [] },
-    }
+    
     saveData(newData)
     setAddCategoryOpen(false)
-    setNewCategoryName("")
-    setNewCategoryIcon("")
   }
 
   const handleDeleteCategory = () => {
     if (!adminSelectedCategory) return alert("Selecciona una categoría para eliminar.")
-    if (confirm(`¿Seguro que quieres eliminar la categoría "${adminSelectedCategory}" y todos sus comandos?`)) {
+    if (confirm(`¿Seguro que quieres eliminar la categoría "${data.categories.find(c => c.id === adminSelectedCategory)?.name}" y todos sus comandos?`)) {
       const newCategories = data.categories.filter((c) => c.id !== adminSelectedCategory)
       const newCommands = { ...data.commands }
       delete newCommands[adminSelectedCategory]
@@ -183,34 +208,71 @@ export default function BroworksLaunchpad() {
   }
 
   // --- Lógica de Administración de Comandos ---
-  const handleSaveNewCommand = () => {
+  const handleOpenAddCommand = () => {
+    if(!adminSelectedCategory) return;
+    setEditingCommand(null);
+    setNewCommandLabel("");
+    setNewCommandText("");
+    setNewCommandType("simple");
+    setNewWorkflowSteps([""]);
+    setNewVariables([{ name: "", placeholder: "" }]);
+    setAddCommandOpen(true);
+  }
+
+  const handleOpenEditCommand = (command: Command) => {
+    setEditingCommand(command);
+    setNewCommandLabel(command.label);
+    setNewCommandText(command.command || "");
+    if(command.type === 'workflow') {
+      setNewCommandType('workflow');
+      setNewWorkflowSteps(command.steps || [""]);
+    } else if (command.variables && command.variables.length > 0) {
+      setNewCommandType('variables');
+      setNewVariables(command.variables);
+    } else {
+      setNewCommandType('simple');
+    }
+    setAddCommandOpen(true);
+  }
+
+  const handleSaveCommand = () => {
     if (!adminSelectedCategory || !newCommandLabel) {
         alert("Debes seleccionar una categoría y añadir un label para el comando.")
         return
     }
 
-    const id = `cmd-${Date.now()}`
-    let newCmd: Command
+    let finalCommand: Command;
+    let commandList = [...(data.commands[adminSelectedCategory] || [])];
 
-    if (newCommandType === "workflow") {
-      newCmd = { id, label: newCommandLabel, command: "workflow", type: "workflow", steps: newWorkflowSteps.filter((s) => s.trim() !== "") }
-    } else if (newCommandType === "variables") {
-      newCmd = { id, label: newCommandLabel, command: newCommandText, type: "command", variables: newVariables.filter((v) => v.name.trim() || v.placeholder.trim()) }
-    } else {
-      newCmd = { id, label: newCommandLabel, command: newCommandText, type: "command" }
+    if (editingCommand) { // --- MODO EDICIÓN ---
+      const baseCommand = { ...editingCommand, label: newCommandLabel, command: newCommandText };
+      if (newCommandType === 'workflow') {
+        finalCommand = { ...baseCommand, type: 'workflow', steps: newWorkflowSteps.filter(s => s.trim()), variables: undefined };
+      } else if (newCommandType === 'variables') {
+        finalCommand = { ...baseCommand, type: 'command', variables: newVariables.filter(v => v.name.trim()), steps: undefined };
+      } else {
+        finalCommand = { ...baseCommand, type: 'command', variables: undefined, steps: undefined };
+      }
+      commandList = commandList.map(cmd => cmd.id === editingCommand.id ? finalCommand : cmd);
+
+    } else { // --- MODO CREACIÓN ---
+      const id = `cmd-${Date.now()}`;
+      const baseCommand = { id, label: newCommandLabel, command: newCommandText };
+       if (newCommandType === "workflow") {
+        finalCommand = { ...baseCommand, command: "workflow", type: "workflow", steps: newWorkflowSteps.filter((s) => s.trim() !== "") }
+      } else if (newCommandType === "variables") {
+        finalCommand = { ...baseCommand, type: "command", variables: newVariables.filter((v) => v.name.trim() || v.placeholder.trim()) }
+      } else {
+        finalCommand = { ...baseCommand, type: "command" }
+      }
+      commandList.push(finalCommand);
     }
-
-    const newCommandsData = { ...data.commands }
-    newCommandsData[adminSelectedCategory] = [...newCommandsData[adminSelectedCategory], newCmd]
-    saveData({ ...data, commands: newCommandsData })
+    
+    const newCommandsData = { ...data.commands, [adminSelectedCategory]: commandList };
+    saveData({ ...data, commands: newCommandsData });
 
     // Resetear formulario
-    setAddCommandOpen(false)
-    setNewCommandLabel("")
-    setNewCommandText("")
-    setNewWorkflowSteps([""])
-    setNewVariables([{ name: "", placeholder: "" }])
-    setNewCommandType("simple")
+    setAddCommandOpen(false);
   }
   
   // --- Helpers para formularios dinámicos ---
@@ -318,27 +380,10 @@ export default function BroworksLaunchpad() {
                     <div className="col-span-1 flex flex-col gap-2">
                       <h3 className="font-bold">Categorías</h3>
                       <div className="flex gap-2">
-                        <Dialog open={addCategoryOpen} onOpenChange={setAddCategoryOpen}>
-                            <DialogTrigger asChild>
-                                <Button size="sm" className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700">
-                                    <PlusCircle size={16} />
-                                    Añadir Categoría
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="bg-gray-900 border-gray-800 text-white">
-                                <DialogHeader>
-                                    <DialogTitle>Nueva Categoría</DialogTitle>
-                                </DialogHeader>
-                                <div className="space-y-4 py-4">
-                                    <Input placeholder="Nombre de la categoría" value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)} className="bg-gray-800 border-gray-700 focus:border-blue-500" />
-                                    <Input placeholder="Icono (ej: ⚡️)" value={newCategoryIcon} onChange={e => setNewCategoryIcon(e.target.value)} className="bg-gray-800 border-gray-700 focus:border-blue-500" />
-                                </div>
-                                <DialogFooter>
-                                    <Button onClick={handleSaveNewCategory} className="bg-blue-600 hover:bg-blue-700">Guardar</Button>
-                                    <DialogClose asChild><Button type="button" variant="secondary" className="bg-gray-700 hover:bg-gray-600">Cancelar</Button></DialogClose>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
+                        <Button size="sm" className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700" onClick={handleOpenAddCategory}>
+                            <PlusCircle size={16} />
+                            Añadir
+                        </Button>
                         <Button size="sm" variant="destructive" className="gap-2" onClick={handleDeleteCategory} disabled={!adminSelectedCategory}>
                           <Trash2 size={16} />
                           Eliminar
@@ -347,9 +392,19 @@ export default function BroworksLaunchpad() {
                       <ScrollArea className="flex-1 bg-gray-950/50 rounded-md border border-gray-700">
                         <div className="p-2 space-y-1">
                           {data.categories.map((cat) => (
-                            <button key={cat.id} onClick={() => setAdminSelectedCategory(cat.id)} className={`w-full text-left p-2 rounded-md text-sm ${adminSelectedCategory === cat.id ? "bg-blue-600" : "hover:bg-gray-800"}`}>
-                              <span className="mr-2">{cat.icon}</span>{cat.name}
-                            </button>
+                            <div key={cat.id} className={`group flex items-center justify-between p-2 rounded-md cursor-pointer ${
+                                adminSelectedCategory === cat.id ? 'bg-blue-600 text-white' : 'hover:bg-gray-800'
+                            }`}
+                              onClick={() => setAdminSelectedCategory(cat.id)}
+                            >
+                              <div className="flex items-center gap-2 overflow-hidden">
+                                <span className="text-lg">{cat.icon}</span>
+                                <span className="truncate">{cat.name}</span>
+                              </div>
+                              <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={(e) => {e.stopPropagation(); handleOpenEditCategory(cat)}}>
+                                  <Pencil size={14} />
+                              </Button>
+                            </div>
                           ))}
                         </div>
                       </ScrollArea>
@@ -363,185 +418,10 @@ export default function BroworksLaunchpad() {
                           )?.name || "..."}
                         </span>
                       </h3>
-                       <Dialog
-                        open={addCommandOpen}
-                        onOpenChange={setAddCommandOpen}
-                      >
-                        <DialogTrigger asChild>
-                          <Button
-                            size="sm"
-                            className="gap-2 bg-blue-600 hover:bg-blue-700"
-                            onClick={() => { if(adminSelectedCategory) setAddCommandOpen(true) }}
-                            disabled={!adminSelectedCategory}
-                          >
-                            <PlusCircle size={16} />
-                            Añadir Comando
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-lg flex flex-col">
-                          <DialogHeader>
-                            <DialogTitle>Nuevo Comando</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-4">
-                            <Input
-                              placeholder="Label"
-                              value={newCommandLabel}
-                              onChange={(e) =>
-                                setNewCommandLabel(e.target.value)
-                              }
-                               className="bg-gray-800 border-gray-700 focus:border-blue-500"
-                            />
-                            <RadioGroup
-                              value={newCommandType}
-                              onValueChange={(v) =>
-                                setNewCommandType(
-                                  v as "simple" | "workflow" | "variables"
-                                )
-                              }
-                              className="flex gap-4"
-                            >
-                              <div className="flex items-center gap-2">
-                                <RadioGroupItem
-                                  value="simple"
-                                  id="type-simple"
-                                />
-                                <Label htmlFor="type-simple">
-                                  Simple
-                                </Label>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <RadioGroupItem
-                                  value="workflow"
-                                  id="type-workflow"
-                                />
-                                <Label htmlFor="type-workflow">
-                                  Workflow
-                                </Label>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <RadioGroupItem
-                                  value="variables"
-                                  id="type-variables"
-                                />
-                                <Label htmlFor="type-variables">
-                                  Con Variables
-                                </Label>
-                              </div>
-                            </RadioGroup>
-
-                            {newCommandType === "simple" && (
-                              <Input
-                                placeholder="Comando"
-                                value={newCommandText}
-                                onChange={(e) =>
-                                  setNewCommandText(e.target.value)
-                                }
-                                className="font-mono bg-gray-800 border-gray-700 focus:border-blue-500"
-                              />
-                            )}
-
-                            {newCommandType === "workflow" && (
-                              <div className="space-y-2">
-                                <h4 className="text-sm font-medium text-gray-400">Pasos del Workflow</h4>
-                                {newWorkflowSteps.map((step, idx) => (
-                                  <div key={idx} className="flex gap-2">
-                                    <Input
-                                      placeholder={`Step ${idx + 1}`}
-                                      value={step}
-                                      onChange={(e) =>
-                                        updateStep(idx, e.target.value)
-                                      }
-                                      className="flex-1 font-mono bg-gray-800 border-gray-700 focus:border-blue-500"
-                                    />
-                                    <Button
-                                      size="icon"
-                                      variant="destructive"
-                                      onClick={() => removeStep(idx)}
-                                    >
-                                      <Trash2 size={16} />
-                                    </Button>
-                                  </div>
-                                ))}
-                                <Button
-                                  size="sm"
-                                  onClick={addStepField}
-                                  className="gap-2 bg-gray-700 hover:bg-gray-600"
-                                  variant="outline"
-                                >
-                                  <PlusCircle size={16} />
-                                  Añadir Step
-                                </Button>
-                              </div>
-                            )}
-
-                            {newCommandType === "variables" && (
-                              <div className="space-y-2">
-                                <Input
-                                  placeholder="Comando (ej: ssh {user}@{host})"
-                                  value={newCommandText}
-                                  onChange={(e) =>
-                                    setNewCommandText(e.target.value)
-                                  }
-                                  className="font-mono bg-gray-800 border-gray-700 focus:border-blue-500"
-                                />
-                                 <h4 className="text-sm font-medium text-gray-400">Variables</h4>
-                                {newVariables.map((v, idx) => (
-                                  <div key={idx} className="flex gap-2">
-                                    <Input
-                                      placeholder="Nombre (sin {})"
-                                      value={v.name}
-                                      onChange={(e) =>
-                                        updateVariable(
-                                          idx,
-                                          "name",
-                                          e.target.value
-                                        )
-                                      }
-                                      className="flex-1 bg-gray-800 border-gray-700 focus:border-blue-500"
-                                    />
-                                    <Input
-                                      placeholder="Placeholder"
-                                      value={v.placeholder}
-                                      onChange={(e) =>
-                                        updateVariable(
-                                          idx,
-                                          "placeholder",
-                                          e.target.value
-                                        )
-                                      }
-                                      className="flex-1 bg-gray-800 border-gray-700 focus:border-blue-500"
-                                    />
-                                    <Button
-                                      size="icon"
-                                      variant="destructive"
-                                      onClick={() => removeVariable(idx)}
-                                    >
-                                      <Trash2 size={16} />
-                                    </Button>
-                                  </div>
-                                ))}
-                                <Button
-                                  size="sm"
-                                  onClick={addVariableField}
-                                  className="gap-2 bg-gray-700 hover:bg-gray-600"
-                                  variant="outline"
-                                >
-                                  <PlusCircle size={16} />
-                                  Añadir Variable
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                          <DialogFooter>
-                            <Button onClick={handleSaveNewCommand} className="bg-blue-600 hover:bg-blue-700">
-                              Guardar Comando
-                            </Button>
-                             <DialogClose asChild>
-                                <Button type="button" variant="secondary" className="bg-gray-700 hover:bg-gray-600">Cancelar</Button>
-                              </DialogClose>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
+                      <Button size="sm" className="w-fit gap-2 bg-blue-600 hover:bg-blue-700" onClick={handleOpenAddCommand} disabled={!adminSelectedCategory}>
+                        <PlusCircle size={16} />
+                        Añadir Comando
+                      </Button>
                       <ScrollArea className="flex-1 bg-gray-950/50 rounded-md border border-gray-700">
                         <div className="p-2 space-y-2">
                           {adminSelectedCategory &&
@@ -549,9 +429,9 @@ export default function BroworksLaunchpad() {
                               (cmd) => (
                                 <div
                                   key={cmd.id}
-                                  className="flex items-center justify-between p-2 bg-gray-800 rounded-md"
+                                  className="group flex items-center justify-between p-2 bg-gray-800 rounded-md"
                                 >
-                                  <div className="flex flex-col overflow-hidden">
+                                  <div className="flex flex-col overflow-hidden mr-2">
                                     <span className="font-semibold text-sm truncate">
                                       {cmd.label}
                                     </span>
@@ -559,15 +439,14 @@ export default function BroworksLaunchpad() {
                                       {cmd.command}
                                     </span>
                                   </div>
-                                  <Button
-                                    size="icon"
-                                    variant="destructive"
-                                    onClick={() =>
-                                      handleDeleteCommand(cmd.id)
-                                    }
-                                  >
-                                    <Trash2 size={16} />
-                                  </Button>
+                                  <div className="flex gap-1 flex-shrink-0">
+                                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleOpenEditCommand(cmd)}>
+                                          <Pencil size={16} />
+                                      </Button>
+                                      <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => handleDeleteCommand(cmd.id)}>
+                                          <Trash2 size={16} />
+                                      </Button>
+                                  </div>
                                 </div>
                               )
                             )}
@@ -704,7 +583,7 @@ export default function BroworksLaunchpad() {
               {filteredCommands.map((cmd) => (
                 <Card
                   key={cmd.id}
-                  className="bg-gray-900 border-gray-800 hover:border-gray-700 transition-colors"
+                  className="bg-gray-900 border-gray-800 transition-colors hover:bg-gray-900"
                 >
                   <CardHeader className="flex flex-row items-center justify-between pb-3">
                     <CardTitle className="text-lg font-semibold text-gray-100 flex items-center gap-2">
@@ -806,6 +685,96 @@ export default function BroworksLaunchpad() {
             </div>
           </ScrollArea>
         </div>
+
+        {/* DIALOGS DE FORMULARIOS */}
+        <Dialog open={addCategoryOpen} onOpenChange={setAddCategoryOpen}>
+            <DialogContent className="bg-gray-900 border-gray-800 text-white">
+                <DialogHeader>
+                    <DialogTitle>{editingCategory ? 'Editar' : 'Nueva'} Categoría</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                    <Input placeholder="Nombre de la categoría" value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)} className="bg-gray-800 border-gray-700 focus:border-blue-500" />
+                    <Input placeholder="Icono (ej: ⚡️)" value={newCategoryIcon} onChange={e => setNewCategoryIcon(e.target.value)} className="bg-gray-800 border-gray-700 focus:border-blue-500" />
+                </div>
+                <DialogFooter>
+                    <Button onClick={handleSaveCategory} className="bg-blue-600 hover:bg-blue-700">Guardar</Button>
+                    <DialogClose asChild><Button type="button" variant="destructive">Cancelar</Button></DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
+        <Dialog open={addCommandOpen} onOpenChange={setAddCommandOpen}>
+            <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-lg flex flex-col">
+              <DialogHeader>
+                <DialogTitle>{editingCommand ? 'Editar' : 'Nuevo'} Comando</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <Input
+                  placeholder="Label"
+                  value={newCommandLabel}
+                  onChange={(e) => setNewCommandLabel(e.target.value)}
+                   className="bg-gray-800 border-gray-700 focus:border-blue-500"
+                />
+                <RadioGroup
+                  value={newCommandType}
+                  onValueChange={(v) => setNewCommandType(v as "simple" | "workflow" | "variables")}
+                  className="flex gap-4"
+                  disabled={!!editingCommand}
+                >
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="simple" id="type-simple" />
+                    <Label htmlFor="type-simple">Simple</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="workflow" id="type-workflow" />
+                    <Label htmlFor="type-workflow">Workflow</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="variables" id="type-variables"/>
+                    <Label htmlFor="type-variables">Con Variables</Label>
+                  </div>
+                </RadioGroup>
+                
+                {newCommandType === 'simple' && (
+                  <Input placeholder="Comando" value={newCommandText} onChange={(e) => setNewCommandText(e.target.value)} className="font-mono bg-gray-800 border-gray-700 focus:border-blue-500"/>
+                )}
+
+                {newCommandType === 'workflow' && (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-400">Pasos del Workflow</h4>
+                    {newWorkflowSteps.map((step, idx) => (
+                      <div key={idx} className="flex gap-2">
+                        <Input placeholder={`Step ${idx + 1}`} value={step} onChange={(e) => updateStep(idx, e.target.value)} className="flex-1 font-mono bg-gray-800 border-gray-700 focus:border-blue-500"/>
+                        <Button size="icon" variant="destructive" onClick={() => removeStep(idx)}><Trash2 size={16} /></Button>
+                      </div>
+                    ))}
+                    <Button size="sm" onClick={addStepField} className="gap-2 bg-gray-700 hover:bg-gray-600" variant="outline"><PlusCircle size={16} />Añadir Step</Button>
+                  </div>
+                )}
+
+                {newCommandType === 'variables' && (
+                  <div className="space-y-2">
+                    <Input placeholder="Comando (ej: ssh {user}@{host})" value={newCommandText} onChange={(e) => setNewCommandText(e.target.value)} className="font-mono bg-gray-800 border-gray-700 focus:border-blue-500"/>
+                     <h4 className="text-sm font-medium text-gray-400">Variables</h4>
+                    {newVariables.map((v, idx) => (
+                      <div key={idx} className="flex gap-2">
+                        <Input placeholder="Nombre (sin {})" value={v.name} onChange={(e) => updateVariable( idx, "name", e.target.value)} className="flex-1 bg-gray-800 border-gray-700 focus:border-blue-500"/>
+                        <Input placeholder="Placeholder" value={v.placeholder} onChange={(e) => updateVariable(idx, "placeholder", e.target.value)} className="flex-1 bg-gray-800 border-gray-700 focus:border-blue-500"/>
+                        <Button size="icon" variant="destructive" onClick={() => removeVariable(idx)}><Trash2 size={16} /></Button>
+                      </div>
+                    ))}
+                    <Button size="sm" onClick={addVariableField} className="gap-2 bg-gray-700 hover:bg-gray-600" variant="outline"><PlusCircle size={16} />Añadir Variable</Button>
+                  </div>
+                )}
+              </div>
+              <DialogFooter>
+                <Button onClick={handleSaveCommand} className="bg-blue-600 hover:bg-blue-700">Guardar Comando</Button>
+                 <DialogClose asChild>
+                    <Button type="button" variant="destructive">Cancelar</Button>
+                  </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+        </Dialog>
       </div>
     </div>
   )

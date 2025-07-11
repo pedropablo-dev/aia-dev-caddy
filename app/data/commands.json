@@ -27,7 +27,7 @@
     },
     {
       "id": "prueba",
-      "name": "Prueba",
+      "name": "Prueba editada",
       "icon": "😶"
     }
   ],
@@ -138,7 +138,7 @@
       },
       {
         "id": "cmd-1752233714949",
-        "label": "af",
+        "label": "af editado",
         "command": "asdf",
         "type": "command"
       }
@@ -160,7 +160,7 @@
     "prueba": [
       {
         "id": "cmd-1752231806383",
-        "label": "x",
+        "label": "x editado",
         "command": "workflow",
         "type": "workflow",
         "steps": [
