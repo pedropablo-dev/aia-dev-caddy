@@ -30,7 +30,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Label } from "@/components/ui/label"
 import ReactMarkdown, { Components } from "react-markdown"
 import { useUIStore } from "@/store/uiStore"
@@ -368,7 +368,7 @@ export default function BroworksLaunchpad() {
                 <DialogTrigger asChild>
                   <Button variant="ghost" className="gap-2 text-gray-400 hover:bg-gray-800/50 hover:text-gray-200 px-2">
                     <Settings className="h-5 w-5 flex-shrink-0" />
-                    <span className={`font-bold text-sm ${isSidebarCollapsed ? "hidden" : ""}`}>Administrar</span>
+                    <span className={`font-bold text-sm ${isSidebarCollapsed ? "hidden" : ""}`}>Panel de Administración</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-4xl h-[80vh] flex flex-col">
@@ -478,7 +478,7 @@ export default function BroworksLaunchpad() {
 
           <ScrollArea className="flex-1 p-2">
              {!isSidebarCollapsed && (
-                <h3 className="text-sm font-medium text-gray-400 mb-3 px-3">
+                <h3 className="text-sm font-bold text-gray-400 mb-3 px-3">
                     Categorías
                 </h3>
              )}
@@ -717,25 +717,19 @@ export default function BroworksLaunchpad() {
                   onChange={(e) => setNewCommandLabel(e.target.value)}
                    className="bg-gray-800 border-gray-700 focus:border-blue-500"
                 />
-                <RadioGroup
+                <ToggleGroup
+                  type="single"
                   value={newCommandType}
-                  onValueChange={(v) => setNewCommandType(v as "simple" | "workflow" | "variables")}
-                  className="flex gap-4"
+                  onValueChange={(v) => {
+                    if (v) setNewCommandType(v as "simple" | "workflow" | "variables")
+                  }}
+                  className="w-full justify-start gap-2"
                   disabled={!!editingCommand}
                 >
-                  <div className="flex items-center gap-2">
-                    <RadioGroupItem value="simple" id="type-simple" />
-                    <Label htmlFor="type-simple">Simple</Label>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <RadioGroupItem value="workflow" id="type-workflow" />
-                    <Label htmlFor="type-workflow">Workflow</Label>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <RadioGroupItem value="variables" id="type-variables"/>
-                    <Label htmlFor="type-variables">Con Variables</Label>
-                  </div>
-                </RadioGroup>
+                  <ToggleGroupItem value="simple" variant="outline">Simple</ToggleGroupItem>
+                  <ToggleGroupItem value="workflow" variant="outline">Workflow</ToggleGroupItem>
+                  <ToggleGroupItem value="variables" variant="outline">Con Variables</ToggleGroupItem>
+                </ToggleGroup>
                 
                 {newCommandType === 'simple' && (
                   <Input placeholder="Comando" value={newCommandText} onChange={(e) => setNewCommandText(e.target.value)} className="font-mono bg-gray-800 border-gray-700 focus:border-blue-500"/>
@@ -750,7 +744,7 @@ export default function BroworksLaunchpad() {
                         <Button size="icon" variant="destructive" onClick={() => removeStep(idx)}><Trash2 size={16} /></Button>
                       </div>
                     ))}
-                    <Button size="sm" onClick={addStepField} className="gap-2 bg-gray-700 hover:bg-gray-600" variant="outline"><PlusCircle size={16} />Añadir Step</Button>
+                    <Button size="sm" onClick={addStepField} className="gap-2 bg-gray-700 hover:opacity-90" variant="outline"><PlusCircle size={16} />Añadir Step</Button>
                   </div>
                 )}
 
@@ -765,7 +759,7 @@ export default function BroworksLaunchpad() {
                         <Button size="icon" variant="destructive" onClick={() => removeVariable(idx)}><Trash2 size={16} /></Button>
                       </div>
                     ))}
-                    <Button size="sm" onClick={addVariableField} className="gap-2 bg-gray-700 hover:bg-gray-600" variant="outline"><PlusCircle size={16} />Añadir Variable</Button>
+                    <Button size="sm" onClick={addVariableField} className="gap-2 bg-gray-700 hover:opacity-90" variant="outline"><PlusCircle size={16} />Añadir Variable</Button>
                   </div>
                 )}
               </div>
