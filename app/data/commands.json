@@ -32,19 +32,7 @@
     }
   ],
   "commands": {
-    "docker": [
-      {
-        "id": "docker-4",
-        "label": "Full Stack Restart Workflow",
-        "command": "workflow",
-        "type": "workflow",
-        "steps": [
-          "docker-compose down",
-          "docker system prune -f",
-          "docker-compose up --build"
-        ]
-      }
-    ],
+    "docker": [],
     "git": [
       {
         "id": "git-2",

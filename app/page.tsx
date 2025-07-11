@@ -305,7 +305,7 @@ export default function BroworksLaunchpad() {
   )
 
   // --- Lógica de Interacción con Comandos ---
-  const handleCopyCommand = async (commandId: string, baseCommand: string, variables?: any[]) => {
+  const handleCopyCommand = (commandId: string, baseCommand: string, variables?: any[]) => {
     let finalCommand = baseCommand
     if (variables) {
       variables.forEach((variable) => {
@@ -313,7 +313,7 @@ export default function BroworksLaunchpad() {
         finalCommand = finalCommand.replace(`{${variable.name}}`, value)
       })
     }
-    await navigator.clipboard.writeText(finalCommand)
+    navigator.clipboard.writeText(finalCommand)
     setCopiedCommand(commandId)
     setTimeout(() => setCopiedCommand(null), 2000)
   }
@@ -726,9 +726,9 @@ export default function BroworksLaunchpad() {
                   className="w-full justify-start gap-2"
                   disabled={!!editingCommand}
                 >
-                  <ToggleGroupItem value="simple" variant="outline">Simple</ToggleGroupItem>
-                  <ToggleGroupItem value="workflow" variant="outline">Workflow</ToggleGroupItem>
-                  <ToggleGroupItem value="variables" variant="outline">Con Variables</ToggleGroupItem>
+                  <ToggleGroupItem value="simple" variant="outline" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white data-[state=on]:border-blue-700 hover:bg-blue-800/50 hover:text-blue-200">Simple</ToggleGroupItem>
+                  <ToggleGroupItem value="workflow" variant="outline" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white data-[state=on]:border-blue-700 hover:bg-blue-800/50 hover:text-blue-200">Workflow</ToggleGroupItem>
+                  <ToggleGroupItem value="variables" variant="outline" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white data-[state=on]:border-blue-700 hover:bg-blue-800/50 hover:text-blue-200">Con Variables</ToggleGroupItem>
                 </ToggleGroup>
                 
                 {newCommandType === 'simple' && (
