@@ -529,10 +529,12 @@ export default function BroworksLaunchpad() {
                     <HelpCircle /> Guía de uso
                   </DialogTitle>
                 </DialogHeader>
-                <ScrollArea className="flex-1 text-gray-300 pr-4">
-                  <ReactMarkdown components={markdownComponents}>
-                      {helpContent}
-                  </ReactMarkdown>
+                <ScrollArea className="flex-1 pr-4">
+                  <div className="prose prose-invert max-w-none w-full">
+                    <ReactMarkdown components={markdownComponents}>
+                        {helpContent}
+                    </ReactMarkdown>
+                  </div>
                 </ScrollArea>
                 <DialogFooter>
                   <DialogClose asChild>
@@ -617,7 +619,7 @@ export default function BroworksLaunchpad() {
                     {cmd.type === "workflow" && (
                       <Badge
                         variant="secondary"
-                        className="bg-purple-900 text-purple-200"
+                        className="bg-purple-900 text-purple-200 hover:bg-purple-900/80"
                       >
                         Workflow
                       </Badge>

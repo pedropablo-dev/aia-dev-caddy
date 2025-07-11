@@ -43,12 +43,6 @@
           "docker system prune -f",
           "docker-compose up --build"
         ]
-      },
-      {
-        "id": "cmd-1752231359823",
-        "label": "asdfa",
-        "command": "asdf",
-        "type": "command"
       }
     ],
     "git": [
