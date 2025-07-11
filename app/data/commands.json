@@ -34,30 +34,6 @@
   "commands": {
     "docker": [
       {
-        "id": "docker-1",
-        "label": "Rebuild and start frontend",
-        "command": "docker-compose up --build gamifyu",
-        "type": "command"
-      },
-      {
-        "id": "docker-2",
-        "label": "Stop all containers",
-        "command": "docker-compose down",
-        "type": "command"
-      },
-      {
-        "id": "docker-3",
-        "label": "View container logs",
-        "command": "docker logs {container_name}",
-        "type": "command",
-        "variables": [
-          {
-            "name": "container_name",
-            "placeholder": "Enter container name"
-          }
-        ]
-      },
-      {
         "id": "docker-4",
         "label": "Full Stack Restart Workflow",
         "command": "workflow",
@@ -67,21 +43,15 @@
           "docker system prune -f",
           "docker-compose up --build"
         ]
+      },
+      {
+        "id": "cmd-1752231359823",
+        "label": "asdfa",
+        "command": "asdf",
+        "type": "command"
       }
     ],
     "git": [
-      {
-        "id": "git-1",
-        "label": "Commit with message",
-        "command": "git commit -m \"{message}\"",
-        "type": "command",
-        "variables": [
-          {
-            "name": "message",
-            "placeholder": "Enter commit message"
-          }
-        ]
-      },
       {
         "id": "git-2",
         "label": "Push to origin",
@@ -98,17 +68,6 @@
             "name": "branch_name",
             "placeholder": "Enter branch name"
           }
-        ]
-      },
-      {
-        "id": "git-4",
-        "label": "Quick Commit & Push Workflow",
-        "command": "workflow",
-        "type": "workflow",
-        "steps": [
-          "git add .",
-          "git commit -m \"{message}\"",
-          "git push origin main"
         ]
       }
     ],
@@ -176,6 +135,12 @@
             "placeholder": "Database name"
           }
         ]
+      },
+      {
+        "id": "cmd-1752233714949",
+        "label": "af",
+        "command": "asdf",
+        "type": "command"
       }
     ],
     "deployment": [
@@ -192,6 +157,18 @@
         "type": "command"
       }
     ],
-    "prueba": []
+    "prueba": [
+      {
+        "id": "cmd-1752231806383",
+        "label": "x",
+        "command": "workflow",
+        "type": "workflow",
+        "steps": [
+          "1",
+          "2",
+          "3"
+        ]
+      }
+    ]
   }
 }

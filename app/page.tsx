@@ -31,9 +31,10 @@ import {
 } from "@/components/ui/dialog"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import ReactMarkdown from "react-markdown"
+import ReactMarkdown, { Components } from "react-markdown"
 import { useUIStore } from "@/store/uiStore"
 
+// --- Tipos de Datos ---
 interface Command {
   id: string
   label: string
@@ -54,48 +55,62 @@ interface AppData {
   commands: Record<string, Command[]>
 }
 
+// --- Componentes para Markdown ---
+const markdownComponents: Components = {
+  h1: ({...props}) => <h1 className="text-2xl font-bold text-white mb-4" {...props} />,
+  h3: ({...props}) => <h3 className="text-lg font-semibold text-blue-400 mt-6 mb-2" {...props} />,
+  hr: ({...props}) => <hr className="my-4 border-gray-700" {...props} />,
+  ul: ({...props}) => <ul className="list-disc list-inside space-y-2 pl-4" {...props} />,
+  li: ({...props}) => <li className="text-gray-300" {...props} />,
+  p: ({...props}) => <p className="text-gray-300 mb-4" {...props} />,
+  strong: ({...props}) => <strong className="font-semibold text-gray-200" {...props} />,
+  code: ({...props}) => <code className="bg-gray-800 text-purple-300 font-mono rounded-md px-1.5 py-0.5 text-sm" {...props} />
+}
+
 export default function BroworksLaunchpad() {
+  // --- Estados de Datos y UI Principal ---
   const [data, setData] = useState<AppData>({ categories: [], commands: {} })
   const [isLoading, setIsLoading] = useState(true)
-
   const [selectedCategory, setSelectedCategory] = useState<string>("")
   const [searchQuery, setSearchQuery] = useState("")
   const [categorySearch, setCategorySearch] = useState("")
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [workflowStep, setWorkflowStep] = useState<Record<string, number>>({})
-  const [adminSelectedCategory, setAdminSelectedCategory] =
-    useState<string | null>(null)
-
+  
+  // --- Estados de la Barra Lateral ---
   const { isSidebarCollapsed, toggleSidebar } = useUIStore()
 
+  // --- Estados de los Modales ---
+  const [adminOpen, setAdminOpen] = useState(false)
+  const [adminSelectedCategory, setAdminSelectedCategory] = useState<string | null>(null)
+  
   const [isHelpOpen, setIsHelpOpen] = useState(false)
   const [helpContent, setHelpContent] = useState("")
 
+  const [addCategoryOpen, setAddCategoryOpen] = useState(false)
+  const [newCategoryName, setNewCategoryName] = useState("")
+  const [newCategoryIcon, setNewCategoryIcon] = useState("")
+
   const [addCommandOpen, setAddCommandOpen] = useState(false)
   const [newCommandLabel, setNewCommandLabel] = useState("")
-  const [newCommandType, setNewCommandType] = useState<
-    "simple" | "workflow" | "variables"
-  >("simple")
+  const [newCommandType, setNewCommandType] = useState<"simple" | "workflow" | "variables">("simple")
   const [newCommandText, setNewCommandText] = useState("")
   const [newWorkflowSteps, setNewWorkflowSteps] = useState<string[]>([""])
-  const [newVariables, setNewVariables] = useState<
-    { name: string; placeholder: string }[]
-  >([{ name: "", placeholder: "" }])
+  const [newVariables, setNewVariables] = useState<{ name: string; placeholder: string }[]>([{ name: "", placeholder: "" }])
 
+  // --- Lógica de Datos (Carga/Guardado) ---
   const fetchData = async () => {
-    setIsLoading(true)
+    if (!isLoading) setIsLoading(true)
     try {
       const response = await fetch("/api/commands")
-      if (!response.ok) {
-        throw new Error(`API call failed with status: ${response.status}`)
-      }
+      if (!response.ok) throw new Error(`API call failed with status: ${response.status}`)
+      
       const jsonData = await response.json()
       setData(jsonData)
-      if (jsonData.categories && jsonData.categories.length > 0) {
-        if (!selectedCategory) {
-          setSelectedCategory(jsonData.categories[0].id)
-        }
+
+      if (jsonData.categories && jsonData.categories.length > 0 && !selectedCategory) {
+        setSelectedCategory(jsonData.categories[0].id)
       }
     } catch (error) {
       console.error("Error loading commands:", error)
@@ -122,45 +137,43 @@ export default function BroworksLaunchpad() {
     fetchData()
   }, [])
 
+  // --- Lógica de Ayuda ---
   useEffect(() => {
     if (isHelpOpen) {
       fetch("/help.md")
         .then((r) => r.text())
-        .then((text) => setHelpContent(text))
+        .then(setHelpContent)
         .catch(() => setHelpContent("No se pudo cargar la ayuda."))
     }
   }, [isHelpOpen])
 
-  const handleAddCategory = () => {
-    const name = prompt("Nombre de la nueva categoría:")
-    const icon = prompt("Icono para la nueva categoría (ej: ⚡️):")
-    if (name && icon) {
-      const newId = name.toLowerCase().replace(/\s+/g, "-")
-      if (data.categories.some((c) => c.id === newId)) {
+  // --- Lógica de Administración de Categorías ---
+  const handleSaveNewCategory = () => {
+    if (!newCategoryName || !newCategoryIcon) {
+        alert("El nombre y el icono son obligatorios.")
+        return
+    }
+    const newId = newCategoryName.toLowerCase().replace(/\s+/g, "-")
+    if (data.categories.some((c) => c.id === newId)) {
         alert("Ya existe una categoría con un ID similar.")
         return
-      }
-      const newCategory: Category = { id: newId, name, icon }
-      const newData: AppData = {
+    }
+    const newCategory: Category = { id: newId, name: newCategoryName, icon: newCategoryIcon }
+    const newData: AppData = {
         ...data,
         categories: [...data.categories, newCategory],
-        commands: { ...data.commands, [newCategory.id]: [] },
-      }
-      saveData(newData)
+        commands: { ...data.commands, [newId]: [] },
     }
+    saveData(newData)
+    setAddCategoryOpen(false)
+    setNewCategoryName("")
+    setNewCategoryIcon("")
   }
 
   const handleDeleteCategory = () => {
-    if (!adminSelectedCategory)
-      return alert("Selecciona una categoría para eliminar.")
-    if (
-      confirm(
-        `¿Seguro que quieres eliminar la categoría "${adminSelectedCategory}" y todos sus comandos?`
-      )
-    ) {
-      const newCategories = data.categories.filter(
-        (c) => c.id !== adminSelectedCategory
-      )
+    if (!adminSelectedCategory) return alert("Selecciona una categoría para eliminar.")
+    if (confirm(`¿Seguro que quieres eliminar la categoría "${adminSelectedCategory}" y todos sus comandos?`)) {
+      const newCategories = data.categories.filter((c) => c.id !== adminSelectedCategory)
       const newCommands = { ...data.commands }
       delete newCommands[adminSelectedCategory]
       const newData = { categories: newCategories, commands: newCommands }
@@ -169,54 +182,29 @@ export default function BroworksLaunchpad() {
     }
   }
 
-  const handleAddCommand = () => {
-    if (!adminSelectedCategory) {
-      alert("Selecciona una categoría primero.")
-      return
-    }
-    setAddCommandOpen(true)
-  }
-
+  // --- Lógica de Administración de Comandos ---
   const handleSaveNewCommand = () => {
-    if (!adminSelectedCategory) return
+    if (!adminSelectedCategory || !newCommandLabel) {
+        alert("Debes seleccionar una categoría y añadir un label para el comando.")
+        return
+    }
 
     const id = `cmd-${Date.now()}`
     let newCmd: Command
 
     if (newCommandType === "workflow") {
-      newCmd = {
-        id,
-        label: newCommandLabel,
-        command: "workflow",
-        type: "workflow",
-        steps: newWorkflowSteps.filter((s) => s.trim() !== ""),
-      }
+      newCmd = { id, label: newCommandLabel, command: "workflow", type: "workflow", steps: newWorkflowSteps.filter((s) => s.trim() !== "") }
     } else if (newCommandType === "variables") {
-      newCmd = {
-        id,
-        label: newCommandLabel,
-        command: newCommandText,
-        type: "command",
-        variables: newVariables.filter(
-          (v) => v.name.trim() || v.placeholder.trim()
-        ),
-      }
+      newCmd = { id, label: newCommandLabel, command: newCommandText, type: "command", variables: newVariables.filter((v) => v.name.trim() || v.placeholder.trim()) }
     } else {
-      newCmd = {
-        id,
-        label: newCommandLabel,
-        command: newCommandText,
-        type: "command",
-      }
+      newCmd = { id, label: newCommandLabel, command: newCommandText, type: "command" }
     }
 
     const newCommandsData = { ...data.commands }
-    newCommandsData[adminSelectedCategory] = [
-      ...newCommandsData[adminSelectedCategory],
-      newCmd,
-    ]
+    newCommandsData[adminSelectedCategory] = [...newCommandsData[adminSelectedCategory], newCmd]
     saveData({ ...data, commands: newCommandsData })
 
+    // Resetear formulario
     setAddCommandOpen(false)
     setNewCommandLabel("")
     setNewCommandText("")
@@ -224,40 +212,27 @@ export default function BroworksLaunchpad() {
     setNewVariables([{ name: "", placeholder: "" }])
     setNewCommandType("simple")
   }
-
-  const updateStep = (idx: number, value: string) =>
-    setNewWorkflowSteps((s) => s.map((v, i) => (i === idx ? value : v)))
-  const removeStep = (idx: number) =>
-    setNewWorkflowSteps((s) => s.filter((_, i) => i !== idx))
+  
+  // --- Helpers para formularios dinámicos ---
+  const updateStep = (idx: number, value: string) => setNewWorkflowSteps((s) => s.map((v, i) => (i === idx ? value : v)))
+  const removeStep = (idx: number) => setNewWorkflowSteps((s) => s.filter((_, i) => i !== idx))
   const addStepField = () => setNewWorkflowSteps((s) => [...s, ""])
 
-  const updateVariable = (
-    idx: number,
-    field: "name" | "placeholder",
-    value: string
-  ) =>
-    setNewVariables((v) =>
-      v.map((item, i) => (i === idx ? { ...item, [field]: value } : item))
-    )
-  const removeVariable = (idx: number) =>
-    setNewVariables((v) => v.filter((_, i) => i !== idx))
-  const addVariableField = () =>
-    setNewVariables((v) => [...v, { name: "", placeholder: "" }])
+  const updateVariable = (idx: number, field: "name" | "placeholder", value: string) => setNewVariables((v) => v.map((item, i) => (i === idx ? { ...item, [field]: value } : item)))
+  const removeVariable = (idx: number) => setNewVariables((v) => v.filter((_, i) => i !== idx))
+  const addVariableField = () => setNewVariables((v) => [...v, { name: "", placeholder: "" }])
 
   const handleDeleteCommand = (commandId: string) => {
     if (!adminSelectedCategory) return
     if (confirm("¿Seguro que quieres eliminar este comando?")) {
       const newCommandsData = { ...data.commands }
-      newCommandsData[adminSelectedCategory] =
-        newCommandsData[adminSelectedCategory].filter(
-          (c) => c.id !== commandId
-        )
+      newCommandsData[adminSelectedCategory] = newCommandsData[adminSelectedCategory].filter((c) => c.id !== commandId)
       saveData({ ...data, commands: newCommandsData })
     }
   }
-
-  const filteredCommands =
-    data.commands[selectedCategory]?.filter(
+  
+  // --- Lógica de Filtrado y Búsqueda ---
+  const filteredCommands = data.commands[selectedCategory]?.filter(
       (cmd) =>
         cmd.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
         cmd.command.toLowerCase().includes(searchQuery.toLowerCase())
@@ -267,11 +242,8 @@ export default function BroworksLaunchpad() {
     cat.name.toLowerCase().includes(categorySearch.toLowerCase())
   )
 
-  const handleCopyCommand = async (
-    commandId: string,
-    baseCommand: string,
-    variables?: any[]
-  ) => {
+  // --- Lógica de Interacción con Comandos ---
+  const handleCopyCommand = async (commandId: string, baseCommand: string, variables?: any[]) => {
     let finalCommand = baseCommand
     if (variables) {
       variables.forEach((variable) => {
@@ -287,13 +259,11 @@ export default function BroworksLaunchpad() {
   const handleWorkflowStep = (commandId: string, steps: string[]) => {
     const currentStep = workflowStep[commandId] || 0
     const nextStep = (currentStep + 1) % steps.length
-    handleCopyCommand(
-      commandId + "_step_" + currentStep,
-      steps[currentStep]
-    )
+    handleCopyCommand(commandId + "_step_" + currentStep, steps[currentStep])
     setWorkflowStep((prev) => ({ ...prev, [commandId]: nextStep }))
   }
 
+  // --- Atajo de Teclado ---
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
@@ -310,84 +280,66 @@ export default function BroworksLaunchpad() {
       <div className="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center">
         <div className="flex items-center gap-3">
           <Zap className="w-8 h-8 text-blue-500 animate-pulse" />
-          <h1 className="text-2xl font-bold text-gray-400">
-            Loading Dev-Caddy...
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-400">Loading Dev-Caddy...</h1>
         </div>
       </div>
     )
   }
-
+  
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
       <div className="flex h-screen">
         {/* Left Panel */}
-        <div
-          className={`transition-all duration-300 ${
-            isSidebarCollapsed ? "w-24" : "w-80"
-          } bg-gray-900 border-r border-gray-800 flex flex-col`}
-        >
+        <div className={`transition-all duration-300 ${isSidebarCollapsed ? "w-20" : "w-80"} bg-gray-900 border-r border-gray-800 flex flex-col`}>
           <div className="p-4 border-b border-gray-800">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'justify-center' : ''}`}>
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
                 <Zap className="w-5 h-5 text-white" />
               </div>
-              <h1
-                className={`text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent whitespace-nowrap ${
-                  isSidebarCollapsed ? "hidden" : ""
-                }`}
-              >
+              <h1 className={`text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent whitespace-nowrap ${isSidebarCollapsed ? "hidden" : ""}`}>
                 broWorks dev-caddy
               </h1>
             </div>
-
-            <div className="flex justify-start items-center mt-3 mb-4 gap-2">
-              <Dialog
-                onOpenChange={(open) =>
-                  !open && setAdminSelectedCategory(null)
-                }
-              >
+            
+            <div className={`flex items-center mt-3 mb-4 gap-2 ${isSidebarCollapsed ? 'justify-center' : 'justify-start'}`}>
+              <Dialog open={adminOpen} onOpenChange={setAdminOpen}>
                 <DialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="justify-start gap-2 text-gray-400 hover:bg-gray-800/50 hover:text-gray-200 px-2"
-                  >
+                  <Button variant="ghost" className="gap-2 text-gray-400 hover:bg-gray-800/50 hover:text-gray-200 px-2">
                     <Settings className="h-5 w-5 flex-shrink-0" />
-                    <span
-                      className={`font-bold text-sm ${
-                        isSidebarCollapsed ? "hidden" : ""
-                      }`}
-                    >
-                      Administrar
-                    </span>
+                    <span className={`font-bold text-sm ${isSidebarCollapsed ? "hidden" : ""}`}>Administrar</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-4xl h-[80vh] flex flex-col">
                   <DialogHeader>
                     <DialogTitle>Panel de Administración</DialogTitle>
-                    <DialogDescription>
-                      Añade, edita o elimina tus categorías y comandos.
-                    </DialogDescription>
+                    <DialogDescription>Añade, edita o elimina tus categorías y comandos.</DialogDescription>
                   </DialogHeader>
                   <div className="flex-1 grid grid-cols-3 gap-4 overflow-hidden">
                     <div className="col-span-1 flex flex-col gap-2">
                       <h3 className="font-bold">Categorías</h3>
                       <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          className="flex-1 gap-2"
-                          onClick={handleAddCategory}
-                        >
-                          <PlusCircle size={16} />
-                          Añadir
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          className="gap-2"
-                          onClick={handleDeleteCategory}
-                          disabled={!adminSelectedCategory}
-                        >
+                        <Dialog open={addCategoryOpen} onOpenChange={setAddCategoryOpen}>
+                            <DialogTrigger asChild>
+                                <Button size="sm" className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700">
+                                    <PlusCircle size={16} />
+                                    Añadir Categoría
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="bg-gray-900 border-gray-800 text-white">
+                                <DialogHeader>
+                                    <DialogTitle>Nueva Categoría</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-4 py-4">
+                                    <Input placeholder="Nombre de la categoría" value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)} className="bg-gray-800 border-gray-700 focus:border-blue-500" />
+                                    <Input placeholder="Icono (ej: ⚡️)" value={newCategoryIcon} onChange={e => setNewCategoryIcon(e.target.value)} className="bg-gray-800 border-gray-700 focus:border-blue-500" />
+                                </div>
+                                <DialogFooter>
+                                    <Button onClick={handleSaveNewCategory} className="bg-blue-600 hover:bg-blue-700">Guardar</Button>
+                                    <DialogClose asChild><Button type="button" variant="secondary" className="bg-gray-700 hover:bg-gray-600">Cancelar</Button></DialogClose>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                        <Button size="sm" variant="destructive" className="gap-2" onClick={handleDeleteCategory} disabled={!adminSelectedCategory}>
                           <Trash2 size={16} />
                           Eliminar
                         </Button>
@@ -395,25 +347,15 @@ export default function BroworksLaunchpad() {
                       <ScrollArea className="flex-1 bg-gray-950/50 rounded-md border border-gray-700">
                         <div className="p-2 space-y-1">
                           {data.categories.map((cat) => (
-                            <button
-                              key={cat.id}
-                              onClick={() =>
-                                setAdminSelectedCategory(cat.id)
-                              }
-                              className={`w-full text-left p-2 rounded-md text-sm ${
-                                adminSelectedCategory === cat.id
-                                  ? "bg-blue-600"
-                                  : "hover:bg-gray-800"
-                              }`}
-                            >
-                              {cat.icon} {cat.name}
+                            <button key={cat.id} onClick={() => setAdminSelectedCategory(cat.id)} className={`w-full text-left p-2 rounded-md text-sm ${adminSelectedCategory === cat.id ? "bg-blue-600" : "hover:bg-gray-800"}`}>
+                              <span className="mr-2">{cat.icon}</span>{cat.name}
                             </button>
                           ))}
                         </div>
                       </ScrollArea>
                     </div>
                     <div className="col-span-2 flex flex-col gap-2">
-                      <h3 className="font-bold">
+                       <h3 className="font-bold">
                         Comandos en:{" "}
                         <span className="text-blue-400">
                           {data.categories.find(
@@ -421,15 +363,15 @@ export default function BroworksLaunchpad() {
                           )?.name || "..."}
                         </span>
                       </h3>
-                      <Dialog
+                       <Dialog
                         open={addCommandOpen}
                         onOpenChange={setAddCommandOpen}
                       >
                         <DialogTrigger asChild>
                           <Button
                             size="sm"
-                            className="gap-2"
-                            onClick={handleAddCommand}
+                            className="gap-2 bg-blue-600 hover:bg-blue-700"
+                            onClick={() => { if(adminSelectedCategory) setAddCommandOpen(true) }}
                             disabled={!adminSelectedCategory}
                           >
                             <PlusCircle size={16} />
@@ -447,6 +389,7 @@ export default function BroworksLaunchpad() {
                               onChange={(e) =>
                                 setNewCommandLabel(e.target.value)
                               }
+                               className="bg-gray-800 border-gray-700 focus:border-blue-500"
                             />
                             <RadioGroup
                               value={newCommandType}
@@ -493,7 +436,7 @@ export default function BroworksLaunchpad() {
                                 onChange={(e) =>
                                   setNewCommandText(e.target.value)
                                 }
-                                className="font-mono"
+                                className="font-mono bg-gray-800 border-gray-700 focus:border-blue-500"
                               />
                             )}
 
@@ -508,7 +451,7 @@ export default function BroworksLaunchpad() {
                                       onChange={(e) =>
                                         updateStep(idx, e.target.value)
                                       }
-                                      className="flex-1 font-mono"
+                                      className="flex-1 font-mono bg-gray-800 border-gray-700 focus:border-blue-500"
                                     />
                                     <Button
                                       size="icon"
@@ -522,7 +465,7 @@ export default function BroworksLaunchpad() {
                                 <Button
                                   size="sm"
                                   onClick={addStepField}
-                                  className="gap-2"
+                                  className="gap-2 bg-gray-700 hover:bg-gray-600"
                                   variant="outline"
                                 >
                                   <PlusCircle size={16} />
@@ -539,7 +482,7 @@ export default function BroworksLaunchpad() {
                                   onChange={(e) =>
                                     setNewCommandText(e.target.value)
                                   }
-                                  className="font-mono"
+                                  className="font-mono bg-gray-800 border-gray-700 focus:border-blue-500"
                                 />
                                  <h4 className="text-sm font-medium text-gray-400">Variables</h4>
                                 {newVariables.map((v, idx) => (
@@ -554,7 +497,7 @@ export default function BroworksLaunchpad() {
                                           e.target.value
                                         )
                                       }
-                                      className="flex-1"
+                                      className="flex-1 bg-gray-800 border-gray-700 focus:border-blue-500"
                                     />
                                     <Input
                                       placeholder="Placeholder"
@@ -566,7 +509,7 @@ export default function BroworksLaunchpad() {
                                           e.target.value
                                         )
                                       }
-                                      className="flex-1"
+                                      className="flex-1 bg-gray-800 border-gray-700 focus:border-blue-500"
                                     />
                                     <Button
                                       size="icon"
@@ -580,7 +523,7 @@ export default function BroworksLaunchpad() {
                                 <Button
                                   size="sm"
                                   onClick={addVariableField}
-                                  className="gap-2"
+                                  className="gap-2 bg-gray-700 hover:bg-gray-600"
                                   variant="outline"
                                 >
                                   <PlusCircle size={16} />
@@ -590,11 +533,11 @@ export default function BroworksLaunchpad() {
                             )}
                           </div>
                           <DialogFooter>
-                            <Button onClick={handleSaveNewCommand}>
+                            <Button onClick={handleSaveNewCommand} className="bg-blue-600 hover:bg-blue-700">
                               Guardar Comando
                             </Button>
                              <DialogClose asChild>
-                                <Button type="button" variant="secondary">Cancelar</Button>
+                                <Button type="button" variant="secondary" className="bg-gray-700 hover:bg-gray-600">Cancelar</Button>
                               </DialogClose>
                           </DialogFooter>
                         </DialogContent>
@@ -632,20 +575,15 @@ export default function BroworksLaunchpad() {
                       </ScrollArea>
                     </div>
                   </div>
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button
-                        type="button"
-                        className="bg-gray-700 text-white hover:bg-gray-600"
-                      >
-                        Cerrar
-                      </Button>
-                    </DialogClose>
+                   <DialogFooter>
+                    <Button type="button" onClick={() => setAdminOpen(false)} className="bg-gray-700 text-white hover:bg-gray-600">
+                      Cerrar Panel
+                    </Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
             </div>
-
+            
             {!isSidebarCollapsed && (
               <div className="relative mt-2">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -659,7 +597,7 @@ export default function BroworksLaunchpad() {
             )}
           </div>
 
-          <ScrollArea className="flex-1 overflow-y-auto p-4">
+          <ScrollArea className="flex-1 p-2">
              {!isSidebarCollapsed && (
                 <h3 className="text-sm font-medium text-gray-400 mb-3 px-3">
                     Categorías
@@ -694,7 +632,7 @@ export default function BroworksLaunchpad() {
               <DialogTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="justify-start gap-2 text-gray-400 hover:bg-gray-800/50 hover:text-gray-200 px-2"
+                  className={`gap-2 text-gray-400 hover:bg-gray-800/50 hover:text-gray-200 px-2 ${isSidebarCollapsed ? 'justify-center' : 'justify-start'}`}
                 >
                   <HelpCircle className="h-5 w-5 flex-shrink-0" />
                   <span
@@ -713,11 +651,9 @@ export default function BroworksLaunchpad() {
                   </DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="flex-1 text-gray-300 pr-4">
-                  <div className="prose prose-invert prose-sm max-w-none">
-                    <ReactMarkdown>
+                  <ReactMarkdown components={markdownComponents}>
                       {helpContent}
-                    </ReactMarkdown>
-                  </div>
+                  </ReactMarkdown>
                 </ScrollArea>
                 <DialogFooter>
                   <DialogClose asChild>
@@ -735,7 +671,7 @@ export default function BroworksLaunchpad() {
             <Button
               variant="ghost"
               onClick={toggleSidebar}
-              className="justify-start gap-2 text-gray-400 hover:bg-gray-800/50 hover:text-gray-200 px-2"
+              className={`gap-2 text-gray-400 hover:bg-gray-800/50 hover:text-gray-200 px-2 ${isSidebarCollapsed ? 'justify-center' : 'justify-start'}`}
             >
               <PanelLeftClose className="h-5 w-5 flex-shrink-0" />
               <span
