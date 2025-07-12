@@ -2,13 +2,13 @@
 
 import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
+import Image from "next/image" // <-- IMPORTANTE: Añadimos la importación de Image
 import {
   Search,
   Copy,
   Check,
   Play,
   Terminal,
-  Zap,
   Settings,
   HelpCircle,
   PanelLeftClose,
@@ -32,7 +32,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import ReactMarkdown, { Components } from "react-markdown"
 import { useUIStore } from "@/store/uiStore"
-import { useAppStore } from "@/store/appStore" // <-- NUEVA IMPORTACIÓN
+import { useAppStore } from "@/store/appStore"
 
 // --- Tipos de Datos ---
 interface Command {
@@ -80,7 +80,7 @@ export default function BroworksLaunchpad() {
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [workflowStep, setWorkflowStep] = useState<Record<string, number>>({})
   const [hasMounted, setHasMounted] = useState(false);
-  
+
   const { isSidebarCollapsed, toggleSidebar } = useUIStore()
   const [isHelpOpen, setIsHelpOpen] = useState(false)
   const [helpContent, setHelpContent] = useState("")
@@ -91,7 +91,7 @@ export default function BroworksLaunchpad() {
     try {
       const response = await fetch("/api/commands")
       if (!response.ok) throw new Error(`API call failed with status: ${response.status}`)
-      
+
       const jsonData: AppData = await response.json()
 
       let needsSave = false;
@@ -110,7 +110,7 @@ export default function BroworksLaunchpad() {
           }
         });
       }
-      
+
       setData(jsonData)
 
       // Se mantiene la categoría seleccionada del store, no se resetea
@@ -146,7 +146,7 @@ export default function BroworksLaunchpad() {
   useEffect(() => {
     fetchData()
   }, [])
-  
+
   useEffect(() => {
     setHasMounted(true);
   }, []);
@@ -160,12 +160,12 @@ export default function BroworksLaunchpad() {
         .catch(() => setHelpContent("No se pudo cargar la ayuda."))
     }
   }, [isHelpOpen])
-  
+
   // --- Lógica de Favoritos ---
   const handleToggleFavorite = (commandId: string) => {
     const newData = JSON.parse(JSON.stringify(data));
     let found = false;
-  
+
     for (const categoryId in newData.commands) {
       const commandIndex = newData.commands[categoryId].findIndex((cmd: Command) => cmd.id === commandId);
       if (commandIndex !== -1) {
@@ -175,7 +175,7 @@ export default function BroworksLaunchpad() {
         break;
       }
     }
-  
+
     if (found) {
       setData(newData); // Actualización local inmediata
       saveData(newData, false); // Guardar sin recargar
@@ -251,7 +251,7 @@ export default function BroworksLaunchpad() {
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [])
-  
+
   const sidebarClasses = hasMounted && isSidebarCollapsed ? "w-20" : "w-80";
   const contentClasses = hasMounted && isSidebarCollapsed ? "hidden" : "";
 
@@ -259,13 +259,13 @@ export default function BroworksLaunchpad() {
     return (
       <div className="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center">
         <div className="flex items-center gap-3">
-          <Zap className="w-8 h-8 text-blue-500 animate-pulse" />
-          <h1 className="text-2xl font-bold text-gray-400">Loading Dev-Caddy...</h1>
+          <Image src="/logo.png" alt="Dev-Caddy Logo" width={32} height={32} className="flex-shrink-0"/>
+          <h1 className="text-2xl font-bold text-yellow-500">Loading Dev-Caddy...</h1>
         </div>
       </div>
     )
   }
-  
+
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
       <div className="max-w-7xl mx-auto flex h-screen">
@@ -273,14 +273,20 @@ export default function BroworksLaunchpad() {
         <div className={`transition-all duration-300 ${sidebarClasses} bg-gray-900 border-r border-gray-800 flex flex-col`}>
           <div className="p-4 border-b border-gray-800">
             <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'justify-center' : ''}`}>
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Zap className="w-5 h-5 text-white" />
-              </div>
-              <h1 className={`text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent whitespace-nowrap ${contentClasses}`}>
-                broWorks dev-caddy
+              {/* --- INICIO DE LA MODIFICACIÓN --- */}
+              <Image
+                  src="/logo.png"
+                  alt="Dev-Caddy Logo"
+                  width={32}
+                  height={32}
+                  className="flex-shrink-0"
+                />
+              <h1 className={`text-xl font-bold bg-gradient-to-r from-yellow-500 to-orange-300 bg-clip-text text-transparent whitespace-nowrap ${contentClasses}`}>
+                broWorks Dev-Caddy
               </h1>
+               {/* --- FIN DE LA MODIFICACIÓN --- */}
             </div>
-            
+
             <div className={`flex items-center mt-3 mb-4 gap-2 ${isSidebarCollapsed ? 'justify-center' : 'justify-start'}`}>
                 <Link href="/admin" className="w-full">
                     <Button variant="ghost" className={`w-full gap-2 text-gray-400 hover:bg-gray-800/50 hover:text-gray-200 px-2 ${isSidebarCollapsed ? 'justify-center' : 'justify-start'}`}>
@@ -289,7 +295,7 @@ export default function BroworksLaunchpad() {
                     </Button>
                 </Link>
             </div>
-            
+
             {!isSidebarCollapsed && (
               <div className="relative mt-2">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />

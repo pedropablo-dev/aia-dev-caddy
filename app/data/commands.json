@@ -10,31 +10,25 @@
       "id": "git",
       "name": "Git",
       "icon": "😺",
-      "order": 2
+      "order": 1
     },
     {
       "id": "<acx",
       "name": "URLs en Local",
       "icon": "💻",
+      "order": 2
+    },
+    {
+      "id": "gemelo-digital-vps",
+      "name": "Gemelo Digital VPS",
+      "icon": "🐧",
       "order": 3
     },
     {
       "id": "urls-en-remoto",
       "name": "URLs en Remoto",
       "icon": "🌍",
-      "order": 5
-    },
-    {
-      "id": "gemelo-digital-vps",
-      "name": "Gemelo Digital VPS",
-      "icon": "🐧",
       "order": 4
-    },
-    {
-      "id": "gemelo-digital-vps-copy-1752338446983",
-      "name": "Gemelo Digital VPS (Copia)",
-      "icon": "🐧",
-      "order": 1
     }
   ],
   "commands": {
@@ -76,7 +70,7 @@
         "label": "🐋 🚀 Arrancar Todos los Contenedores (Copia)",
         "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d comando largo largo",
         "type": "command",
-        "isFavorite": false,
+        "isFavorite": true,
         "order": 0
       },
       {
@@ -110,8 +104,8 @@
           "broworksgit",
           "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"
         ],
-        "order": 1,
-        "isFavorite": true
+        "order": 0,
+        "isFavorite": false
       },
       {
         "id": "cmd-1752255957807",
@@ -124,7 +118,7 @@
             "placeholder": "Comentario para el commit"
           }
         ],
-        "order": 0
+        "order": 1
       },
       {
         "id": "cmd-1752257540120",
@@ -186,14 +180,6 @@
         "command": "https://github.com/broworksgit/gamifyu-app-debug",
         "type": "command",
         "order": 6
-      },
-      {
-        "id": "cmd-1752341696364",
-        "label": "Prompt de prueba",
-        "command": "asfasdfa",
-        "isFavorite": false,
-        "order": 7,
-        "type": "prompt"
       }
     ],
     "<acx": [
@@ -328,79 +314,6 @@
           "P3dr0P@bl0+Sudo.2025"
         ],
         "order": 0
-      }
-    ],
-    "gemelo-digital-vps-copy-1752338446983": [
-      {
-        "id": "cmd-1752338446983-0.13719499856308848",
-        "label": "🔌 Conexión ssh Gemelo Digital",
-        "command": "workflow",
-        "type": "workflow",
-        "steps": [
-          "ssh pedropablo@localhost -p 2222",
-          "P3dr0P@bl0+Sudo.2025"
-        ],
-        "order": 0,
-        "isFavorite": false
-      },
-      {
-        "id": "cmd-1752338446983-0.503380605833239",
-        "label": "🔑 Permisos /opt/broworks/ ",
-        "command": "workflow",
-        "type": "workflow",
-        "steps": [
-          "sudo chown -R pedropablo:pedropablo /opt/broworks/",
-          "P3dr0P@bl0+Sudo.2025"
-        ],
-        "order": 1
-      },
-      {
-        "id": "cmd-1752338446983-0.5883108625882917",
-        "label": "🔑 Permisos /home/pedropablo/GAMIFYU_VPS_CLONADO",
-        "command": "workflow",
-        "type": "workflow",
-        "steps": [
-          "sudo chown -R pedropablo:pedropablo /home/pedropablo/GAMIFYU_VPS_CLONADO",
-          "P3dr0P@bl0+Sudo.2025"
-        ],
-        "order": 2
-      },
-      {
-        "id": "cmd-1752338446983-0.09994924804830652",
-        "label": "📂 Entrar en /opt/broworks/",
-        "command": "cd /opt/broworks/",
-        "type": "command",
-        "order": 3
-      },
-      {
-        "id": "cmd-1752338446983-0.8682873627506021",
-        "label": "📂 Entrar en /home/pedropablo/GAMIFYU_VPS_CLONADO",
-        "command": "cd /home/pedropablo/GAMIFYU_VPS_CLONADO",
-        "type": "command",
-        "order": 4
-      },
-      {
-        "id": "cmd-1752338446983-0.04295728221961059",
-        "label": "📂🚀 Entrar y Ejecutar Script de Sincronización",
-        "command": "workflow",
-        "type": "workflow",
-        "steps": [
-          "cd /home/pedropablo/GAMIFYU_VPS_CLONADO",
-          "sudo python3 sync_debug_repo.py",
-          "P3dr0P@bl0+Sudo.2025"
-        ],
-        "order": 5
-      },
-      {
-        "id": "cmd-1752338446983-0.4506673402678286",
-        "label": "🚀 Ejecutar Script de Sincronización",
-        "command": "workflow",
-        "type": "workflow",
-        "steps": [
-          "sudo python3 sync_debug_repo.py",
-          "P3dr0P@bl0+Sudo.2025"
-        ],
-        "order": 6
       }
     ]
   }
