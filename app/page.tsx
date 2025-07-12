@@ -32,6 +32,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import ReactMarkdown, { Components } from "react-markdown"
 import { useUIStore } from "@/store/uiStore"
+import { useAppStore } from "@/store/appStore" // <-- NUEVA IMPORTACIÓN
 
 // --- Tipos de Datos ---
 interface Command {
@@ -42,12 +43,14 @@ interface Command {
   isFavorite?: boolean
   variables?: { name: string; placeholder: string }[]
   steps?: string[]
+  order?: number
 }
 
 interface Category {
   id: string
   name: string
   icon: string
+  order?: number
 }
 
 interface AppData {
@@ -55,7 +58,6 @@ interface AppData {
   commands: Record<string, Command[]>
 }
 
-// --- Componentes para Markdown (para futura mejora) ---
 const markdownComponents: Components = {
     h1: ({...props}) => <h1 className="text-2xl font-bold text-white mb-4" {...props} />,
     h3: ({...props}) => <h3 className="text-lg font-semibold text-blue-400 mt-6 mb-2" {...props} />,
@@ -71,7 +73,7 @@ export default function BroworksLaunchpad() {
   // --- Estados de Datos y UI Principal ---
   const [data, setData] = useState<AppData>({ categories: [], commands: {} })
   const [isLoading, setIsLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState<string>("")
+  const { selectedCategory, setSelectedCategory } = useAppStore() // <-- USANDO EL STORE
   const [searchQuery, setSearchQuery] = useState("")
   const [categorySearch, setCategorySearch] = useState("")
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
@@ -79,10 +81,7 @@ export default function BroworksLaunchpad() {
   const [workflowStep, setWorkflowStep] = useState<Record<string, number>>({})
   const [hasMounted, setHasMounted] = useState(false);
   
-  // --- Estados de la Barra Lateral ---
   const { isSidebarCollapsed, toggleSidebar } = useUIStore()
-
-  // --- Estados de los Modales ---
   const [isHelpOpen, setIsHelpOpen] = useState(false)
   const [helpContent, setHelpContent] = useState("")
 
@@ -93,12 +92,32 @@ export default function BroworksLaunchpad() {
       const response = await fetch("/api/commands")
       if (!response.ok) throw new Error(`API call failed with status: ${response.status}`)
       
-      const jsonData = await response.json()
+      const jsonData: AppData = await response.json()
+
+      let needsSave = false;
+      jsonData.categories.forEach((cat, index) => {
+        if (cat.order === undefined) {
+          cat.order = index;
+          needsSave = true;
+        }
+      });
+
+      for (const categoryId in jsonData.commands) {
+        jsonData.commands[categoryId].forEach((cmd, index) => {
+          if (cmd.order === undefined) {
+            cmd.order = index;
+            needsSave = true;
+          }
+        });
+      }
+      
       setData(jsonData)
 
-      if (jsonData.categories && jsonData.categories.length > 0) {
-        setSelectedCategory('favorites');
+      // Se mantiene la categoría seleccionada del store, no se resetea
+      if (needsSave) {
+        await saveData(jsonData, false);
       }
+
     } catch (error) {
       console.error("Error loading commands:", error)
     } finally {
@@ -106,18 +125,23 @@ export default function BroworksLaunchpad() {
     }
   }
 
-  const saveData = async (newData: AppData) => {
+  const saveData = async (newData: AppData, shouldRefetch = true) => {
     try {
       await fetch("/api/commands", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newData),
-      })
+      });
+      if (shouldRefetch) {
+        // No se llama a fetchData para evitar bucles. 
+        // El estado se actualiza localmente en las funciones que guardan.
+        setData(newData);
+      }
     } catch (error) {
-      console.error("Error saving data:", error)
-      alert("Error al guardar los datos.")
+      console.error("Error saving data:", error);
+      alert("Error al guardar los datos.");
     }
-  }
+  };
 
   useEffect(() => {
     fetchData()
@@ -139,7 +163,7 @@ export default function BroworksLaunchpad() {
   
   // --- Lógica de Favoritos ---
   const handleToggleFavorite = (commandId: string) => {
-    const newData = JSON.parse(JSON.stringify(data)); // Deep copy
+    const newData = JSON.parse(JSON.stringify(data));
     let found = false;
   
     for (const categoryId in newData.commands) {
@@ -153,15 +177,16 @@ export default function BroworksLaunchpad() {
     }
   
     if (found) {
-      setData(newData);
-      saveData(newData);
+      setData(newData); // Actualización local inmediata
+      saveData(newData, false); // Guardar sin recargar
     }
   };
 
   // --- Lógica de Categorías y Comandos para Mostrar ---
   const displayCategories = useMemo(() => {
-    const favoritesCategory = { id: 'favorites', name: 'Favoritos', icon: '⭐' };
-    return [favoritesCategory, ...data.categories];
+    const favoritesCategory = { id: 'favorites', name: 'Favoritos', icon: '⭐', order: -1 };
+    const sortedCategories = [...data.categories].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    return [favoritesCategory, ...sortedCategories];
   }, [data.categories]);
 
   const filteredCategories = useMemo(() => {
@@ -176,9 +201,10 @@ export default function BroworksLaunchpad() {
     if (selectedCategory === 'favorites') {
       commandsToShow = Object.values(data.commands)
         .flat()
-        .filter(cmd => cmd.isFavorite);
+        .filter(cmd => cmd.isFavorite)
+        .sort((a,b) => (a.label > b.label) ? 1 : -1); // Ordenar favoritos alfabéticamente
     } else {
-      commandsToShow = data.commands[selectedCategory] || [];
+      commandsToShow = [...(data.commands[selectedCategory] || [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     }
 
     if (searchQuery) {
@@ -287,7 +313,7 @@ export default function BroworksLaunchpad() {
               {filteredCategories.map((category) => (
                 <button
                   key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
+                  onClick={() => setSelectedCategory(category.id)} // <-- USA EL STORE
                   className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
                     selectedCategory === category.id
                       ? "bg-blue-600 text-white"
@@ -363,7 +389,6 @@ export default function BroworksLaunchpad() {
 
         {/* Central Panel */}
         <div className="flex-1 flex flex-col bg-gray-950">
-          {/* Search Bar Header */}
           <div className="p-6 border-b border-gray-800">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -376,7 +401,6 @@ export default function BroworksLaunchpad() {
               />
             </div>
           </div>
-          {/* Command List */}
           <ScrollArea className="flex-1">
             <div className="p-6 space-y-4">
               {filteredCommands.map((cmd) => (
@@ -390,118 +414,53 @@ export default function BroworksLaunchpad() {
                             <Star className={`transition-all ${cmd.isFavorite ? 'text-yellow-400 fill-yellow-400' : ''}`} />
                         </Button>
                         <CardTitle className="text-lg font-semibold text-gray-100 flex items-center gap-2">
-                        {cmd.type === "workflow" ? (
-                            <Play className="w-4 h-4 text-purple-400" />
-                        ) : cmd.type === 'prompt' ? (
-                            <Sparkles className="w-4 h-4 text-yellow-400" />
-                        ) : (
-                            <Terminal className="w-4 h-4 text-blue-400" />
-                        )}
+                        {cmd.type === "workflow" ? (<Play className="w-4 h-4 text-purple-400" />) : cmd.type === 'prompt' ? (<Sparkles className="w-4 h-4 text-yellow-400" />) : (<Terminal className="w-4 h-4 text-blue-400" />)}
                         {cmd.label}
                         </CardTitle>
                     </div>
                     <div>
-                        {cmd.type === 'prompt' && (
-                        <Badge variant="secondary" className="bg-yellow-900 text-yellow-200 hover:bg-yellow-900/80">
-                            Prompt
-                        </Badge>
-                        )}
+                        {cmd.type === 'prompt' && (<Badge variant="secondary" className="bg-yellow-900 text-yellow-200 hover:bg-yellow-900/80">Prompt</Badge>)}
                         {cmd.type === "command" && (!cmd.variables || cmd.variables.length === 0) && (
-                        <Button
-                            size="sm"
-                            onClick={() => handleCopyCommand(cmd.id, cmd.command)}
-                            className="bg-blue-600 hover:bg-blue-700"
-                        >
+                        <Button size="sm" onClick={() => handleCopyCommand(cmd.id, cmd.command)} className="bg-blue-600 hover:bg-blue-700">
                             {copiedCommand === cmd.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                             <span className="ml-2">Copy</span>
                         </Button>
                         )}
-                        {cmd.type === "command" && cmd.variables && cmd.variables.length > 0 && (
-                        <Badge variant="secondary" className="bg-green-900 text-green-200 hover:bg-green-900/80">
-                            Con Variables
-                        </Badge>
-                        )}
-                        {cmd.type === "workflow" && (
-                        <Badge variant="secondary" className="bg-purple-900 text-purple-200 hover:bg-purple-900/80">
-                            Workflow
-                        </Badge>
-                        )}
+                        {cmd.type === "command" && cmd.variables && cmd.variables.length > 0 && (<Badge variant="secondary" className="bg-green-900 text-green-200 hover:bg-green-900/80">Con Variables</Badge>)}
+                        {cmd.type === "workflow" && (<Badge variant="secondary" className="bg-purple-900 text-purple-200 hover:bg-purple-900/80">Workflow</Badge>)}
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4 pt-2">
                     {cmd.type === 'prompt' ? (
                         <>
-                            <Textarea
-                                value={cmd.command}
-                                readOnly
-                                className="font-sans bg-gray-800 border-gray-700 text-white text-sm"
-                                rows={Math.min(10, cmd.command.split('\n').length)}
-                            />
-                            <Button
-                                size="sm"
-                                onClick={() => handleCopyCommand(cmd.id, cmd.command)}
-                                className="bg-yellow-600 hover:bg-yellow-700"
-                            >
+                            <Textarea value={cmd.command} readOnly className="font-sans bg-gray-800 border-gray-700 text-white text-sm" rows={Math.min(10, cmd.command.split('\n').length)} />
+                            <Button size="sm" onClick={() => handleCopyCommand(cmd.id, cmd.command)} className="bg-yellow-600 hover:bg-yellow-700">
                                 {copiedCommand === cmd.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                                 <span className="ml-2">Copy Prompt</span>
                             </Button>
                         </>
                     ) : cmd.type === "workflow" ? (
                       <div className="space-y-3">
-                        <div className="text-sm text-gray-400">
-                          Step {(workflowStep[cmd.id] || 0) + 1} of{" "}
-                          {cmd.steps?.length}
-                        </div>
-                        <Input
-                          value={
-                            cmd.steps?.[workflowStep[cmd.id] || 0] || ""
-                          }
-                          readOnly
-                          className="font-mono bg-gray-800 border-gray-700 text-white"
-                        />
-                        <Button
-                          onClick={() =>
-                            handleWorkflowStep(cmd.id, cmd.steps || [])
-                          }
-                          className="bg-purple-600 hover:bg-purple-700"
-                        >
+                        <div className="text-sm text-gray-400">Step {(workflowStep[cmd.id] || 0) + 1} of{" "}{cmd.steps?.length}</div>
+                        <Input value={cmd.steps?.[workflowStep[cmd.id] || 0] || ""} readOnly className="font-mono bg-gray-800 border-gray-700 text-white" />
+                        <Button onClick={() => handleWorkflowStep(cmd.id, cmd.steps || [])} className="bg-purple-600 hover:bg-purple-700">
                           <Copy className="w-4 h-4 mr-2" />
                           Copy Step & Next
                         </Button>
                       </div>
                     ) : (
                       <>
-                        <Input
-                          value={cmd.command}
-                          readOnly
-                          className="font-mono bg-gray-800 border-gray-700 text-white"
-                        />
+                        <Input value={cmd.command} readOnly className="font-mono bg-gray-800 border-gray-700 text-white" />
                         {cmd.variables && (
                           <div className="grid gap-2 mt-4">
                             {cmd.variables.map((variable) => (
-                              <Input
-                                key={variable.name}
-                                placeholder={variable.placeholder}
-                                value={
-                                  variableValues[
-                                    `${cmd.id}_${variable.name}`
-                                  ] || ""
-                                }
+                              <Input key={variable.name} placeholder={variable.placeholder} value={variableValues[`${cmd.id}_${variable.name}`] || ""}
                                 onChange={(e) =>
-                                  setVariableValues((prev) => ({
-                                    ...prev,
-                                    [`${cmd.id}_${variable.name}`]:
-                                      e.target.value,
-                                  }))
+                                  setVariableValues((prev) => ({...prev, [`${cmd.id}_${variable.name}`]: e.target.value,}))
                                 }
-                                className="bg-gray-800 border-gray-700 focus:border-blue-500 text-white"
-                              />
+                                className="bg-gray-800 border-gray-700 focus:border-blue-500 text-white" />
                             ))}
-                               <Button
-                                  size="sm"
-                                  onClick={() => handleCopyCommand(cmd.id, cmd.command, cmd.variables)}
-                                  className="bg-green-600 hover:bg-green-700 w-fit"
-                                >
+                               <Button size="sm" onClick={() => handleCopyCommand(cmd.id, cmd.command, cmd.variables)} className="bg-green-600 hover:bg-green-700 w-fit">
                                   {copiedCommand === cmd.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                                   <span className="ml-2">Copy</span>
                                 </Button>

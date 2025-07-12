@@ -3,32 +3,38 @@
     {
       "id": "docker",
       "name": "Docker",
-      "icon": "🐳"
+      "icon": "🐳",
+      "order": 4
     },
     {
       "id": "git",
       "name": "Git",
-      "icon": "😺"
+      "icon": "😺",
+      "order": 2
     },
     {
       "id": "<acx",
       "name": "URLs en Local",
-      "icon": "💻"
+      "icon": "💻",
+      "order": 5
     },
     {
       "id": "urls-en-remoto",
       "name": "URLs en Remoto",
-      "icon": "🌍"
+      "icon": "🌍",
+      "order": 3
     },
     {
       "id": "gemelo-digital-vps",
       "name": "Gemelo Digital VPS",
-      "icon": "🐧"
+      "icon": "🐧",
+      "order": 0
     },
     {
       "id": "gemelo-digital-vps-copy-1752338446983",
       "name": "Gemelo Digital VPS (Copia)",
-      "icon": "🐧"
+      "icon": "🐧",
+      "order": 1
     }
   ],
   "commands": {
@@ -38,49 +44,56 @@
         "label": "🐋 🚀 Arrancar Todos los Contenedores",
         "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d comando largo largo",
         "type": "command",
-        "isFavorite": true
+        "isFavorite": false,
+        "order": 4
       },
       {
         "id": "cmd-1752313575691",
         "label": "asdfa",
         "command": "asdfasdfasdfasfasdfasdfasdfasdfasddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "type": "command",
-        "isFavorite": true
+        "isFavorite": false,
+        "order": 1
       },
       {
         "id": "cmd-1752316653536",
         "label": "fasdfa",
         "command": "asdfa",
         "type": "command",
-        "isFavorite": true
+        "isFavorite": false,
+        "order": 2
       },
       {
         "id": "cmd-1752316657658",
         "label": "asdfas",
         "command": "asdf",
         "type": "command",
-        "isFavorite": false
+        "isFavorite": false,
+        "order": 3
       },
       {
         "id": "cmd-1752338136845",
         "label": "🐋 🚀 Arrancar Todos los Contenedores (Copia)",
         "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d comando largo largo",
         "type": "command",
-        "isFavorite": true
+        "isFavorite": false,
+        "order": 0
       },
       {
         "id": "cmd-1752338139416",
         "label": "🐋 🚀 Arrancar Todos los Contenedores (Copia)",
         "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d comando largo largo",
         "type": "command",
-        "isFavorite": true
+        "isFavorite": false,
+        "order": 5
       },
       {
         "id": "cmd-1752338140976",
         "label": "🐋 🚀 Arrancar Todos los Contenedores (Copia)",
         "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d comando largo largo",
         "type": "command",
-        "isFavorite": true
+        "isFavorite": false,
+        "order": 6
       }
     ],
     "git": [
@@ -96,7 +109,9 @@
           "git push",
           "broworksgit",
           "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"
-        ]
+        ],
+        "order": 1,
+        "isFavorite": true
       },
       {
         "id": "cmd-1752255957807",
@@ -108,7 +123,8 @@
             "name": "comentario",
             "placeholder": "Comentario para el commit"
           }
-        ]
+        ],
+        "order": 0
       },
       {
         "id": "cmd-1752257540120",
@@ -123,7 +139,8 @@
           "git push",
           "broworksgit",
           "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"
-        ]
+        ],
+        "order": 2
       },
       {
         "id": "cmd-1752257677691",
@@ -138,7 +155,8 @@
           "git push",
           "broworksgit",
           "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"
-        ]
+        ],
+        "order": 3
       },
       {
         "id": "cmd-1752258070519",
@@ -152,19 +170,22 @@
           "git push",
           "broworksgit",
           "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"
-        ]
+        ],
+        "order": 4
       },
       {
         "id": "cmd-1752262751605",
         "label": "😺🔗🧰 Repo broworks-dev-caddy",
         "command": "https://github.com/broworksgit/broworks-dev-caddy",
-        "type": "command"
+        "type": "command",
+        "order": 5
       },
       {
         "id": "cmd-1752262866744",
         "label": "😺🔗🤖 Repo Contexto IA gamifyu-app-debug",
         "command": "https://github.com/broworksgit/gamifyu-app-debug",
-        "type": "command"
+        "type": "command",
+        "order": 6
       }
     ],
     "<acx": [
@@ -172,49 +193,60 @@
         "id": "cmd-1752255377008",
         "label": "🔗 GamifyU",
         "command": "http://localhost:3000",
-        "type": "command"
+        "type": "command",
+        "order": 0
       },
       {
         "id": "cmd-1752255396268",
         "label": "🔗 GamifyU Backend",
         "command": "http://localhost:3001",
-        "type": "command"
+        "type": "command",
+        "order": 1,
+        "isFavorite": false
       },
       {
         "id": "cmd-1752255419802",
         "label": "🔗 broWorks dev-caddy",
         "command": "http://localhost:3002",
-        "type": "command"
+        "type": "command",
+        "order": 2,
+        "isFavorite": false
       },
       {
         "id": "cmd-1752255442899",
         "label": "🔗 Grafana",
         "command": "http://localhost:3003",
-        "type": "command"
+        "type": "command",
+        "order": 3,
+        "isFavorite": false
       },
       {
         "id": "cmd-1752255474869",
         "label": "🔗 n8n",
         "command": "http://localhost:5678",
-        "type": "command"
+        "type": "command",
+        "order": 4
       },
       {
         "id": "cmd-1752255495209",
         "label": "🔗 Flowise",
         "command": "http://localhost:8080",
-        "type": "command"
+        "type": "command",
+        "order": 5
       },
       {
         "id": "cmd-1752255525956",
         "label": "🔗 NocoDB",
         "command": "http://localhost:8081",
-        "type": "command"
+        "type": "command",
+        "order": 6
       },
       {
         "id": "cmd-1752255547843",
         "label": "🔗 AP1",
         "command": "http://192.168.18.182",
-        "type": "command"
+        "type": "command",
+        "order": 7
       }
     ],
     "urls-en-remoto": [],
@@ -227,7 +259,8 @@
         "steps": [
           "ssh pedropablo@localhost -p 2222",
           "P3dr0P@bl0+Sudo.2025"
-        ]
+        ],
+        "order": 6
       },
       {
         "id": "cmd-1752256535659",
@@ -237,7 +270,8 @@
         "steps": [
           "sudo chown -R pedropablo:pedropablo /opt/broworks/",
           "P3dr0P@bl0+Sudo.2025"
-        ]
+        ],
+        "order": 1
       },
       {
         "id": "cmd-1752256609992",
@@ -247,19 +281,22 @@
         "steps": [
           "sudo chown -R pedropablo:pedropablo /home/pedropablo/GAMIFYU_VPS_CLONADO",
           "P3dr0P@bl0+Sudo.2025"
-        ]
+        ],
+        "order": 2
       },
       {
         "id": "cmd-1752256688597",
         "label": "📂 Entrar en /opt/broworks/",
         "command": "cd /opt/broworks/",
-        "type": "command"
+        "type": "command",
+        "order": 3
       },
       {
         "id": "cmd-1752256724527",
         "label": "📂 Entrar en /home/pedropablo/GAMIFYU_VPS_CLONADO",
         "command": "cd /home/pedropablo/GAMIFYU_VPS_CLONADO",
-        "type": "command"
+        "type": "command",
+        "order": 4
       },
       {
         "id": "cmd-1752257237033",
@@ -270,7 +307,8 @@
           "cd /home/pedropablo/GAMIFYU_VPS_CLONADO",
           "sudo python3 sync_debug_repo.py",
           "P3dr0P@bl0+Sudo.2025"
-        ]
+        ],
+        "order": 5
       },
       {
         "id": "cmd-1752257338701",
@@ -280,7 +318,8 @@
         "steps": [
           "sudo python3 sync_debug_repo.py",
           "P3dr0P@bl0+Sudo.2025"
-        ]
+        ],
+        "order": 0
       }
     ],
     "gemelo-digital-vps-copy-1752338446983": [
@@ -292,7 +331,9 @@
         "steps": [
           "ssh pedropablo@localhost -p 2222",
           "P3dr0P@bl0+Sudo.2025"
-        ]
+        ],
+        "order": 0,
+        "isFavorite": false
       },
       {
         "id": "cmd-1752338446983-0.503380605833239",
@@ -302,7 +343,8 @@
         "steps": [
           "sudo chown -R pedropablo:pedropablo /opt/broworks/",
           "P3dr0P@bl0+Sudo.2025"
-        ]
+        ],
+        "order": 1
       },
       {
         "id": "cmd-1752338446983-0.5883108625882917",
@@ -312,19 +354,22 @@
         "steps": [
           "sudo chown -R pedropablo:pedropablo /home/pedropablo/GAMIFYU_VPS_CLONADO",
           "P3dr0P@bl0+Sudo.2025"
-        ]
+        ],
+        "order": 2
       },
       {
         "id": "cmd-1752338446983-0.09994924804830652",
         "label": "📂 Entrar en /opt/broworks/",
         "command": "cd /opt/broworks/",
-        "type": "command"
+        "type": "command",
+        "order": 3
       },
       {
         "id": "cmd-1752338446983-0.8682873627506021",
         "label": "📂 Entrar en /home/pedropablo/GAMIFYU_VPS_CLONADO",
         "command": "cd /home/pedropablo/GAMIFYU_VPS_CLONADO",
-        "type": "command"
+        "type": "command",
+        "order": 4
       },
       {
         "id": "cmd-1752338446983-0.04295728221961059",
@@ -335,7 +380,8 @@
           "cd /home/pedropablo/GAMIFYU_VPS_CLONADO",
           "sudo python3 sync_debug_repo.py",
           "P3dr0P@bl0+Sudo.2025"
-        ]
+        ],
+        "order": 5
       },
       {
         "id": "cmd-1752338446983-0.4506673402678286",
@@ -345,7 +391,8 @@
         "steps": [
           "sudo python3 sync_debug_repo.py",
           "P3dr0P@bl0+Sudo.2025"
-        ]
+        ],
+        "order": 6
       }
     ]
   }
