@@ -77,6 +77,7 @@ export default function BroworksLaunchpad() {
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [workflowStep, setWorkflowStep] = useState<Record<string, number>>({})
+  const [hasMounted, setHasMounted] = useState(false);
   
   // --- Estados de la Barra Lateral ---
   const { isSidebarCollapsed, toggleSidebar } = useUIStore()
@@ -121,6 +122,10 @@ export default function BroworksLaunchpad() {
   useEffect(() => {
     fetchData()
   }, [])
+  
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   // --- Lógica de Ayuda ---
   useEffect(() => {
@@ -220,8 +225,11 @@ export default function BroworksLaunchpad() {
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [])
+  
+  const sidebarClasses = hasMounted && isSidebarCollapsed ? "w-20" : "w-80";
+  const contentClasses = hasMounted && isSidebarCollapsed ? "hidden" : "";
 
-  if (isLoading) {
+  if (isLoading || !hasMounted) {
     return (
       <div className="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center">
         <div className="flex items-center gap-3">
@@ -236,13 +244,13 @@ export default function BroworksLaunchpad() {
     <div className="min-h-screen bg-gray-950 text-gray-100">
       <div className="max-w-7xl mx-auto flex h-screen">
         {/* Left Panel */}
-        <div className={`transition-all duration-300 ${isSidebarCollapsed ? "w-20" : "w-80"} bg-gray-900 border-r border-gray-800 flex flex-col`}>
+        <div className={`transition-all duration-300 ${sidebarClasses} bg-gray-900 border-r border-gray-800 flex flex-col`}>
           <div className="p-4 border-b border-gray-800">
             <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'justify-center' : ''}`}>
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
                 <Zap className="w-5 h-5 text-white" />
               </div>
-              <h1 className={`text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent whitespace-nowrap ${isSidebarCollapsed ? "hidden" : ""}`}>
+              <h1 className={`text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent whitespace-nowrap ${contentClasses}`}>
                 broWorks dev-caddy
               </h1>
             </div>
@@ -251,7 +259,7 @@ export default function BroworksLaunchpad() {
                 <Link href="/admin" className="w-full">
                     <Button variant="ghost" className={`w-full gap-2 text-gray-400 hover:bg-gray-800/50 hover:text-gray-200 px-2 ${isSidebarCollapsed ? 'justify-center' : 'justify-start'}`}>
                         <Settings className="h-5 w-5 flex-shrink-0" />
-                        <span className={`font-bold text-sm ${isSidebarCollapsed ? "hidden" : ""}`}>Panel de Administración</span>
+                        <span className={`font-bold text-sm ${contentClasses}`}>Panel de Administración</span>
                     </Button>
                 </Link>
             </div>
@@ -288,9 +296,7 @@ export default function BroworksLaunchpad() {
                 >
                   <span className="text-lg">{category.icon}</span>
                   <span
-                    className={`font-medium whitespace-nowrap ${
-                      isSidebarCollapsed ? "hidden" : ""
-                    }`}
+                    className={`font-medium whitespace-nowrap ${contentClasses}`}
                   >
                     {category.name}
                   </span>
@@ -308,9 +314,7 @@ export default function BroworksLaunchpad() {
                 >
                   <HelpCircle className="h-5 w-5 flex-shrink-0" />
                   <span
-                    className={`font-bold text-sm ${
-                      isSidebarCollapsed ? "hidden" : ""
-                    }`}
+                    className={`font-bold text-sm ${contentClasses}`}
                   >
                     Ayuda
                   </span>
@@ -349,9 +353,7 @@ export default function BroworksLaunchpad() {
             >
               <PanelLeftClose className="h-5 w-5 flex-shrink-0" />
               <span
-                className={`font-bold text-sm ${
-                  isSidebarCollapsed ? "hidden" : ""
-                }`}
+                className={`font-bold text-sm ${contentClasses}`}
               >
                 Colapsar
               </span>
