@@ -4,7 +4,7 @@
       "id": "docker",
       "name": "Docker",
       "icon": "🐳",
-      "order": 4
+      "order": 0
     },
     {
       "id": "git",
@@ -16,19 +16,19 @@
       "id": "<acx",
       "name": "URLs en Local",
       "icon": "💻",
-      "order": 5
+      "order": 3
     },
     {
       "id": "urls-en-remoto",
       "name": "URLs en Remoto",
       "icon": "🌍",
-      "order": 3
+      "order": 5
     },
     {
       "id": "gemelo-digital-vps",
       "name": "Gemelo Digital VPS",
       "icon": "🐧",
-      "order": 0
+      "order": 4
     },
     {
       "id": "gemelo-digital-vps-copy-1752338446983",
@@ -186,6 +186,14 @@
         "command": "https://github.com/broworksgit/gamifyu-app-debug",
         "type": "command",
         "order": 6
+      },
+      {
+        "id": "cmd-1752341696364",
+        "label": "Prompt de prueba",
+        "command": "asfasdfa",
+        "isFavorite": false,
+        "order": 7,
+        "type": "prompt"
       }
     ],
     "<acx": [
