@@ -95,7 +95,6 @@ export default function BroworksLaunchpad() {
       const jsonData = await response.json()
       setData(jsonData)
 
-      // Selecciona 'Favoritos' por defecto si existe, si no, la primera categoría
       if (jsonData.categories && jsonData.categories.length > 0) {
         setSelectedCategory('favorites');
       }
@@ -149,9 +148,7 @@ export default function BroworksLaunchpad() {
     }
   
     if (found) {
-      // Optimistic UI update
       setData(newData);
-      // Persist changes in the background
       saveData(newData);
     }
   };
@@ -237,7 +234,7 @@ export default function BroworksLaunchpad() {
   
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
-      <div className="flex h-screen">
+      <div className="max-w-7xl mx-auto flex h-screen">
         {/* Left Panel */}
         <div className={`transition-all duration-300 ${isSidebarCollapsed ? "w-20" : "w-80"} bg-gray-900 border-r border-gray-800 flex flex-col`}>
           <div className="p-4 border-b border-gray-800">
@@ -364,6 +361,7 @@ export default function BroworksLaunchpad() {
 
         {/* Central Panel */}
         <div className="flex-1 flex flex-col bg-gray-950">
+          {/* Search Bar Header */}
           <div className="p-6 border-b border-gray-800">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -376,8 +374,9 @@ export default function BroworksLaunchpad() {
               />
             </div>
           </div>
-          <ScrollArea className="flex-1 p-6">
-            <div className="space-y-4">
+          {/* Command List */}
+          <ScrollArea className="flex-1">
+            <div className="p-6 space-y-4">
               {filteredCommands.map((cmd) => (
                 <Card
                   key={cmd.id}
@@ -496,23 +495,23 @@ export default function BroworksLaunchpad() {
                                 className="bg-gray-800 border-gray-700 focus:border-blue-500 text-white"
                               />
                             ))}
-                             <Button
-                                size="sm"
-                                onClick={() => handleCopyCommand(cmd.id, cmd.command, cmd.variables)}
-                                className="bg-green-600 hover:bg-green-700 w-fit"
-                              >
-                                {copiedCommand === cmd.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                                <span className="ml-2">Copy</span>
-                              </Button>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </ScrollArea>
+                               <Button
+                                  size="sm"
+                                  onClick={() => handleCopyCommand(cmd.id, cmd.command, cmd.variables)}
+                                  className="bg-green-600 hover:bg-green-700 w-fit"
+                                >
+                                  {copiedCommand === cmd.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                                  <span className="ml-2">Copy</span>
+                                </Button>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </ScrollArea>
         </div>
       </div>
     </div>
