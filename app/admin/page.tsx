@@ -258,7 +258,7 @@ export default function AdminPage() {
                                     <span className="font-semibold text-sm truncate">{cmd.label}</span>
                                     <span className="text-xs text-gray-400 font-mono truncate">{cmd.command}</span>
                                 </div>
-                                <div className="flex gap-1">
+                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => adminSelectedCategory && handleDuplicateCommand(cmd.id, adminSelectedCategory)}><Copy size={16} /></Button>
                                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleOpenEditCommand(cmd)}><Pencil size={16} /></Button>
                                     <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => triggerDeleteCommand(cmd)}><Trash2 size={16} /></Button>
