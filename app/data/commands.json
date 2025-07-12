@@ -8,149 +8,301 @@
     {
       "id": "git",
       "name": "Git",
-      "icon": "📝"
+      "icon": "😺"
     },
     {
-      "id": "vps",
-      "name": "VPS",
-      "icon": "🖥️"
+      "id": "<acx",
+      "name": "URLs en Local",
+      "icon": "💻"
     },
     {
-      "id": "database",
-      "name": "Database",
-      "icon": "🗄️"
+      "id": "urls-en-remoto",
+      "name": "URLs en Remoto",
+      "icon": "🌍"
     },
     {
-      "id": "deployment",
-      "name": "Deployment",
-      "icon": "🚀"
+      "id": "gemelo-digital-vps",
+      "name": "Gemelo Digital VPS",
+      "icon": "🐧"
     },
     {
-      "id": "prueba",
-      "name": "Prueba editada",
-      "icon": "😶"
+      "id": "dhfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfhdf",
+      "name": "dhfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfhdf",
+      "icon": "#️⃣"
     }
   ],
   "commands": {
-    "docker": [],
-    "git": [
+    "docker": [
       {
-        "id": "git-2",
-        "label": "Push to origin",
-        "command": "git push origin main",
+        "id": "cmd-1752258346377",
+        "label": "🐋 🚀 Arrancar Todos los Contenedores",
+        "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d comando largo largo",
         "type": "command"
       },
       {
-        "id": "git-3",
-        "label": "Create new branch",
-        "command": "git checkout -b {branch_name}",
-        "type": "command",
-        "variables": [
-          {
-            "name": "branch_name",
-            "placeholder": "Enter branch name"
-          }
-        ]
-      }
-    ],
-    "vps": [
-      {
-        "id": "vps-1",
-        "label": "SSH into server",
-        "command": "ssh {username}@{server_ip}",
-        "type": "command",
-        "variables": [
-          {
-            "name": "username",
-            "placeholder": "Username"
-          },
-          {
-            "name": "server_ip",
-            "placeholder": "Server IP"
-          }
-        ]
-      },
-      {
-        "id": "vps-2",
-        "label": "Check disk usage",
-        "command": "df -h",
+        "id": "cmd-1752313575691",
+        "label": "asdfa",
+        "command": "asdfasdfasdfasfasdfasdfasdfasdfasddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "type": "command"
       },
       {
-        "id": "vps-3",
-        "label": "Monitor system resources",
-        "command": "htop",
-        "type": "command"
-      },
-      {
-        "id": "cmd-1752172057020",
-        "label": "Comando de prueba",
-        "command": "comando a ejecutar de prueba",
-        "type": "command"
-      }
-    ],
-    "database": [
-      {
-        "id": "db-1",
-        "label": "Connect to PostgreSQL",
-        "command": "psql -h localhost -U {username} -d {database}",
-        "type": "command",
-        "variables": [
-          {
-            "name": "username",
-            "placeholder": "Username"
-          },
-          {
-            "name": "database",
-            "placeholder": "Database name"
-          }
-        ]
-      },
-      {
-        "id": "db-2",
-        "label": "Backup database",
-        "command": "pg_dump {database} > backup.sql",
-        "type": "command",
-        "variables": [
-          {
-            "name": "database",
-            "placeholder": "Database name"
-          }
-        ]
-      },
-      {
-        "id": "cmd-1752233714949",
-        "label": "af editado",
-        "command": "asdf",
-        "type": "command"
-      }
-    ],
-    "deployment": [
-      {
-        "id": "deploy-1",
-        "label": "Deploy to production",
-        "command": "npm run deploy:prod",
-        "type": "command"
-      },
-      {
-        "id": "deploy-2",
-        "label": "Build for production",
-        "command": "npm run build",
-        "type": "command"
-      }
-    ],
-    "prueba": [
-      {
-        "id": "cmd-1752231806383",
-        "label": "x editado",
+        "id": "cmd-1752315872034",
+        "label": "asdfasdfasdfasdfasdfasdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "command": "workflow",
         "type": "workflow",
         "steps": [
-          "1",
-          "2",
-          "3"
+          "ddddddddddddddddd"
+        ]
+      },
+      {
+        "id": "cmd-1752316653536",
+        "label": "fasdfa",
+        "command": "asdfa",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752316657658",
+        "label": "asdfas",
+        "command": "asdf",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752316661836",
+        "label": "asdfas",
+        "command": "asdfas",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752316666368",
+        "label": "asdfas",
+        "command": "asdf",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752316674130",
+        "label": "asdfasdf",
+        "command": "asdfas",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752316677284",
+        "label": "asdfas",
+        "command": "asdfa",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752316681323",
+        "label": "14124",
+        "command": "1234123",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752316686492",
+        "label": "213412",
+        "command": "12341",
+        "type": "command"
+      }
+    ],
+    "git": [
+      {
+        "id": "cmd-1752255832160",
+        "label": "😺 GitHub - Secuencia Para Guardar en Repositorios",
+        "command": "workflow",
+        "type": "workflow",
+        "steps": [
+          "git status",
+          "git add .",
+          "git commit -m \"Comentario\"",
+          "git push",
+          "broworksgit",
+          "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"
+        ]
+      },
+      {
+        "id": "cmd-1752255957807",
+        "label": "😺📬 git commit",
+        "command": "git commit \"{comentario}\"",
+        "type": "command",
+        "variables": [
+          {
+            "name": "comentario",
+            "placeholder": "Comentario para el commit"
+          }
+        ]
+      },
+      {
+        "id": "cmd-1752257540120",
+        "label": "💾 Persistir gamifyu",
+        "command": "workflow",
+        "type": "workflow",
+        "steps": [
+          "cd /opt/broworks/apps/gamifyu",
+          "git status",
+          "git add .",
+          "git commit -m \"Comentario\"",
+          "git push",
+          "broworksgit",
+          "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"
+        ]
+      },
+      {
+        "id": "cmd-1752257677691",
+        "label": "💾 Persistir gamifyu-backend",
+        "command": "workflow",
+        "type": "workflow",
+        "steps": [
+          "cd /opt/broworks/apps/gamifyu-backend",
+          "git status",
+          "git add .",
+          "git commit -m \"Comentario\"",
+          "git push",
+          "broworksgit",
+          "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"
+        ]
+      },
+      {
+        "id": "cmd-1752258070519",
+        "label": "💾 Persistir gamifyu-app-debug",
+        "command": "workflow",
+        "type": "workflow",
+        "steps": [
+          "git status",
+          "git add .",
+          "git commit -m \"Comentario\"",
+          "git push",
+          "broworksgit",
+          "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"
+        ]
+      },
+      {
+        "id": "cmd-1752262751605",
+        "label": "😺🔗🧰 Repo broworks-dev-caddy",
+        "command": "https://github.com/broworksgit/broworks-dev-caddy",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752262866744",
+        "label": "😺🔗🤖 Repo Contexto IA gamifyu-app-debug",
+        "command": "https://github.com/broworksgit/gamifyu-app-debug",
+        "type": "command"
+      }
+    ],
+    "<acx": [
+      {
+        "id": "cmd-1752255377008",
+        "label": "🔗 GamifyU",
+        "command": "http://localhost:3000",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752255396268",
+        "label": "🔗 GamifyU Backend",
+        "command": "http://localhost:3001",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752255419802",
+        "label": "🔗 broWorks dev-caddy",
+        "command": "http://localhost:3002",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752255442899",
+        "label": "🔗 Grafana",
+        "command": "http://localhost:3003",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752255474869",
+        "label": "🔗 n8n",
+        "command": "http://localhost:5678",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752255495209",
+        "label": "🔗 Flowise",
+        "command": "http://localhost:8080",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752255525956",
+        "label": "🔗 NocoDB",
+        "command": "http://localhost:8081",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752255547843",
+        "label": "🔗 AP1",
+        "command": "http://192.168.18.182",
+        "type": "command"
+      }
+    ],
+    "urls-en-remoto": [],
+    "gemelo-digital-vps": [
+      {
+        "id": "cmd-1752256427605",
+        "label": "🔌 Conexión ssh Gemelo Digital",
+        "command": "workflow",
+        "type": "workflow",
+        "steps": [
+          "ssh pedropablo@localhost -p 2222",
+          "P3dr0P@bl0+Sudo.2025"
+        ]
+      },
+      {
+        "id": "cmd-1752256535659",
+        "label": "🔑 Permisos /opt/broworks/ ",
+        "command": "workflow",
+        "type": "workflow",
+        "steps": [
+          "sudo chown -R pedropablo:pedropablo /opt/broworks/",
+          "P3dr0P@bl0+Sudo.2025"
+        ]
+      },
+      {
+        "id": "cmd-1752256609992",
+        "label": "🔑 Permisos /home/pedropablo/GAMIFYU_VPS_CLONADO",
+        "command": "workflow",
+        "type": "workflow",
+        "steps": [
+          "sudo chown -R pedropablo:pedropablo /home/pedropablo/GAMIFYU_VPS_CLONADO",
+          "P3dr0P@bl0+Sudo.2025"
+        ]
+      },
+      {
+        "id": "cmd-1752256688597",
+        "label": "📂 Entrar en /opt/broworks/",
+        "command": "cd /opt/broworks/",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752256724527",
+        "label": "📂 Entrar en /home/pedropablo/GAMIFYU_VPS_CLONADO",
+        "command": "cd /home/pedropablo/GAMIFYU_VPS_CLONADO",
+        "type": "command"
+      },
+      {
+        "id": "cmd-1752257237033",
+        "label": "📂🚀 Entrar y Ejecutar Script de Sincronización",
+        "command": "workflow",
+        "type": "workflow",
+        "steps": [
+          "cd /home/pedropablo/GAMIFYU_VPS_CLONADO",
+          "sudo python3 sync_debug_repo.py",
+          "P3dr0P@bl0+Sudo.2025"
+        ]
+      },
+      {
+        "id": "cmd-1752257338701",
+        "label": "🚀 Ejecutar Script de Sincronización",
+        "command": "workflow",
+        "type": "workflow",
+        "steps": [
+          "sudo python3 sync_debug_repo.py",
+          "P3dr0P@bl0+Sudo.2025"
         ]
       }
-    ]
+    ],
+    "dhfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfhdf": []
   }
 }

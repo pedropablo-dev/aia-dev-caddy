@@ -2,7 +2,7 @@
 
 
 
-\*\*Visión General:\*\* `broWorks Dev-Caddy` es un arsenal de comandos personal, diseñado para actuar como una paleta de comandos centralizada y ultrarrápida. Su propósito es eliminar la fricción de buscar y recordar comandos de terminal de uso frecuente, organizándolos en categorías lógicas para un acceso y ejecución inmediatos.
+\*\*Visión General:\*\* `broWorks Dev-Caddy` es un arsenal de comandos personal, diseñado para actuar como una paleta de comandos centralizada y ultrarrápida. Su propósito es eliminar la fricción de buscar y recordar comandos de terminal, rutas y URLs de uso frecuente, organizándolos en categorías lógicas para un acceso y ejecución inmediatos.
 
 
 

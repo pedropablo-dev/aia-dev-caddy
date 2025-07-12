@@ -26,5 +26,3 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# por seguridad el repo ya dispone de uno de ejemplo
-app/data/commands.json

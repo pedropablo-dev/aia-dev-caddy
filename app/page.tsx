@@ -78,14 +78,14 @@ export default function BroworksLaunchpad() {
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [workflowStep, setWorkflowStep] = useState<Record<string, number>>({})
-  
+
   // --- Estados de la Barra Lateral ---
   const { isSidebarCollapsed, toggleSidebar } = useUIStore()
 
   // --- Estados de los Modales y Edición---
   const [adminOpen, setAdminOpen] = useState(false)
   const [adminSelectedCategory, setAdminSelectedCategory] = useState<string | null>(null)
-  
+
   const [isHelpOpen, setIsHelpOpen] = useState(false)
   const [helpContent, setHelpContent] = useState("")
 
@@ -108,7 +108,7 @@ export default function BroworksLaunchpad() {
     try {
       const response = await fetch("/api/commands")
       if (!response.ok) throw new Error(`API call failed with status: ${response.status}`)
-      
+
       const jsonData = await response.json()
       setData(jsonData)
 
@@ -376,7 +376,7 @@ export default function BroworksLaunchpad() {
                     <DialogTitle>Panel de Administración</DialogTitle>
                     <DialogDescription>Añade, edita o elimina tus categorías y comandos.</DialogDescription>
                   </DialogHeader>
-                  <div className="flex-1 grid grid-cols-3 gap-4 overflow-hidden">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 overflow-hidden">
                     <div className="col-span-1 flex flex-col gap-2">
                       <h3 className="font-bold">Categorías</h3>
                       <div className="flex gap-2">
@@ -392,12 +392,12 @@ export default function BroworksLaunchpad() {
                       <ScrollArea className="flex-1 bg-gray-950/50 rounded-md border border-gray-700">
                         <div className="p-2 space-y-1">
                           {data.categories.map((cat) => (
-                            <div key={cat.id} className={`group flex items-center justify-between p-2 rounded-md cursor-pointer ${
+                            <div key={cat.id} className={`group grid grid-cols-[1fr_auto] items-center gap-2 p-2 rounded-md cursor-pointer ${
                                 adminSelectedCategory === cat.id ? 'bg-blue-600 text-white' : 'hover:bg-gray-800'
                             }`}
                               onClick={() => setAdminSelectedCategory(cat.id)}
                             >
-                              <div className="flex items-center gap-2 overflow-hidden">
+                              <div className="flex items-center gap-2 overflow-hidden min-w-0">
                                 <span className="text-lg">{cat.icon}</span>
                                 <span className="truncate">{cat.name}</span>
                               </div>
@@ -409,7 +409,7 @@ export default function BroworksLaunchpad() {
                         </div>
                       </ScrollArea>
                     </div>
-                    <div className="col-span-2 flex flex-col gap-2">
+                    <div className="md:col-span-2 flex flex-col gap-2 min-w-0">
                        <h3 className="font-bold">
                         Comandos en:{" "}
                         <span className="text-blue-400">
@@ -429,9 +429,9 @@ export default function BroworksLaunchpad() {
                               (cmd) => (
                                 <div
                                   key={cmd.id}
-                                  className="group flex items-center justify-between p-2 bg-gray-800 rounded-md"
+                                  className="group grid grid-cols-[1fr_auto] items-center gap-4 p-2 bg-gray-800 rounded-md"
                                 >
-                                  <div className="flex flex-col overflow-hidden mr-2">
+                                  <div className="flex flex-col overflow-hidden min-w-0">
                                     <span className="font-semibold text-sm truncate">
                                       {cmd.label}
                                     </span>
@@ -439,7 +439,7 @@ export default function BroworksLaunchpad() {
                                       {cmd.command}
                                     </span>
                                   </div>
-                                  <div className="flex gap-1 flex-shrink-0">
+                                  <div className="flex gap-1">
                                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleOpenEditCommand(cmd)}>
                                           <Pencil size={16} />
                                       </Button>
