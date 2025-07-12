@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import {
   Search,
@@ -13,6 +13,7 @@ import {
   HelpCircle,
   PanelLeftClose,
   Sparkles,
+  Star,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -38,6 +39,7 @@ interface Command {
   label: string
   command: string
   type: "command" | "workflow" | "prompt"
+  isFavorite?: boolean
   variables?: { name: string; placeholder: string }[]
   steps?: string[]
 }
@@ -93,13 +95,27 @@ export default function BroworksLaunchpad() {
       const jsonData = await response.json()
       setData(jsonData)
 
-      if (jsonData.categories && jsonData.categories.length > 0 && !selectedCategory) {
-        setSelectedCategory(jsonData.categories[0].id)
+      // Selecciona 'Favoritos' por defecto si existe, si no, la primera categoría
+      if (jsonData.categories && jsonData.categories.length > 0) {
+        setSelectedCategory('favorites');
       }
     } catch (error) {
       console.error("Error loading commands:", error)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const saveData = async (newData: AppData) => {
+    try {
+      await fetch("/api/commands", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData),
+      })
+    } catch (error) {
+      console.error("Error saving data:", error)
+      alert("Error al guardar los datos.")
     }
   }
 
@@ -116,17 +132,64 @@ export default function BroworksLaunchpad() {
         .catch(() => setHelpContent("No se pudo cargar la ayuda."))
     }
   }, [isHelpOpen])
+  
+  // --- Lógica de Favoritos ---
+  const handleToggleFavorite = (commandId: string) => {
+    const newData = JSON.parse(JSON.stringify(data)); // Deep copy
+    let found = false;
+  
+    for (const categoryId in newData.commands) {
+      const commandIndex = newData.commands[categoryId].findIndex((cmd: Command) => cmd.id === commandId);
+      if (commandIndex !== -1) {
+        const currentStatus = newData.commands[categoryId][commandIndex].isFavorite || false;
+        newData.commands[categoryId][commandIndex].isFavorite = !currentStatus;
+        found = true;
+        break;
+      }
+    }
+  
+    if (found) {
+      // Optimistic UI update
+      setData(newData);
+      // Persist changes in the background
+      saveData(newData);
+    }
+  };
 
-  // --- Lógica de Filtrado y Búsqueda ---
-  const filteredCommands = data.commands[selectedCategory]?.filter(
-      (cmd) =>
-        cmd.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cmd.command.toLowerCase().includes(searchQuery.toLowerCase())
-    ) || []
+  // --- Lógica de Categorías y Comandos para Mostrar ---
+  const displayCategories = useMemo(() => {
+    const favoritesCategory = { id: 'favorites', name: 'Favoritos', icon: '⭐' };
+    return [favoritesCategory, ...data.categories];
+  }, [data.categories]);
 
-  const filteredCategories = data.categories.filter((cat) =>
-    cat.name.toLowerCase().includes(categorySearch.toLowerCase())
-  )
+  const filteredCategories = useMemo(() => {
+    return displayCategories.filter((cat) =>
+      cat.name.toLowerCase().includes(categorySearch.toLowerCase())
+    );
+  }, [displayCategories, categorySearch]);
+
+  const filteredCommands = useMemo(() => {
+    let commandsToShow: Command[] = [];
+
+    if (selectedCategory === 'favorites') {
+      commandsToShow = Object.values(data.commands)
+        .flat()
+        .filter(cmd => cmd.isFavorite);
+    } else {
+      commandsToShow = data.commands[selectedCategory] || [];
+    }
+
+    if (searchQuery) {
+      return commandsToShow.filter(
+        (cmd) =>
+          cmd.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          cmd.command.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    return commandsToShow;
+  }, [selectedCategory, data.commands, searchQuery]);
+
 
   // --- Lógica de Interacción con Comandos ---
   const handleCopyCommand = (commandId: string, baseCommand: string, variables?: any[]) => {
@@ -200,7 +263,7 @@ export default function BroworksLaunchpad() {
               <div className="relative mt-2">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <Input
-                  placeholder="Search categories..."
+                  placeholder="Buscar categorías..."
                   value={categorySearch}
                   onChange={(e) => setCategorySearch(e.target.value)}
                   className="pl-10 bg-gray-800 border-gray-700 focus:border-blue-500"
@@ -306,7 +369,7 @@ export default function BroworksLaunchpad() {
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <Input
                 id="command-search"
-                placeholder="Search commands or press Ctrl+K..."
+                placeholder="Buscar items o presionar Ctrl+K..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 h-12 bg-gray-900 border-gray-700 focus:border-blue-500 text-lg"
@@ -318,44 +381,51 @@ export default function BroworksLaunchpad() {
               {filteredCommands.map((cmd) => (
                 <Card
                   key={cmd.id}
-                  className="bg-gray-900 border-gray-800 transition-colors hover:bg-gray-900"
+                  className="bg-gray-900 border-gray-800"
                 >
                   <CardHeader className="flex flex-row items-center justify-between pb-3">
-                    <CardTitle className="text-lg font-semibold text-gray-100 flex items-center gap-2">
-                      {cmd.type === "workflow" ? (
-                        <Play className="w-4 h-4 text-purple-400" />
-                      ) : cmd.type === 'prompt' ? (
-                        <Sparkles className="w-4 h-4 text-yellow-400" />
-                      ) : (
-                        <Terminal className="w-4 h-4 text-blue-400" />
-                      )}
-                      {cmd.label}
-                    </CardTitle>
-                    {cmd.type === 'prompt' && (
-                       <Badge variant="secondary" className="bg-yellow-900 text-yellow-200 hover:bg-yellow-900/80">
-                         Prompt
-                       </Badge>
-                    )}
-                    {cmd.type === "command" && (!cmd.variables || cmd.variables.length === 0) && (
-                      <Button
-                        size="sm"
-                        onClick={() => handleCopyCommand(cmd.id, cmd.command)}
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        {copiedCommand === cmd.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                        <span className="ml-2">Copy</span>
-                      </Button>
-                    )}
-                     {cmd.type === "command" && cmd.variables && cmd.variables.length > 0 && (
-                       <Badge variant="secondary" className="bg-green-900 text-green-200 hover:bg-green-900/80">
-                         Con Variables
-                       </Badge>
-                    )}
-                    {cmd.type === "workflow" && (
-                      <Badge variant="secondary" className="bg-purple-900 text-purple-200 hover:bg-purple-900/80">
-                        Workflow
-                      </Badge>
-                    )}
+                    <div className="flex items-center gap-3">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-yellow-400" onClick={() => handleToggleFavorite(cmd.id)}>
+                            <Star className={`transition-all ${cmd.isFavorite ? 'text-yellow-400 fill-yellow-400' : ''}`} />
+                        </Button>
+                        <CardTitle className="text-lg font-semibold text-gray-100 flex items-center gap-2">
+                        {cmd.type === "workflow" ? (
+                            <Play className="w-4 h-4 text-purple-400" />
+                        ) : cmd.type === 'prompt' ? (
+                            <Sparkles className="w-4 h-4 text-yellow-400" />
+                        ) : (
+                            <Terminal className="w-4 h-4 text-blue-400" />
+                        )}
+                        {cmd.label}
+                        </CardTitle>
+                    </div>
+                    <div>
+                        {cmd.type === 'prompt' && (
+                        <Badge variant="secondary" className="bg-yellow-900 text-yellow-200 hover:bg-yellow-900/80">
+                            Prompt
+                        </Badge>
+                        )}
+                        {cmd.type === "command" && (!cmd.variables || cmd.variables.length === 0) && (
+                        <Button
+                            size="sm"
+                            onClick={() => handleCopyCommand(cmd.id, cmd.command)}
+                            className="bg-blue-600 hover:bg-blue-700"
+                        >
+                            {copiedCommand === cmd.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                            <span className="ml-2">Copy</span>
+                        </Button>
+                        )}
+                        {cmd.type === "command" && cmd.variables && cmd.variables.length > 0 && (
+                        <Badge variant="secondary" className="bg-green-900 text-green-200 hover:bg-green-900/80">
+                            Con Variables
+                        </Badge>
+                        )}
+                        {cmd.type === "workflow" && (
+                        <Badge variant="secondary" className="bg-purple-900 text-purple-200 hover:bg-purple-900/80">
+                            Workflow
+                        </Badge>
+                        )}
+                    </div>
                   </CardHeader>
                   <CardContent className="space-y-4 pt-2">
                     {cmd.type === 'prompt' ? (

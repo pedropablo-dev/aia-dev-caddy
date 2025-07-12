@@ -38,6 +38,7 @@ interface Command {
   label: string
   command: string
   type: "command" | "workflow" | "prompt"
+  isFavorite?: boolean // <--- NUEVA PROPIEDAD
   variables?: { name: string; placeholder: string }[]
   steps?: string[]
 }
@@ -227,7 +228,7 @@ export default function AdminPage() {
 
     } else { // --- MODO CREACIÓN ---
       const id = `cmd-${Date.now()}`;
-      const baseCommand = { id, label: newCommandLabel, command: newCommandText };
+      const baseCommand = { id, label: newCommandLabel, command: newCommandText, isFavorite: false };
        if (newCommandType === "prompt") {
         finalCommand = { ...baseCommand, type: "prompt" };
        } else if (newCommandType === "workflow") {

@@ -82,25 +82,29 @@
         "id": "cmd-1752258346377",
         "label": "🐋 🚀 Arrancar Todos los Contenedores",
         "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d comando largo largo",
-        "type": "command"
+        "type": "command",
+        "isFavorite": true
       },
       {
         "id": "cmd-1752313575691",
         "label": "asdfa",
         "command": "asdfasdfasdfasfasdfasdfasdfasdfasddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-        "type": "command"
+        "type": "command",
+        "isFavorite": false
       },
       {
         "id": "cmd-1752316653536",
         "label": "fasdfa",
         "command": "asdfa",
-        "type": "command"
+        "type": "command",
+        "isFavorite": false
       },
       {
         "id": "cmd-1752316657658",
         "label": "asdfas",
         "command": "asdf",
-        "type": "command"
+        "type": "command",
+        "isFavorite": false
       }
     ],
     "git": [
