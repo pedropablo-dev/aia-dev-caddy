@@ -376,8 +376,8 @@ export default function BroworksLaunchpad() {
                     <DialogTitle>Panel de Administración</DialogTitle>
                     <DialogDescription>Añade, edita o elimina tus categorías y comandos.</DialogDescription>
                   </DialogHeader>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 overflow-hidden">
-                    <div className="col-span-1 flex flex-col gap-2">
+                  <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 overflow-hidden">
+                    <div className="col-span-1 flex flex-col gap-2 min-h-0">
                       <h3 className="font-bold">Categorías</h3>
                       <div className="flex gap-2">
                         <Button size="sm" className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700" onClick={handleOpenAddCategory}>
@@ -409,7 +409,7 @@ export default function BroworksLaunchpad() {
                         </div>
                       </ScrollArea>
                     </div>
-                    <div className="md:col-span-2 flex flex-col gap-2 min-w-0">
+                    <div className="md:col-span-2 flex flex-col gap-2 min-w-0 min-h-0">
                        <h3 className="font-bold">
                         Comandos en:{" "}
                         <span className="text-blue-400">
