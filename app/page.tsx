@@ -699,7 +699,7 @@ export default function BroworksLaunchpad() {
                     <Input placeholder="Icono (ej: ⚡️)" value={newCategoryIcon} onChange={e => setNewCategoryIcon(e.target.value)} className="bg-gray-800 border-gray-700 focus:border-blue-500" />
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleSaveCategory} className="bg-blue-600 hover:bg-blue-700">Guardar</Button>
+                    <Button onClick={handleSaveCategory} className="bg-blue-600 hover:bg-blue-700 mt-2 sm:mt-0">Guardar</Button>
                     <DialogClose asChild><Button type="button" variant="destructive">Cancelar</Button></DialogClose>
                 </DialogFooter>
             </DialogContent>
@@ -764,7 +764,7 @@ export default function BroworksLaunchpad() {
                 )}
               </div>
               <DialogFooter>
-                <Button onClick={handleSaveCommand} className="bg-blue-600 hover:bg-blue-700">Guardar Comando</Button>
+                <Button onClick={handleSaveCommand} className="bg-blue-600 hover:bg-blue-700 mt-2 sm:mt-0">Guardar Comando</Button>
                  <DialogClose asChild>
                     <Button type="button" variant="destructive">Cancelar</Button>
                   </DialogClose>
