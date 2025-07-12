@@ -26,9 +26,54 @@
       "icon": "🐧"
     },
     {
-      "id": "dhfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfhdf",
-      "name": "dhfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfhdf",
+      "id": "prueba",
+      "name": "Prueba",
+      "icon": "💃"
+    },
+    {
+      "id": "prueba-2",
+      "name": "Prueba 2",
       "icon": "#️⃣"
+    },
+    {
+      "id": "prueba-3",
+      "name": "Prueba 3",
+      "icon": "😘"
+    },
+    {
+      "id": "prueba-4",
+      "name": "Prueba 4",
+      "icon": "😭"
+    },
+    {
+      "id": "prueba-5",
+      "name": "Prueba 5",
+      "icon": "⌨️"
+    },
+    {
+      "id": "prueba-7",
+      "name": "Prueba 7",
+      "icon": "😶"
+    },
+    {
+      "id": "prueba-8",
+      "name": "Prueba 8",
+      "icon": "👍"
+    },
+    {
+      "id": "prueba-9",
+      "name": "Prueba 9",
+      "icon": "😈"
+    },
+    {
+      "id": "prueba-10",
+      "name": "Prueba 10",
+      "icon": "🗒️"
+    },
+    {
+      "id": "prueba-22",
+      "name": "Prueba 22",
+      "icon": "✌️"
     }
   ],
   "commands": {
@@ -46,15 +91,6 @@
         "type": "command"
       },
       {
-        "id": "cmd-1752315872034",
-        "label": "asdfasdfasdfasdfasdfasdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-        "command": "workflow",
-        "type": "workflow",
-        "steps": [
-          "ddddddddddddddddd"
-        ]
-      },
-      {
         "id": "cmd-1752316653536",
         "label": "fasdfa",
         "command": "asdfa",
@@ -70,12 +106,6 @@
         "id": "cmd-1752316661836",
         "label": "asdfas",
         "command": "asdfas",
-        "type": "command"
-      },
-      {
-        "id": "cmd-1752316666368",
-        "label": "asdfas",
-        "command": "asdf",
         "type": "command"
       },
       {
@@ -303,6 +333,15 @@
         ]
       }
     ],
-    "dhfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfghdfhdf": []
+    "prueba": [],
+    "prueba-2": [],
+    "prueba-3": [],
+    "prueba-4": [],
+    "prueba-5": [],
+    "prueba-7": [],
+    "prueba-8": [],
+    "prueba-9": [],
+    "prueba-10": [],
+    "prueba-22": []
   }
 }

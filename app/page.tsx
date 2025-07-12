@@ -30,8 +30,17 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { Label } from "@/components/ui/label"
 import ReactMarkdown, { Components } from "react-markdown"
 import { useUIStore } from "@/store/uiStore"
 
@@ -56,6 +65,13 @@ interface AppData {
   commands: Record<string, Command[]>
 }
 
+interface DeleteAlertState {
+  isOpen: boolean;
+  type: 'category' | 'command' | null;
+  id: string | null;
+  name?: string;
+}
+
 // --- Componentes para Markdown (para futura mejora) ---
 const markdownComponents: Components = {
     h1: ({...props}) => <h1 className="text-2xl font-bold text-white mb-4" {...props} />,
@@ -78,14 +94,14 @@ export default function BroworksLaunchpad() {
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [workflowStep, setWorkflowStep] = useState<Record<string, number>>({})
-
+  
   // --- Estados de la Barra Lateral ---
   const { isSidebarCollapsed, toggleSidebar } = useUIStore()
 
   // --- Estados de los Modales y Edición---
   const [adminOpen, setAdminOpen] = useState(false)
   const [adminSelectedCategory, setAdminSelectedCategory] = useState<string | null>(null)
-
+  
   const [isHelpOpen, setIsHelpOpen] = useState(false)
   const [helpContent, setHelpContent] = useState("")
 
@@ -101,6 +117,8 @@ export default function BroworksLaunchpad() {
   const [newCommandText, setNewCommandText] = useState("")
   const [newWorkflowSteps, setNewWorkflowSteps] = useState<string[]>([""])
   const [newVariables, setNewVariables] = useState<{ name: string; placeholder: string }[]>([{ name: "", placeholder: "" }])
+  const [deleteAlert, setDeleteAlert] = useState<DeleteAlertState>({ isOpen: false, type: null, id: null });
+
 
   // --- Lógica de Datos (Carga/Guardado) ---
   const fetchData = async () => {
@@ -108,7 +126,7 @@ export default function BroworksLaunchpad() {
     try {
       const response = await fetch("/api/commands")
       if (!response.ok) throw new Error(`API call failed with status: ${response.status}`)
-
+      
       const jsonData = await response.json()
       setData(jsonData)
 
@@ -195,16 +213,15 @@ export default function BroworksLaunchpad() {
     setAddCategoryOpen(false)
   }
 
-  const handleDeleteCategory = () => {
-    if (!adminSelectedCategory) return alert("Selecciona una categoría para eliminar.")
-    if (confirm(`¿Seguro que quieres eliminar la categoría "${data.categories.find(c => c.id === adminSelectedCategory)?.name}" y todos sus comandos?`)) {
-      const newCategories = data.categories.filter((c) => c.id !== adminSelectedCategory)
-      const newCommands = { ...data.commands }
-      delete newCommands[adminSelectedCategory]
-      const newData = { categories: newCategories, commands: newCommands }
-      setAdminSelectedCategory(null)
-      saveData(newData)
-    }
+  const triggerDeleteCategory = () => {
+    if (!adminSelectedCategory) return;
+    const categoryName = data.categories.find(c => c.id === adminSelectedCategory)?.name;
+    setDeleteAlert({
+      isOpen: true,
+      type: 'category',
+      id: adminSelectedCategory,
+      name: categoryName
+    });
   }
 
   // --- Lógica de Administración de Comandos ---
@@ -234,7 +251,7 @@ export default function BroworksLaunchpad() {
     }
     setAddCommandOpen(true);
   }
-
+  
   const handleSaveCommand = () => {
     if (!adminSelectedCategory || !newCommandLabel) {
         alert("Debes seleccionar una categoría y añadir un label para el comando.")
@@ -270,10 +287,37 @@ export default function BroworksLaunchpad() {
     
     const newCommandsData = { ...data.commands, [adminSelectedCategory]: commandList };
     saveData({ ...data, commands: newCommandsData });
-
-    // Resetear formulario
     setAddCommandOpen(false);
   }
+
+  const triggerDeleteCommand = (command: Command) => {
+    setDeleteAlert({
+      isOpen: true,
+      type: 'command',
+      id: command.id,
+      name: command.label
+    });
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deleteAlert.id || !deleteAlert.type) return;
+  
+    if (deleteAlert.type === 'category') {
+      const newCategories = data.categories.filter((c) => c.id !== deleteAlert.id);
+      const newCommands = { ...data.commands };
+      delete newCommands[deleteAlert.id];
+      saveData({ categories: newCategories, commands: newCommands });
+      setAdminSelectedCategory(null); 
+    } else if (deleteAlert.type === 'command' && adminSelectedCategory) {
+      const newCommandsData = { ...data.commands };
+      newCommandsData[adminSelectedCategory] = newCommandsData[adminSelectedCategory].filter(
+        (c) => c.id !== deleteAlert.id
+      );
+      saveData({ ...data, commands: newCommandsData });
+    }
+  
+    setDeleteAlert({ isOpen: false, type: null, id: null });
+  };
   
   // --- Helpers para formularios dinámicos ---
   const updateStep = (idx: number, value: string) => setNewWorkflowSteps((s) => s.map((v, i) => (i === idx ? value : v)))
@@ -284,14 +328,6 @@ export default function BroworksLaunchpad() {
   const removeVariable = (idx: number) => setNewVariables((v) => v.filter((_, i) => i !== idx))
   const addVariableField = () => setNewVariables((v) => [...v, { name: "", placeholder: "" }])
 
-  const handleDeleteCommand = (commandId: string) => {
-    if (!adminSelectedCategory) return
-    if (confirm("¿Seguro que quieres eliminar este comando?")) {
-      const newCommandsData = { ...data.commands }
-      newCommandsData[adminSelectedCategory] = newCommandsData[adminSelectedCategory].filter((c) => c.id !== commandId)
-      saveData({ ...data, commands: newCommandsData })
-    }
-  }
   
   // --- Lógica de Filtrado y Búsqueda ---
   const filteredCommands = data.commands[selectedCategory]?.filter(
@@ -384,7 +420,7 @@ export default function BroworksLaunchpad() {
                             <PlusCircle size={16} />
                             Añadir
                         </Button>
-                        <Button size="sm" variant="destructive" className="gap-2" onClick={handleDeleteCategory} disabled={!adminSelectedCategory}>
+                        <Button size="sm" variant="destructive" className="gap-2" onClick={triggerDeleteCategory} disabled={!adminSelectedCategory}>
                           <Trash2 size={16} />
                           Eliminar
                         </Button>
@@ -443,7 +479,7 @@ export default function BroworksLaunchpad() {
                                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleOpenEditCommand(cmd)}>
                                           <Pencil size={16} />
                                       </Button>
-                                      <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => handleDeleteCommand(cmd.id)}>
+                                      <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => triggerDeleteCommand(cmd)}>
                                           <Trash2 size={16} />
                                       </Button>
                                   </div>
@@ -771,6 +807,30 @@ export default function BroworksLaunchpad() {
               </DialogFooter>
             </DialogContent>
         </Dialog>
+
+        <AlertDialog open={deleteAlert.isOpen} onOpenChange={(isOpen) => setDeleteAlert({ ...deleteAlert, isOpen })}>
+          <AlertDialogContent className="bg-gray-900 border-gray-700 text-white">
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
+              <AlertDialogDescription className="text-gray-300">
+                {deleteAlert.type === 'category'
+                  ? `Esto eliminará permanentemente la categoría "${deleteAlert.name}" y todos los comandos que contiene.`
+                  : `Esto eliminará permanentemente el comando "${deleteAlert.name}".`}
+                  <br />
+                  Esta acción no se puede deshacer.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="bg-blue-600 text-white hover:bg-blue-700 border-transparent hover:text-white">Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleConfirmDelete}
+                className="bg-red-600 text-white hover:bg-red-700"
+              >
+                Sí, eliminar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   )
