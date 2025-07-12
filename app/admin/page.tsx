@@ -7,6 +7,7 @@ import {
   PlusCircle,
   Trash2,
   Pencil,
+  Copy, // <-- Icono añadido
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -38,7 +39,7 @@ interface Command {
   label: string
   command: string
   type: "command" | "workflow" | "prompt"
-  isFavorite?: boolean // <--- NUEVA PROPIEDAD
+  isFavorite?: boolean
   variables?: { name: string; placeholder: string }[]
   steps?: string[]
 }
@@ -146,7 +147,7 @@ export default function AdminPage() {
             alert("El nombre y el icono son obligatorios.")
             return
         }
-        const newId = newCategoryName.toLowerCase().replace(/\s+/g, "-")
+        const newId = newCategoryName.toLowerCase().replace(/\s+/g, "-") + `-${Date.now()}`
         if (data.categories.some((c) => c.id === newId)) {
             alert("Ya existe una categoría con un ID similar.")
             return
@@ -173,6 +174,56 @@ export default function AdminPage() {
       name: categoryName
     });
   }
+
+  // --- Lógica de Duplicación (NUEVO) ---
+  const handleDuplicateCategory = (categoryId: string) => {
+    const categoryToDuplicate = data.categories.find(c => c.id === categoryId);
+    const commandsToDuplicate = data.commands[categoryId] || [];
+    
+    if (!categoryToDuplicate) return;
+
+    // Crear nueva categoría
+    const newCategoryId = `${categoryToDuplicate.id}-copy-${Date.now()}`;
+    const newCategory: Category = {
+      ...categoryToDuplicate,
+      id: newCategoryId,
+      name: `${categoryToDuplicate.name} (Copia)`
+    };
+
+    // Duplicar comandos
+    const newCommands = commandsToDuplicate.map(cmd => ({
+      ...JSON.parse(JSON.stringify(cmd)),
+      id: `cmd-${Date.now()}-${Math.random()}`
+    }));
+
+    const newData = {
+      ...data,
+      categories: [...data.categories, newCategory],
+      commands: {
+        ...data.commands,
+        [newCategoryId]: newCommands
+      }
+    };
+
+    saveData(newData);
+  };
+
+  const handleDuplicateCommand = (commandId: string, categoryId: string) => {
+    const commandToDuplicate = data.commands[categoryId]?.find(c => c.id === commandId);
+    if (!commandToDuplicate) return;
+    
+    const newCommand = {
+      ...JSON.parse(JSON.stringify(commandToDuplicate)),
+      id: `cmd-${Date.now()}`,
+      label: `${commandToDuplicate.label} (Copia)`
+    };
+
+    const newCommandsForCategory = [...data.commands[categoryId], newCommand];
+    const newCommands = { ...data.commands, [categoryId]: newCommandsForCategory };
+    
+    saveData({ ...data, commands: newCommands });
+  };
+
 
   // --- Lógica de Administración de Comandos ---
   const handleOpenAddCommand = () => {
@@ -263,7 +314,7 @@ export default function AdminPage() {
       const newCommands = { ...data.commands };
       delete newCommands[deleteAlert.id];
       saveData({ categories: newCategories, commands: newCommands });
-      setAdminSelectedCategory(null); 
+      setAdminSelectedCategory(data.categories[0]?.id || null);
     } else if (deleteAlert.type === 'command' && adminSelectedCategory) {
       const newCommandsData = { ...data.commands };
       newCommandsData[adminSelectedCategory] = newCommandsData[adminSelectedCategory].filter(
@@ -325,7 +376,7 @@ export default function AdminPage() {
                 <ScrollArea className="flex-1 bg-gray-950/50 rounded-md border border-gray-700">
                     <div className="p-2 space-y-1">
                         {data.categories.map((cat) => (
-                            <div key={cat.id} className={`group grid grid-cols-[1fr_auto] items-center gap-2 p-2 rounded-md cursor-pointer ${
+                            <div key={cat.id} className={`group grid grid-cols-[1fr_auto_auto] items-center gap-2 p-2 rounded-md cursor-pointer ${
                                 adminSelectedCategory === cat.id ? 'bg-blue-600 text-white' : 'hover:bg-gray-800'
                             }`}
                               onClick={() => setAdminSelectedCategory(cat.id)}
@@ -334,6 +385,9 @@ export default function AdminPage() {
                                     <span className="text-lg">{cat.icon}</span>
                                     <span className="truncate">{cat.name}</span>
                                 </div>
+                                <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={(e) => {e.stopPropagation(); handleDuplicateCategory(cat.id)}}>
+                                    <Copy size={14} />
+                                </Button>
                                 <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={(e) => {e.stopPropagation(); handleOpenEditCategory(cat)}}>
                                     <Pencil size={14} />
                                 </Button>
@@ -364,6 +418,9 @@ export default function AdminPage() {
                                     <span className="text-xs text-gray-400 font-mono truncate">{cmd.command}</span>
                                 </div>
                                 <div className="flex gap-1">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDuplicateCommand(cmd.id, adminSelectedCategory)}>
+                                        <Copy size={16} />
+                                    </Button>
                                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleOpenEditCommand(cmd)}>
                                         <Pencil size={16} />
                                     </Button>
