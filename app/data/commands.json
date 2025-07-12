@@ -101,36 +101,6 @@
         "label": "asdfas",
         "command": "asdf",
         "type": "command"
-      },
-      {
-        "id": "cmd-1752316661836",
-        "label": "asdfas",
-        "command": "asdfas",
-        "type": "command"
-      },
-      {
-        "id": "cmd-1752316674130",
-        "label": "asdfasdf",
-        "command": "asdfas",
-        "type": "command"
-      },
-      {
-        "id": "cmd-1752316677284",
-        "label": "asdfas",
-        "command": "asdfa",
-        "type": "command"
-      },
-      {
-        "id": "cmd-1752316681323",
-        "label": "14124",
-        "command": "1234123",
-        "type": "command"
-      },
-      {
-        "id": "cmd-1752316686492",
-        "label": "213412",
-        "command": "12341",
-        "type": "command"
       }
     ],
     "git": [
