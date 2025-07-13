@@ -1,77 +1,68 @@
-# 🧰 broWorks Dev-Caddy
+# 🧰 Dev-Caddy: Tu Arsenal de Comandos Personal
 
-**Visión General:** `broWorks Dev-Caddy` es un arsenal de comandos personal, diseñado para actuar como una paleta de comandos centralizada y ultrarrápida. Su propósito es eliminar la fricción de buscar y recordar comandos de terminal, rutas y URLs de uso frecuente, organizándolos en categorías lógicas para un acceso y ejecución inmediatos.
+**Dev-Caddy** es una paleta de comandos personal, ultrarrápida y centralizada. Ha sido diseñada para eliminar la fricción de buscar y recordar comandos de terminal, rutas, URLs y prompts complejos de uso frecuente. Organiza todo tu conocimiento de desarrollo en un arsenal lógico y accesible al instante.
+
+_¿Cansado de buscar en tu historial, notas o wikis internas el mismo comando una y otra vez? Dev-Caddy es la solución._
 
 ---
 
 ## ✨ Características Principales
 
-* **Gestión por Categorías:** Organiza los comandos en categorías personalizables con iconos para una fácil identificación visual.
-* **Búsqueda Instantánea:** Filtra categorías y busca comandos por nombre o contenido en tiempo real, con soporte para atajos de teclado (`Ctrl+K`).
-* **Sistema de Favoritos:** Marca cualquier item con una estrella para que aparezca en una categoría especial de "Favoritos" para un acceso aún más rápido.
-* **Tipos de Contenido Versátiles:**
-    * **Comandos Simples:** Para copiar y pegar directamente.
-    * **Workflows:** Secuencias de comandos de varios pasos que guían al usuario.
-    * **Comandos con Variables:** Plantillas que se rellenan dinámicamente.
-    * **Prompts de IA:** Almacena y gestiona prompts multilínea para usarlos con modelos de lenguaje.
-* **Panel de Administración Completo:** Una interfaz integrada para realizar operaciones CRUD (Crear, Leer, Editar, Eliminar), **Duplicar** y **Reordenar** tanto categorías como items.
-* **Interfaz Eficiente y Persistente:** Un panel lateral plegable y una interfaz limpia. El estado de la UI (barra lateral y categoría seleccionada) se guarda en `localStorage` para persistir entre sesiones.
+* **Organización Intuitiva:** Agrupa tus comandos en **categorías** personalizables con iconos para una fácil identificación visual.
+* **Búsqueda Instantánea:** Un potente cuadro de búsqueda (`Ctrl+K`) te permite filtrar categorías y encontrar cualquier item por su nombre o contenido en milisegundos.
+* **⭐ Sistema de Favoritos:** Marca cualquier item con una estrella para anclarlo a la sección de "Favoritos" y tener un acceso aún más rápido.
+* **Panel de Administración Integrado:** Una interfaz de administrador (`/admin`) te permite realizar operaciones CRUD, **duplicar** y **reordenar** tanto categorías como items mediante una sencilla interfaz de arrastrar y soltar (drag-and-drop).
+* **Interfaz Eficiente y Persistente:** El estado de la UI, como la categoría seleccionada o si la barra lateral está colapsada, se guarda en el `localStorage` para que tu espacio de trabajo se mantenga entre sesiones.
+
+###  versatile Item Types
+
+Dev-Caddy soporta múltiples tipos de "items" para adaptarse a cualquier necesidad:
+
+| Tipo | Icono | Descripción |
+| :--- | :---: | :--- |
+| **Comando Simple** | `▶️` | Un comando directo listo para copiar y pegar. |
+| **Workflow** | `🚀` | Una secuencia de comandos guiada. Copia un paso y avanza al siguiente con un solo clic, ideal para procesos complejos. |
+| **Con Variables** | `📝` | Plantillas de comandos con "huecos" que puedes rellenar dinámicamente antes de copiar el resultado final. |
+| **Prompt de IA** | `✨` | Almacena, visualiza y gestiona prompts multilínea complejos para reutilizarlos fácilmente con modelos de lenguaje. Incluye un editor avanzado con formato Markdown y gestión de variables. |
 
 ---
 
 ## 🛠️ Stack Tecnológico
 
-El proyecto está construido con un stack moderno enfocado en la simplicidad y el rendimiento:
-
-* **Framework:** Next.js (con App Router)
-* **Lenguaje:** TypeScript
-* **Estilos:** Tailwind CSS
-* **Componentes UI:** Shadcn UI
-* **Gestión de Estado Global:** Zustand (para estados de UI y de la aplicación)
-* **Renderizado de Markdown:** `react-markdown` (para la ventana de ayuda)
+* **Framework:** [Next.js](https://nextjs.org/) (con App Router)
+* **Lenguaje:** [TypeScript](https://www.typescriptlang.org/)
+* **Estilos:** [Tailwind CSS](https://tailwindcss.com/)
+* **Componentes UI:** [Shadcn UI](https://ui.shadcn.com/)
+* **Gestión de Estado Global:** [Zustand](https://github.com/pmndrs/zustand)
+* **Renderizado de Markdown:** `react-markdown`
 
 ---
 
-## 🏗️ Arquitectura y Flujo de Datos
+## 🏗️ Arquitectura
 
-1.  **Componentes Principales:**
-    * **`app/page.tsx`:** Lógica de la aplicación principal, renderizado de categorías e items.
-    * **`app/admin/page.tsx`:** Lógica completa del panel de administración (CRUD, reordenación, etc.).
-2.  **Fuente de Datos (`app/data/commands.json`):**
-    * Actúa como la "base de datos" del proyecto. Es la fuente única y absoluta de verdad.
-3.  **API Local (`app/api/commands/route.ts`):**
-    * Endpoint para leer (`GET`) y escribir (`POST`) en `commands.json` de forma desacoplada.
-4.  **Gestión de Estado (`store/*.ts`):**
-    * Se utilizan *stores* de Zustand para manejar estados globales que necesitan persistir, como el estado de colapso de la barra lateral (`uiStore.ts`) y la última categoría seleccionada por el usuario (`appStore.ts`).
+1.  **Fuente de Datos (`app/data/commands.json`):** El proyecto funciona sin una base de datos tradicional. `commands.json` es la fuente única y absoluta de verdad para todas las categorías e items.
+2.  **API Local (`app/api/commands/route.ts`):** Un endpoint de Next.js se encarga de leer y escribir en el archivo `commands.json` de forma desacoplada, permitiendo que el frontend y el panel de administración interactúen con los datos.
+3.  **Gestión de Estado (`store/*.ts`):** Zustand maneja estados globales que persisten en `localStorage`, como la categoría seleccionada por el usuario (`appStore.ts`) y el estado de la barra lateral (`uiStore.ts`).
 
 ---
 
-## 📂 Estructura de Ficheros Clave
+## 🚀 Cómo Empezar
 
-/
-├── app/
-│   ├── page.tsx            # Componente principal de la aplicación
-│   ├── admin/
-│   │   └── page.tsx        # Panel de administración
-│   ├── data/
-│   │   └── commands.json   # La "base de datos" del proyecto
-│   └── api/
-│       └── commands/
-│           └── route.ts    # Endpoint para leer/escribir commands.json
-├── components/
-│   └── ui/                 # Componentes base de Shadcn UI
-├── public/
-│   └── help.md             # Contenido Markdown para el modal de ayuda
-└── store/
-├── uiStore.ts          # Store de Zustand para el estado de la UI
-└── appStore.ts         # Store de Zustand para el estado de la App
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone [https://github.com/TU_USUARIO/dev-caddy-public.git](https://github.com/TU_USUARIO/dev-caddy-public.git)
+    cd dev-caddy-public
+    ```
 
+2.  **Instalar dependencias:**
+    ```bash
+    npm install
+    ```
 
----
+3.  **Iniciar el servidor de desarrollo:**
+    ```bash
+    npm run dev
+    ```
 
-## 🚀 Cómo Ejecutar Localmente
-
-1.  Asegúrate de tener Node.js y npm/yarn/pnpm instalados.
-2.  Instala las dependencias: `npm install`
-3.  Inicia el servidor de desarrollo: `npm run dev`
-4.  La aplicación estará disponible en `http://localhost:3002`.
+4.  Abre [http://localhost:3002](http://localhost:3002) en tu navegador para ver la aplicación.
+    * El panel de administración está disponible en [http://localhost:3002/admin](http://localhost:3002/admin).
