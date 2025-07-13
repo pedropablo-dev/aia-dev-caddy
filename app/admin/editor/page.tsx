@@ -293,18 +293,19 @@ function PromptEditor() {
         </div>
       </header>
       <main className={cn(
-          "flex-1 p-4 grid gap-4 max-w-7xl mx-auto w-full min-h-0",
-          isVariablesPanelOpen ? "grid-cols-1 md:grid-cols-[1fr_300px]" : "grid-cols-1",
-          isZenMode && "!p-0 !max-w-full"
+          "flex-1 p-4 w-full min-h-0", // Clases base
+          isZenMode
+             ? "p-0 max-w-full" // En Modo Zen: sin padding y ancho máximo
+             : `grid gap-4 max-w-7xl mx-auto ${isVariablesPanelOpen ? "grid-cols-1 md:grid-cols-[1fr_300px]" : "grid-cols-1"}` // Modo Normal: aplica el grid
       )}>
         <div className={cn("flex flex-col gap-4 min-h-0", isZenMode && "h-full p-4")}>
             <div className={cn(isZenMode && "hidden")}>
-                <label htmlFor="prompt-label" className="text-sm font-medium text-gray-400 mb-2 block">Label del Prompt</label>
+                <label htmlFor="prompt-label" className="text-base font-bold text-gray-400 mb-2 block">Label del Prompt</label>
                 <Input id="prompt-label" placeholder="Escribe aquí el título para tu prompt..." value={label} onChange={(e) => setLabel(e.target.value)} className="w-full text-lg bg-gray-800 border-gray-700 focus:border-blue-500" />
             </div>
             <div className={cn("flex-1 flex flex-col min-h-0", isZenMode && "h-full")}>
                 <div className={cn("flex justify-between items-center mb-2", isZenMode && "hidden")}>
-                    <label htmlFor="prompt-content" className="text-sm font-medium text-gray-400">Contenido del Prompt</label>
+                     <label htmlFor="prompt-content" className="text-base font-bold text-gray-400">Contenido del Prompt</label>
                     <div className="flex items-center gap-1 border border-gray-700 rounded-md p-1 flex-wrap">
                         <Button variant="ghost" size="icon" title="Negrita" className="h-7 w-7" onClick={() => applyFormat('bold')}><Bold size={16} /></Button>
                         <Button variant="ghost" size="icon" title="Cursiva" className="h-7 w-7" onClick={() => applyFormat('italic')}><Italic size={16} /></Button>
@@ -335,7 +336,7 @@ function PromptEditor() {
                 </div>
             </div>
         </div>
-        <div className={cn("flex-col gap-4 bg-gray-950/50 p-4 rounded-lg border border-gray-800", isVariablesPanelOpen ? "flex" : "hidden", isZenMode && "!hidden")}>
+        <div className={cn("flex-col gap-4 bg-gray-950/50 p-4 rounded-lg border border-gray-800 min-h-0", isVariablesPanelOpen ? "flex" : "hidden", isZenMode && "!hidden")}>
             <div>
                 <h3 className="font-bold text-lg text-white mb-2">Buscador</h3>
                  <div className="flex gap-1">
