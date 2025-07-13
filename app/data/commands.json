@@ -279,11 +279,12 @@
     "prompts-1752392101755": [
       {
         "id": "cmd-1752392234606",
-        "label": "Próxima Iteración de Dev-Caddy",
-        "command": "### **Ideas para la Próxima Iteración de Dev-Caddy**\n\n#### **A. Mejoras Funcionales Clave (Añadir más valor)**\n\ncategorías sin nombre, o comandos con variables mal definidas, mostrando mensajes de error útiles.\n    * **Por qué:** Es un paso fundamental hacia una aplicación más estable y a prueba de errores, siguiendo nuestra filosofía rectora.\n",
+        "label": "Próxima Iteración de Dev-Caddy editado",
+        "command": "### **Ideas para la Próxima Iteración de Dev-Caddy**\n\n#### **A. Mejoras Funcionales Clave (Añadir más valor)**\n\ncategorías sin nombre, o comandos con variables mal definidas, mostrando mensajes de error útiles.asdfasdfasdfasd\n    * **Por qué:** Es un paso fundamental hacia una aplicación más estable y a prueba de errores, siguiendo nuestra filosofía rectora.\n",
         "isFavorite": false,
         "order": 0,
-        "type": "prompt"
+        "type": "prompt",
+        "variables": []
       }
     ]
   }
