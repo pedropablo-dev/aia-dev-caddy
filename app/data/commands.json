@@ -4,25 +4,25 @@
       "id": "docker",
       "name": "Docker",
       "icon": "🐳",
-      "order": 0
+      "order": 1
     },
     {
       "id": "git",
       "name": "Git",
       "icon": "😺",
-      "order": 1
+      "order": 2
     },
     {
       "id": "<acx",
       "name": "URLs en Local",
       "icon": "💻",
-      "order": 2
+      "order": 3
     },
     {
       "id": "gemelo-digital-vps",
       "name": "Gemelo Digital VPS",
       "icon": "🐧",
-      "order": 3
+      "order": 0
     },
     {
       "id": "urls-en-remoto",
@@ -92,7 +92,7 @@
           "broworksgit",
           "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"
         ],
-        "order": 1
+        "order": 0
       },
       {
         "id": "cmd-1752257677691",
@@ -138,7 +138,7 @@
         "label": "😺🔗🤖 Repo Contexto IA gamifyu-app-debug",
         "command": "https://github.com/broworksgit/gamifyu-app-debug",
         "type": "command",
-        "order": 0,
+        "order": 1,
         "isFavorite": true
       }
     ],
@@ -279,8 +279,8 @@
     "prompts-1752392101755": [
       {
         "id": "cmd-1752392234606",
-        "label": "Ideas para la Próxima Iteración de Dev-Caddy",
-        "command": "### **Ideas para la Próxima Iteración de Dev-Caddy**\n\n#### **A. Mejoras Funcionales Clave (Añadir más valor)**\n\n1.  **Sistema de Etiquetas (Tags):**\n    * **Qué es:** Además de las categorías, podríamos permitir añadir múltiples etiquetas a cada comando (ej: `#produccion`, `#frontend`, `#ssh`). Esto permitiría un segundo nivel de filtrado mucho más potente. Podrías buscar todos los comandos de `#produccion` sin importar su categoría.\n    * **Por qué:** Ofrece una flexibilidad organizativa inmensa a medida que la cantidad de comandos crece.\n\n2.  **Historial de Comandos Copiados:**\n    * **Qué es:** Una nueva sección (quizás temporal o en un modal) que muestre los últimos 5 o 10 items que has copiado.\n    * **Por qué:** Aumenta aún más la velocidad para tareas repetitivas. Si acabas de copiar una secuencia de 3 comandos, podrías volver a acceder a ellos al instante sin tener que buscarlos de nuevo.\n\n3.  **Función de Importar/Exportar:**\n    * **Qué es:** Añadir botones en el panel de administración para descargar el archivo `commands.json` completo y, de la misma forma, poder subir un archivo `json` para reemplazar la configuración actual.\n    * **Por qué:** Permite hacer copias de seguridad fácilmente y, más importante, te da la portabilidad para llevarte tu Dev-Caddy a otra máquina sin esfuerzo.\n\n#### **B. Pulido de la Interfaz (Mejorar la experiencia)**\n\n1.  **Mejora Visual en la Búsqueda:**\n    * **Qué es:** Al buscar un comando, podríamos resaltar en amarillo el texto que coincide con tu búsqueda dentro del label o del propio comando.\n    * **Por qué:** Facilita ver de un vistazo por qué un resultado en particular ha aparecido en la búsqueda, mejorando la usabilidad.\n\n2.  **Notificaciones de Copiado (Toasts):**\n    * **Qué es:** En lugar de solo cambiar el icono del botón a un ✓, podríamos mostrar una pequeña notificación emergente (un \"toast\") en la esquina de la pantalla que diga \"¡Comando copiado!\". Ya tienes la librería `sonner` instalada, que es perfecta para esto.\n    * **Por qué:** Proporciona una retroalimentación al usuario mucho más clara y satisfactoria.\n\n#### **C. Robustez y Estabilidad (Invertir en el futuro)**\n\n1.  **Validación de Formularios con Zod:**\n    * **Qué es:** Actualmente, los formularios del panel de administración no validan los datos. Podríamos usar `zod` (que ya está en el proyecto) para asegurar que no se puedan crear categorías sin nombre, o comandos con variables mal definidas, mostrando mensajes de error útiles.\n    * **Por qué:** Es un paso fundamental hacia una aplicación más estable y a prueba de errores, siguiendo nuestra filosofía rectora.\n",
+        "label": "Próxima Iteración de Dev-Caddy",
+        "command": "### **Ideas para la Próxima Iteración de Dev-Caddy**\n\n#### **A. Mejoras Funcionales Clave (Añadir más valor)**\n\ncategorías sin nombre, o comandos con variables mal definidas, mostrando mensajes de error útiles.\n    * **Por qué:** Es un paso fundamental hacia una aplicación más estable y a prueba de errores, siguiendo nuestra filosofía rectora.\n",
         "isFavorite": false,
         "order": 0,
         "type": "prompt"
