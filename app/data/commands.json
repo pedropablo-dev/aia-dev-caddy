@@ -305,6 +305,42 @@
         "order": 1,
         "isFavorite": false,
         "variables": []
+      },
+      {
+        "id": "cmd-1752408261415",
+        "label": "sdsd",
+        "command": "asdfasdfasdfasdf**sdfasdf**",
+        "type": "prompt",
+        "order": 2,
+        "isFavorite": false,
+        "variables": []
+      },
+      {
+        "id": "cmd-1752408607392",
+        "label": "asdfasdfasdfasd",
+        "command": "asdfasdfasdfasdf**sdfasdf**\n\nasdfasdfasdfasdf**sdfasdf**asdfasdfasdfasdf**sdfasdf**asdfasdfasdfasdf**sdfasdf**",
+        "type": "prompt",
+        "order": 3,
+        "isFavorite": false,
+        "variables": []
+      },
+      {
+        "id": "cmd-1752408617001",
+        "label": "asdfasdfasdfasd modofiu",
+        "command": "asdfasdfasdfasdf**sdfasdf**\n\nasdfasdfasdfasdf**sdfasdf**asdfasdfasdfasdf**sdfasdf**asdfasdfasdfasdf**sdfasdf**",
+        "type": "prompt",
+        "order": 4,
+        "isFavorite": false,
+        "variables": []
+      },
+      {
+        "id": "cmd-1752409771599",
+        "label": "qwerqw ewewe",
+        "command": "wefqw",
+        "type": "prompt",
+        "order": 5,
+        "isFavorite": false,
+        "variables": []
       }
     ]
   }

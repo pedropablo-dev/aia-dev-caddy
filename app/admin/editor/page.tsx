@@ -20,7 +20,7 @@ import {
 import { 
     ArrowLeft, Save, X, Bold, Italic, Code, List, Heading1, Heading2, Heading3, Heading4, 
     Pilcrow, Minus, PanelRightClose, PanelRightOpen, Underline, SquareCode, ListTodo, 
-    Maximize, Minimize, Copy, ChevronUp, ChevronDown, Search
+    Maximize, Minimize, Copy, ChevronUp, ChevronDown, Search, ClipboardPaste
 } from "lucide-react" 
 import { cn } from "@/lib/utils"
 
@@ -299,6 +299,31 @@ function PromptEditor() {
     }
   };
 
+  const handleCopyToClipboard = () => {
+    navigator.clipboard.writeText(text);
+    toast.success("Contenido copiado al portapapeles");
+  };
+
+  const handlePasteFromClipboard = async () => {
+    try {
+      const clipboardText = await navigator.clipboard.readText();
+      const textarea = textareaRef.current;
+      if (!textarea) return;
+
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const newText = text.substring(0, start) + clipboardText + text.substring(end);
+      setText(newText);
+      textarea.focus();
+      setTimeout(() => {
+        textarea.selectionStart = textarea.selectionEnd = start + clipboardText.length;
+      }, 0);
+
+    } catch (err) {
+      toast.error("No se pudo pegar el contenido.");
+      console.error('Failed to read clipboard contents: ', err);
+    }
+  };
 
   const currentChars = text.length;
   const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
@@ -318,26 +343,28 @@ function PromptEditor() {
           </Button>
         )}
         <header className={cn("p-4 border-b border-gray-800 sticky top-0 bg-gray-900 z-10", isZenMode && "hidden")}>
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-              <h1 className="text-xl font-bold">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <h1 className="text-xl font-bold whitespace-nowrap">
                 {commandId ? 'Editando Prompt' : 'Nuevo Prompt'}
                 {categoryName && <span className="text-gray-400 font-normal"> en: <span className="font-semibold text-blue-400">{categoryName}</span></span>}
               </h1>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap w-full md:w-auto justify-start">
                   <Button variant="outline" className="gap-2 bg-gray-700 hover:opacity-90" onClick={() => router.push('/admin')}>
                       <ArrowLeft />
-                      Volver sin Guardar
                   </Button>
-                  <Button variant="outline" className="bg-blue-800 hover:bg-blue-700 gap-2" onClick={handleSaveOnly} disabled={isSaving}>
+                  <Button className="bg-purple-600 hover:bg-purple-700 gap-2" onClick={handleSaveOnly} disabled={isSaving}>
                       <Save />
-                      {isSaving ? 'Guardando...' : 'Guardar Cambios'}
+                      {isSaving ? 'Guardando...' : 'Guardar'}
                   </Button>
                   <Button className="bg-blue-600 hover:bg-blue-700 gap-2" onClick={handleSaveAndExit} disabled={isSaving}>
                       <Save />
-                      {isSaving ? 'Guardando...' : 'Guardar y Volver'}
+                      {isSaving ? 'Guardando...' : 'Volver'}
                   </Button>
-                   <Button variant="outline" size="icon" className="h-9 w-9 bg-gray-700 hover:opacity-90" onClick={() => navigator.clipboard.writeText(text)} title="Copiar Prompt">
+                   <Button variant="outline" size="icon" className="h-9 w-9 bg-gray-700 hover:opacity-90" onClick={handleCopyToClipboard} title="Copiar Prompt">
                       <Copy size={18}/>
+                  </Button>
+                   <Button variant="outline" size="icon" className="h-9 w-9 bg-gray-700 hover:opacity-90" onClick={handlePasteFromClipboard} title="Pegar desde portapapeles">
+                      <ClipboardPaste size={18}/>
                   </Button>
                   <Button variant="outline" size="icon" className="h-9 w-9 bg-gray-700 hover:opacity-90" onClick={() => setIsVariablesPanelOpen(!isVariablesPanelOpen)} title={isVariablesPanelOpen ? "Ocultar Panel" : "Mostrar Panel"}>
                       {isVariablesPanelOpen ? <PanelRightClose size={18}/> : <PanelRightOpen size={18}/>}
