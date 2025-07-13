@@ -29,65 +29,23 @@
       "name": "URLs en Remoto",
       "icon": "🌍",
       "order": 4
+    },
+    {
+      "id": "prompts-1752392101755",
+      "name": "Prompts",
+      "icon": "🤖",
+      "order": 5
     }
   ],
   "commands": {
     "docker": [
       {
         "id": "cmd-1752258346377",
-        "label": "🐋 🚀 Arrancar Todos los Contenedores",
-        "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d comando largo largo",
+        "label": "🐋 🚀 Levantar Todos los Contenedores",
+        "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d",
         "type": "command",
         "isFavorite": false,
-        "order": 4
-      },
-      {
-        "id": "cmd-1752313575691",
-        "label": "asdfa",
-        "command": "asdfasdfasdfasfasdfasdfasdfasdfasddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-        "type": "command",
-        "isFavorite": false,
-        "order": 1
-      },
-      {
-        "id": "cmd-1752316653536",
-        "label": "fasdfa",
-        "command": "asdfa",
-        "type": "command",
-        "isFavorite": false,
-        "order": 2
-      },
-      {
-        "id": "cmd-1752316657658",
-        "label": "asdfas",
-        "command": "asdf",
-        "type": "command",
-        "isFavorite": false,
-        "order": 3
-      },
-      {
-        "id": "cmd-1752338136845",
-        "label": "🐋 🚀 Arrancar Todos los Contenedores (Copia)",
-        "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d comando largo largo",
-        "type": "command",
-        "isFavorite": true,
         "order": 0
-      },
-      {
-        "id": "cmd-1752338139416",
-        "label": "🐋 🚀 Arrancar Todos los Contenedores (Copia)",
-        "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d comando largo largo",
-        "type": "command",
-        "isFavorite": false,
-        "order": 5
-      },
-      {
-        "id": "cmd-1752338140976",
-        "label": "🐋 🚀 Arrancar Todos los Contenedores (Copia)",
-        "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d comando largo largo",
-        "type": "command",
-        "isFavorite": false,
-        "order": 6
       }
     ],
     "git": [
@@ -104,7 +62,7 @@
           "broworksgit",
           "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"
         ],
-        "order": 0,
+        "order": 5,
         "isFavorite": false
       },
       {
@@ -118,7 +76,7 @@
             "placeholder": "Comentario para el commit"
           }
         ],
-        "order": 1
+        "order": 6
       },
       {
         "id": "cmd-1752257540120",
@@ -134,7 +92,7 @@
           "broworksgit",
           "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"
         ],
-        "order": 2
+        "order": 1
       },
       {
         "id": "cmd-1752257677691",
@@ -150,7 +108,7 @@
           "broworksgit",
           "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"
         ],
-        "order": 3
+        "order": 2
       },
       {
         "id": "cmd-1752258070519",
@@ -165,21 +123,23 @@
           "broworksgit",
           "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"
         ],
-        "order": 4
+        "order": 3
       },
       {
         "id": "cmd-1752262751605",
-        "label": "😺🔗🧰 Repo broworks-dev-caddy",
+        "label": "😺🔗⚡ Repo broworks-dev-caddy",
         "command": "https://github.com/broworksgit/broworks-dev-caddy",
         "type": "command",
-        "order": 5
+        "order": 4,
+        "isFavorite": true
       },
       {
         "id": "cmd-1752262866744",
         "label": "😺🔗🤖 Repo Contexto IA gamifyu-app-debug",
         "command": "https://github.com/broworksgit/gamifyu-app-debug",
         "type": "command",
-        "order": 6
+        "order": 0,
+        "isFavorite": true
       }
     ],
     "<acx": [
@@ -254,7 +214,7 @@
           "ssh pedropablo@localhost -p 2222",
           "P3dr0P@bl0+Sudo.2025"
         ],
-        "order": 6
+        "order": 0
       },
       {
         "id": "cmd-1752256535659",
@@ -265,7 +225,7 @@
           "sudo chown -R pedropablo:pedropablo /opt/broworks/",
           "P3dr0P@bl0+Sudo.2025"
         ],
-        "order": 1
+        "order": 4
       },
       {
         "id": "cmd-1752256609992",
@@ -290,7 +250,7 @@
         "label": "📂 Entrar en /home/pedropablo/GAMIFYU_VPS_CLONADO",
         "command": "cd /home/pedropablo/GAMIFYU_VPS_CLONADO",
         "type": "command",
-        "order": 4
+        "order": 5
       },
       {
         "id": "cmd-1752257237033",
@@ -302,7 +262,7 @@
           "sudo python3 sync_debug_repo.py",
           "P3dr0P@bl0+Sudo.2025"
         ],
-        "order": 5
+        "order": 1
       },
       {
         "id": "cmd-1752257338701",
@@ -313,7 +273,17 @@
           "sudo python3 sync_debug_repo.py",
           "P3dr0P@bl0+Sudo.2025"
         ],
-        "order": 0
+        "order": 6
+      }
+    ],
+    "prompts-1752392101755": [
+      {
+        "id": "cmd-1752392234606",
+        "label": "Ideas para la Próxima Iteración de Dev-Caddy",
+        "command": "### **Ideas para la Próxima Iteración de Dev-Caddy**\n\n#### **A. Mejoras Funcionales Clave (Añadir más valor)**\n\n1.  **Sistema de Etiquetas (Tags):**\n    * **Qué es:** Además de las categorías, podríamos permitir añadir múltiples etiquetas a cada comando (ej: `#produccion`, `#frontend`, `#ssh`). Esto permitiría un segundo nivel de filtrado mucho más potente. Podrías buscar todos los comandos de `#produccion` sin importar su categoría.\n    * **Por qué:** Ofrece una flexibilidad organizativa inmensa a medida que la cantidad de comandos crece.\n\n2.  **Historial de Comandos Copiados:**\n    * **Qué es:** Una nueva sección (quizás temporal o en un modal) que muestre los últimos 5 o 10 items que has copiado.\n    * **Por qué:** Aumenta aún más la velocidad para tareas repetitivas. Si acabas de copiar una secuencia de 3 comandos, podrías volver a acceder a ellos al instante sin tener que buscarlos de nuevo.\n\n3.  **Función de Importar/Exportar:**\n    * **Qué es:** Añadir botones en el panel de administración para descargar el archivo `commands.json` completo y, de la misma forma, poder subir un archivo `json` para reemplazar la configuración actual.\n    * **Por qué:** Permite hacer copias de seguridad fácilmente y, más importante, te da la portabilidad para llevarte tu Dev-Caddy a otra máquina sin esfuerzo.\n\n#### **B. Pulido de la Interfaz (Mejorar la experiencia)**\n\n1.  **Mejora Visual en la Búsqueda:**\n    * **Qué es:** Al buscar un comando, podríamos resaltar en amarillo el texto que coincide con tu búsqueda dentro del label o del propio comando.\n    * **Por qué:** Facilita ver de un vistazo por qué un resultado en particular ha aparecido en la búsqueda, mejorando la usabilidad.\n\n2.  **Notificaciones de Copiado (Toasts):**\n    * **Qué es:** En lugar de solo cambiar el icono del botón a un ✓, podríamos mostrar una pequeña notificación emergente (un \"toast\") en la esquina de la pantalla que diga \"¡Comando copiado!\". Ya tienes la librería `sonner` instalada, que es perfecta para esto.\n    * **Por qué:** Proporciona una retroalimentación al usuario mucho más clara y satisfactoria.\n\n#### **C. Robustez y Estabilidad (Invertir en el futuro)**\n\n1.  **Validación de Formularios con Zod:**\n    * **Qué es:** Actualmente, los formularios del panel de administración no validan los datos. Podríamos usar `zod` (que ya está en el proyecto) para asegurar que no se puedan crear categorías sin nombre, o comandos con variables mal definidas, mostrando mensajes de error útiles.\n    * **Por qué:** Es un paso fundamental hacia una aplicación más estable y a prueba de errores, siguiendo nuestra filosofía rectora.\n",
+        "isFavorite": false,
+        "order": 0,
+        "type": "prompt"
       }
     ]
   }

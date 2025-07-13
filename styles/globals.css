@@ -92,3 +92,23 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* --- Custom Textarea Scrollbar Styles --- */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 12px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1f2937; /* Fondo (track) - Gris muy oscuro */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #9ca3af; /* Barra (thumb) - Gris claro */
+  border-radius: 10px;
+  border: 3px solid #1f2937;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #d1d5db; /* Más claro al pasar el ratón */
+}
