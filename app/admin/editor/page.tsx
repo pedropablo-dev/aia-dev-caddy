@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge"
 import { 
     ArrowLeft, Save, X, Bold, Italic, Code, List, Heading1, Heading2, Heading3, Heading4, 
     Pilcrow, ListOrdered, Link as LinkIcon, Image as ImageIcon, Minus, PanelRightClose, 
-    PanelRightOpen, Underline, SquareCode, ListTodo, Maximize, Minimize 
+    PanelRightOpen, Underline, SquareCode, ListTodo, Maximize, Minimize, Copy,
+    ChevronUp, ChevronDown, Search
 } from "lucide-react" 
 import { cn } from "@/lib/utils"
 
@@ -44,8 +45,60 @@ function PromptEditor() {
   const [isVariablesPanelOpen, setIsVariablesPanelOpen] = useState(false);
   const [isZenMode, setIsZenMode] = useState(false);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchMatches, setSearchMatches] = useState<number[]>([]);
+  const [currentMatchIndex, setCurrentMatchIndex] = useState(-1);
+  
+  // --- LÍNEAS RESTAURADAS ---
   const commandId = searchParams.get('commandId')
   const categoryId = searchParams.get('categoryId')
+
+  // --- Lógica del buscador CORREGIDA Y MEJORADA ---
+  useEffect(() => {
+    if (searchTerm && text) {
+        const regex = new RegExp(searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'gi');
+        const matches = [...text.matchAll(regex)].map(match => match.index!);
+        setSearchMatches(matches);
+    } else {
+        setSearchMatches([]);
+    }
+    // Reseteamos el índice actual con cada nueva búsqueda
+    setCurrentMatchIndex(-1);
+  }, [searchTerm, text]);
+  
+  const focusOnMatch = (index: number) => {
+      const textarea = textareaRef.current;
+      if (textarea && searchMatches[index] !== undefined) {
+        const matchPos = searchMatches[index];
+        textarea.focus();
+        textarea.setSelectionRange(matchPos, matchPos + searchTerm.length);
+        
+        const lineHeight = parseInt(getComputedStyle(textarea).lineHeight) || 20;
+        const lines = text.substring(0, matchPos).match(/\n/g)?.length || 0;
+        textarea.scrollTop = lines * lineHeight;
+      }
+  }
+
+  const handleInitialSearch = () => {
+      if (searchMatches.length > 0) {
+          setCurrentMatchIndex(0);
+          focusOnMatch(0);
+      }
+  }
+
+  const navigateSearch = (direction: 'next' | 'prev') => {
+      if (searchMatches.length === 0) return;
+      
+      let nextIndex;
+      if (direction === 'next') {
+          nextIndex = (currentMatchIndex + 1) % searchMatches.length;
+      } else {
+          nextIndex = (currentMatchIndex - 1 + searchMatches.length) % searchMatches.length;
+      }
+      setCurrentMatchIndex(nextIndex);
+      focusOnMatch(nextIndex);
+  };
+  // --- Fin de la lógica del buscador ---
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -201,6 +254,7 @@ function PromptEditor() {
   };
 
   const currentChars = text.length;
+  const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
   const hasExceeded = maxChars !== null && currentChars > maxChars;
 
   if (isLoading) {
@@ -208,7 +262,7 @@ function PromptEditor() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900 text-white">
+    <div className={cn("flex flex-col h-screen bg-gray-900 text-white", isZenMode && "is-zen")}>
       {isZenMode && (
          <Button variant="outline" size="icon" className="h-9 w-9 bg-gray-700 hover:opacity-90 fixed top-4 right-4 z-50" onClick={() => setIsZenMode(false)}>
             <Minimize size={18}/>
@@ -226,10 +280,13 @@ function PromptEditor() {
                     <Save />
                     {isSaving ? 'Guardando...' : 'Guardar'}
                 </Button>
-                <Button variant="outline" size="icon" className="h-9 w-9 bg-gray-700 hover:opacity-90" onClick={() => setIsVariablesPanelOpen(!isVariablesPanelOpen)}>
+                 <Button variant="outline" size="icon" className="h-9 w-9 bg-gray-700 hover:opacity-90" onClick={() => navigator.clipboard.writeText(text)} title="Copiar Prompt">
+                    <Copy size={18}/>
+                </Button>
+                <Button variant="outline" size="icon" className="h-9 w-9 bg-gray-700 hover:opacity-90" onClick={() => setIsVariablesPanelOpen(!isVariablesPanelOpen)} title={isVariablesPanelOpen ? "Ocultar Panel" : "Mostrar Panel"}>
                     {isVariablesPanelOpen ? <PanelRightClose size={18}/> : <PanelRightOpen size={18}/>}
                 </Button>
-                 <Button variant="outline" size="icon" className="h-9 w-9 bg-gray-700 hover:opacity-90" onClick={() => setIsZenMode(true)}>
+                 <Button variant="outline" size="icon" className="h-9 w-9 bg-gray-700 hover:opacity-90" onClick={() => setIsZenMode(true)} title="Modo Zen">
                     <Maximize size={18}/>
                 </Button>
             </div>
@@ -238,7 +295,7 @@ function PromptEditor() {
       <main className={cn(
           "flex-1 p-4 grid gap-4 max-w-7xl mx-auto w-full min-h-0",
           isVariablesPanelOpen ? "grid-cols-1 md:grid-cols-[1fr_300px]" : "grid-cols-1",
-          isZenMode && "!p-0 !max-w-full" // <-- Corrección para Modo Zen
+          isZenMode && "!p-0 !max-w-full"
       )}>
         <div className={cn("flex flex-col gap-4 min-h-0", isZenMode && "h-full p-4")}>
             <div className={cn(isZenMode && "hidden")}>
@@ -264,24 +321,44 @@ function PromptEditor() {
                     </div>
                 </div>
                 <Textarea id="prompt-content" ref={textareaRef} placeholder="Escribe aquí tu prompt..." value={text} onChange={(e) => setText(e.target.value)} className={cn("w-full h-full flex-1 resize-none text-base bg-gray-800 border-gray-700 focus:border-blue-500 custom-scrollbar", isZenMode && "!text-lg rounded-none border-none")} />
-                <div className={cn("flex items-center justify-start gap-4 mt-2 text-sm text-gray-400", isZenMode && "hidden")}>
-                    <div className="flex items-center gap-2">
-                        <label htmlFor="max-chars">Límite:</label>
-                        <Input id="max-chars" type="number" placeholder="Opcional" className="w-32 h-8 bg-gray-800 border-gray-700" value={maxChars ?? ''} onChange={(e) => setMaxChars(e.target.value ? parseInt(e.target.value, 10) : null)} />
+                <div className={cn("flex items-center justify-between mt-2 text-sm text-gray-400", isZenMode && "hidden")}>
+                     <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                           <label htmlFor="max-chars">Límite:</label>
+                           <Input id="max-chars" type="number" placeholder="Opcional" className="w-32 h-8 bg-gray-800 border-gray-700" value={maxChars ?? ''} onChange={(e) => setMaxChars(e.target.value ? parseInt(e.target.value, 10) : null)} />
+                        </div>
+                        <div className={cn("font-mono", hasExceeded && "text-red-500 font-bold")}>
+                           {maxChars !== null ? `${currentChars} / ${maxChars}` : currentChars} Caracteres
+                        </div>
                     </div>
-                    <div className={cn("font-mono", hasExceeded && "text-red-500 font-bold")}>
-                        {maxChars !== null ? `${currentChars} / ${maxChars}` : currentChars}
-                    </div>
+                    <div className="font-mono">{wordCount} Palabras</div>
                 </div>
             </div>
         </div>
         <div className={cn("flex-col gap-4 bg-gray-950/50 p-4 rounded-lg border border-gray-800", isVariablesPanelOpen ? "flex" : "hidden", isZenMode && "!hidden")}>
-            <h3 className="font-bold text-lg text-white">Variables Dinámicas</h3>
+            <div>
+                <h3 className="font-bold text-lg text-white mb-2">Buscador</h3>
+                 <div className="flex gap-1">
+                    <div className="relative flex-1">
+                        <Input placeholder="Buscar..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleInitialSearch()} className="bg-gray-800 border-gray-700 h-9"/>
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={handleInitialSearch} disabled={searchMatches.length === 0}><Search size={18}/></Button>
+                 </div>
+                 <div className="flex items-center justify-between mt-1">
+                     <span className="text-xs text-gray-400">{searchTerm && (searchMatches.length > 0 ? `${currentMatchIndex === -1 ? 0 : currentMatchIndex + 1} de ${searchMatches.length}`: "No hay resultados")}</span>
+                     <div className="flex">
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => navigateSearch('prev')} disabled={searchMatches.length === 0}><ChevronUp/></Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => navigateSearch('next')} disabled={searchMatches.length === 0}><ChevronDown/></Button>
+                     </div>
+                 </div>
+            </div>
+
+            <h3 className="font-bold text-lg text-white mt-4">Variables Dinámicas</h3>
             <div className="flex gap-2">
                 <Input placeholder="Nombre variable..." value={newVariable} onChange={(e) => setNewVariable(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleAddVariable()} className="bg-gray-800 border-gray-700" />
                 <Button onClick={handleAddVariable} className="bg-gray-700 hover:bg-gray-600">Añadir</Button>
             </div>
-            <div className="flex-1 flex flex-col gap-2 overflow-y-auto custom-scrollbar pr-2">
+            <div className="flex-1 flex flex-col gap-2 overflow-y-auto custom-scrollbar pr-2 min-h-0">
                  <p className="text-xs text-gray-500">Haz clic en una variable para insertarla en el prompt.</p>
                 {variables.map(v => (
                     <Badge key={v} variant="secondary" className="flex justify-between items-center p-2 text-base font-mono cursor-pointer bg-purple-900/50 border-purple-700 text-purple-200 hover:bg-purple-900/80" onClick={() => handleInsertVariable(v)}>
