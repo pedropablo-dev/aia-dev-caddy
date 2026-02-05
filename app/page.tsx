@@ -35,30 +35,7 @@ import { useUIStore } from "@/store/uiStore"
 import { useAppStore } from "@/store/appStore"
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
-
-// --- Tipos de Datos ---
-interface Command {
-  id: string
-  label: string
-  command: string
-  type: "command" | "workflow" | "prompt"
-  isFavorite?: boolean
-  variables?: { name: string; placeholder: string }[]
-  steps?: string[]
-  order?: number
-}
-
-interface Category {
-  id: string
-  name: string
-  icon: string
-  order?: number
-}
-
-interface AppData {
-  categories: Category[]
-  commands: Record<string, Command[]>
-}
+import type { Command, Category, AppData } from "@/types"
 
 const markdownComponents: Components = {
   h1: ({ ...props }) => <h1 className="text-2xl font-bold text-white mb-4" {...props} />,
@@ -341,8 +318,8 @@ export default function BroworksLaunchpad() {
                     key={category.id}
                     onClick={() => setSelectedCategory(category.id)} // <-- USA EL STORE
                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${selectedCategory === category.id
-                        ? "bg-blue-600 text-white"
-                        : "text-gray-300 hover:bg-gray-800"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-300 hover:bg-gray-800"
                       } ${isSidebarCollapsed ? 'justify-center' : ''}`}
                   >
                     <span className="text-lg">{category.icon}</span>

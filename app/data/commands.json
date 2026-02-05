@@ -35,6 +35,12 @@
       "name": "Test Zod",
       "icon": "🚦",
       "order": 5
+    },
+    {
+      "id": "asdfas-1770296269136",
+      "name": "asdfas",
+      "icon": "🚀",
+      "order": 6
     }
   ],
   "commands": {
@@ -45,7 +51,7 @@
         "command": "workflow",
         "type": "workflow",
         "isFavorite": true,
-        "order": 0,
+        "order": 1,
         "steps": [
           "git status",
           "git add .",
@@ -59,7 +65,7 @@
         "command": "git checkout -b {branch-name}",
         "type": "command",
         "isFavorite": false,
-        "order": 1,
+        "order": 2,
         "variables": [
           {
             "name": "branch-name",
@@ -73,14 +79,14 @@
         "command": "git log --graph --oneline --decorate",
         "type": "command",
         "isFavorite": true,
-        "order": 2
+        "order": 0
       },
       {
         "id": "git-simple-2",
         "label": "Deshacer Último Commit (Local)",
         "command": "git reset --soft HEAD~1",
         "type": "command",
-        "order": 3
+        "order": 4
       },
       {
         "id": "cmd-1770295010475",
@@ -88,7 +94,7 @@
         "command": "fghdfgh",
         "type": "command",
         "isFavorite": false,
-        "order": 4
+        "order": 3
       }
     ],
     "docker-commands": [
@@ -205,6 +211,16 @@
         "id": "cmd-1770295074784",
         "label": "dghd",
         "command": "dfhd",
+        "type": "command",
+        "isFavorite": false,
+        "order": 0
+      }
+    ],
+    "asdfas-1770296269136": [
+      {
+        "id": "cmd-1770296275717",
+        "label": "sdSD",
+        "command": "asd",
         "type": "command",
         "isFavorite": false,
         "order": 0

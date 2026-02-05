@@ -39,30 +39,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useAppStore } from "@/store/appStore"
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
-
-// --- Tipos de Datos ---
-interface Command {
-  id: string
-  label: string
-  command: string
-  type: "command" | "workflow" | "prompt"
-  isFavorite?: boolean
-  variables?: { name: string; placeholder: string }[]
-  steps?: string[]
-  order?: number
-}
-
-interface Category {
-  id: string
-  name: string
-  icon: string
-  order?: number
-}
-
-interface AppData {
-  categories: Category[]
-  commands: Record<string, Command[]>
-}
+import type { Command, Category, AppData } from "@/types"
 
 interface DeleteAlertState {
   isOpen: boolean;

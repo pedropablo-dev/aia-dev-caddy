@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Variable, Command, Category, AppData } from "@/types";
 
 /**
  * Schema for command variables (two formats supported)
@@ -8,7 +9,7 @@ import { z } from "zod";
 export const VariableObjectSchema = z.object({
   name: z.string().min(1, "Variable name is required"),
   placeholder: z.string(),
-});
+}) satisfies z.ZodType<Variable>;
 
 /**
  * Schema for Command entities
@@ -28,7 +29,7 @@ export const CommandSchema = z.object({
     .union([z.array(VariableObjectSchema), z.array(z.string())])
     .optional(),
   steps: z.array(z.string()).optional(),
-});
+}) satisfies z.ZodType<Command>;
 
 /**
  * Schema for Category entities
@@ -38,7 +39,7 @@ export const CategorySchema = z.object({
   name: z.string().min(1, "Category name is required"),
   icon: z.string().min(1, "Category icon is required"),
   order: z.number().int().nonnegative().optional(),
-});
+}) satisfies z.ZodType<Category>;
 
 /**
  * Schema for the entire AppData structure
@@ -47,10 +48,5 @@ export const CategorySchema = z.object({
 export const AppDataSchema = z.object({
   categories: z.array(CategorySchema),
   commands: z.record(z.string(), z.array(CommandSchema)),
-});
+}) satisfies z.ZodType<AppData>;
 
-// Type exports for TypeScript usage
-export type Variable = z.infer<typeof VariableObjectSchema>;
-export type Command = z.infer<typeof CommandSchema>;
-export type Category = z.infer<typeof CategorySchema>;
-export type AppData = z.infer<typeof AppDataSchema>;
