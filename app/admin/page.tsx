@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Textarea } from "@/components/ui/textarea"
+import { BackupControls } from "@/components/dev-caddy/backup-controls"
 import { useAppStore } from "@/store/appStore"
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
@@ -214,6 +215,9 @@ export default function AdminPage() {
   const removeVariable = (idx: number) => setNewVariables((v) => v.filter((_, i) => i !== idx))
   const addVariableField = () => setNewVariables((v) => [...v, { name: "", placeholder: "" }])
 
+  const handleImportData = async (newData: AppData) => {
+    await saveData(newData, true)
+  }
 
   if (!hasMounted || isLoading) {
     return <div className="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center"><h1 className="text-2xl font-bold text-gray-400">Cargando...</h1></div>
@@ -224,12 +228,15 @@ export default function AdminPage() {
       <Toaster richColors />
       <div className="bg-gray-900 text-white h-screen flex flex-col">
         <div className="p-4 sm:p-6 border-b border-gray-800 flex-shrink-0">
-          <div className="max-w-7xl mx-auto flex items-center gap-4">
-            <Link href="/" className="p-2 rounded-md hover:bg-gray-800 transition-colors"><ArrowLeft className="w-6 h-6" /></Link>
-            <div>
-              <h1 className="text-2xl font-bold">Panel de Administración</h1>
-              <p className="text-gray-400">Añade, edita, duplica, elimina y reordena tu contenido.</p>
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Link href="/" className="p-2 rounded-md hover:bg-gray-800 transition-colors"><ArrowLeft className="w-6 h-6" /></Link>
+              <div>
+                <h1 className="text-2xl font-bold">Panel de Administración</h1>
+                <p className="text-gray-400">Añade, edita, duplica, elimina y reordena tu contenido.</p>
+              </div>
             </div>
+            <BackupControls data={data} onImport={handleImportData} />
           </div>
         </div>
 

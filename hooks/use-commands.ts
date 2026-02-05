@@ -102,6 +102,17 @@ export function useCommands() {
         [data, saveData]
     )
 
+    // --- Import Data Logic ---
+    const importData = useCallback(async (newData: AppData) => {
+        try {
+            await saveData(newData, true)
+            toast.success("Backup restaurado correctamente")
+        } catch (error) {
+            console.error("Error importing data:", error)
+            toast.error("Error al importar el backup")
+        }
+    }, [saveData])
+
     // --- Initial Load ---
     useEffect(() => {
         setHasMounted(true)
@@ -116,5 +127,6 @@ export function useCommands() {
         fetchData,
         saveData,
         toggleFavorite,
+        importData,
     }
 }
