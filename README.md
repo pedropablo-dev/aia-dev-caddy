@@ -11,8 +11,18 @@ _¿Cansado de buscar en tu historial, notas o wikis internas el mismo comando un
 - **Organización Intuitiva:** Agrupa tus comandos en **categorías** personalizables con iconos emoji
 - **Búsqueda Instantánea:** Filtro rápido con `Ctrl+K` para encontrar cualquier item en milisegundos
 - **⭐ Sistema de Favoritos:** Marca items con estrella para acceso rápido
-- **Panel de Administración:** Interfaz CRUD completa en `/admin` con drag-and-drop para reordenar
+- **Panel de Administración:** Interfaz CRUD completa en `/admin` con reordenamiento
 - **Editor de Prompts:** Editor rico con toolbar Markdown, variables dinámicas y modo Zen
+
+### ✅ Nuevas Características v0.2.0
+
+| Característica | Descripción |
+|----------------|-------------|
+| **🔒 Validación Zod** | API protegida con validación de esquemas |
+| **🛡️ Error Boundaries** | Prevención de "pantalla blanca" con recuperación |
+| **⚡ Skeleton Loading** | Estados de carga con placeholders visuales |
+| **💾 Backup/Restore** | Exportar e importar datos en JSON |
+| **🧩 Arquitectura Atómica** | Componentes modulares y hooks reutilizables |
 
 ### Tipos de Items
 
@@ -35,28 +45,47 @@ _¿Cansado de buscar en tu historial, notas o wikis internas el mismo comando un
 | [Shadcn UI](https://ui.shadcn.com/) | - | Componentes UI |
 | [Zustand](https://github.com/pmndrs/zustand) | 5.0.6 | Estado global |
 | [Sonner](https://sonner.emilkowal.ski/) | 1.7.1 | Notificaciones toast |
-| [Zod](https://zod.dev/) | 3.24.1 | Validación (pendiente) |
+| [Zod](https://zod.dev/) | 3.24.1 | Validación de API |
 
 ---
 
-## 🏗️ Arquitectura
+## 🏗️ Arquitectura v0.2.0
 
 ```
 app/
-├── page.tsx              # Launchpad principal
+├── page.tsx              # Launchpad (160 líneas - orquestador)
+├── error.tsx             # Error boundary global
+├── not-found.tsx         # Página 404
+├── loading.tsx           # Skeleton SSR
 ├── admin/
 │   ├── page.tsx          # Panel de administración
 │   └── editor/page.tsx   # Editor de prompts
-├── api/commands/route.ts # API REST
+├── api/commands/route.ts # API REST (Zod validado)
 └── data/commands.json    # Fuente de datos
+
+components/dev-caddy/
+├── Sidebar.tsx           # Navegación lateral
+├── Header.tsx            # Barra de búsqueda
+├── CommandList.tsx       # Lista de comandos
+├── CommandCard.tsx       # Tarjeta individual
+├── skeletons.tsx         # Estados de carga
+└── backup-controls.tsx   # Export/Import
+
+hooks/
+└── use-commands.ts       # Data fetching + state
+
+types/
+└── index.ts              # Tipos centralizados (SSoT)
+
+lib/
+└── schemas.ts            # Esquemas Zod
 ```
 
 **Flujo de datos:**
-1. `commands.json` es la fuente única de verdad
-2. API route (`/api/commands`) lee/escribe el archivo JSON
-3. Zustand persiste estado de UI en `localStorage`
-
-> ⚠️ **Nota:** El almacenamiento basado en archivos no es compatible con despliegues serverless (Vercel). Ver [docs/ROADMAP.md](docs/ROADMAP.md) para plan de migración.
+1. `types/index.ts` es la fuente única de tipos
+2. `useCommands` hook gestiona fetch/save/toggle
+3. API route valida con Zod antes de escribir
+4. Error boundaries capturan fallos
 
 ---
 
@@ -64,10 +93,10 @@ app/
 
 | Documento | Descripción |
 |-----------|-------------|
-| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Diagramas del sistema y flujo de datos |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Diagramas, hooks y flujo de datos |
 | [PROJECT_BIBLE.md](docs/PROJECT_BIBLE.md) | Guía completa para desarrolladores |
-| [AUDIT_REPORT.md](docs/AUDIT_REPORT.md) | Análisis crítico y deuda técnica |
-| [ROADMAP.md](docs/ROADMAP.md) | Plan de modernización a producción |
+| [ROADMAP.md](docs/ROADMAP.md) | Plan de modernización (Fases 1-4 ✅) |
+| [UX_IMPROVEMENT_PLAN.md](docs/UX_IMPROVEMENT_PLAN.md) | Plan de mejoras UX |
 
 ---
 
@@ -104,14 +133,19 @@ npm run dev
 
 ## 🔮 Estado del Proyecto
 
-**Versión actual:** 0.1.0 (MVP)
+**Versión actual:** 0.2.0 (Refactor Completo)
 
 | Área | Estado |
 |------|--------|
 | Funcionalidad core | ✅ Completa |
-| Validación API | ⚠️ Pendiente |
-| Despliegue serverless | ❌ No soportado |
-| Tests | ❌ No implementados |
+| Validación API (Zod) | ✅ Implementada |
+| Error Boundaries | ✅ Implementadas |
+| Skeleton Loading | ✅ Implementado |
+| Backup/Restore | ✅ Implementado |
+| Componentes Atómicos | ✅ Completado |
+| Hooks Reutilizables | ✅ Completado |
+| Tests | ❌ Pendiente |
+| Despliegue serverless | ❌ Requiere DB |
 
 Ver [ROADMAP.md](docs/ROADMAP.md) para el plan hacia v1.0.0.
 

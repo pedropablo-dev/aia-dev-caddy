@@ -4,291 +4,125 @@
 
 ---
 
-## Current State: v0.1.0 (MVP)
+## Current State: v0.2.0 (Refactor Complete)
 
-✅ Core functionality works  
-❌ Not production-ready  
-❌ Won't deploy to serverless  
-❌ Security vulnerabilities  
-
----
-
-## Phase 1: Foundation Hardening (Priority: Critical)
-
-### Step 1.1: Implement Zod Validation
-**Effort:** 2 hours | **Impact:** High
-
-Create schema validation for API endpoints:
-
-```typescript
-// lib/schemas.ts
-import { z } from 'zod';
-
-export const VariableSchema = z.object({
-  name: z.string().min(1),
-  placeholder: z.string()
-});
-
-export const CommandSchema = z.object({
-  id: z.string().min(1),
-  label: z.string().min(1),
-  command: z.string(),
-  type: z.enum(['command', 'workflow', 'prompt']),
-  isFavorite: z.boolean().optional(),
-  order: z.number().optional(),
-  variables: z.union([
-    z.array(VariableSchema),
-    z.array(z.string())
-  ]).optional(),
-  steps: z.array(z.string()).optional()
-});
-
-export const CategorySchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  icon: z.string().min(1),
-  order: z.number().optional()
-});
-
-export const AppDataSchema = z.object({
-  categories: z.array(CategorySchema),
-  commands: z.record(z.string(), z.array(CommandSchema))
-});
-```
-
-Update API route:
-```typescript
-// app/api/commands/route.ts
-import { AppDataSchema } from '@/lib/schemas';
-
-export async function POST(request: Request) {
-  const body = await request.json();
-  const result = AppDataSchema.safeParse(body);
-  
-  if (!result.success) {
-    return NextResponse.json(
-      { error: result.error.flatten() },
-      { status: 400 }
-    );
-  }
-  // ... proceed with validated data
-}
-```
+✅ Foundation hardened  
+✅ Component architecture  
+✅ Custom hooks  
+✅ Error handling  
+⏳ Database migration pending  
 
 ---
 
-### Step 1.2: Centralize Type Definitions
-**Effort:** 1 hour | **Impact:** Medium
+## Phase 1: Foundation Hardening ✅ COMPLETED
 
-```typescript
-// types/index.ts
-export interface Variable {
-  name: string;
-  placeholder: string;
-}
+### Step 1.1: Implement Zod Validation ✅
+- Created `lib/schemas.ts` with full AppData schema
+- API route validates all incoming data
+- Returns 400 with detailed errors on validation failure
 
-export interface Command {
-  id: string;
-  label: string;
-  command: string;
-  type: 'command' | 'workflow' | 'prompt';
-  isFavorite?: boolean;
-  order?: number;
-  variables?: Variable[] | string[];
-  steps?: string[];
-}
+### Step 1.2: Centralize Type Definitions ✅
+- Created `types/index.ts` as single source of truth
+- All components import from `@/types`
 
-export interface Category {
-  id: string;
-  name: string;
-  icon: string;
-  order?: number;
-}
-
-export interface AppData {
-  categories: Category[];
-  commands: Record<string, Command[]>;
-}
-```
+### Step 1.3: Replace alert() with toast() ✅
+- Replaced all `alert()` with `sonner` toasts
+- Added `<Toaster richColors />` to pages
 
 ---
 
-### Step 1.3: Replace alert() with toast()
-**Effort:** 30 minutes | **Impact:** Medium
+## Phase 2: Component Atomic Design ✅ COMPLETED
 
-Find and replace in `page.tsx` and `admin/page.tsx`:
+### Step 2.1: Extract Shared Components ✅
+Created 6 atomic components in `components/dev-caddy/`:
+- `Sidebar.tsx` (190 lines) - Category navigation
+- `Header.tsx` (24 lines) - Search bar
+- `CommandList.tsx` (48 lines) - Command list wrapper
+- `CommandCard.tsx` (205 lines) - Command display
+- `skeletons.tsx` (80 lines) - Loading states
+- `backup-controls.tsx` (108 lines) - Export/Import
 
-```typescript
-// Before
-alert("Error al guardar los datos.")
+### Step 2.2: Create Custom Hooks ✅
+Created `hooks/use-commands.ts` (133 lines):
+- `fetchData()` - GET /api/commands
+- `saveData()` - POST /api/commands
+- `toggleFavorite()` - Toggle favorite status
+- `importData()` - Restore from backup
 
-// After
-import { toast } from "sonner"
-toast.error("Error al guardar los datos.")
-```
-
-Add `<Toaster />` to layout or each page.
-
----
-
-## Phase 2: Component Atomic Design (Priority: High)
-
-### Step 2.1: Extract Shared Components
-**Effort:** 4 hours | **Impact:** Very High
-
-```
-components/
-├── commands/
-│   ├── CommandCard.tsx        # Single command display
-│   ├── CommandList.tsx        # List with scroll
-│   ├── WorkflowCard.tsx       # Multi-step workflow
-│   └── PromptCard.tsx         # AI prompt display
-│
-├── categories/
-│   ├── CategoryButton.tsx     # Single category
-│   ├── CategoryList.tsx       # Sidebar list
-│   └── CategorySearch.tsx     # Filter input
-│
-├── layout/
-│   ├── Sidebar.tsx            # Collapsible sidebar
-│   ├── MainPanel.tsx          # Content area
-│   └── SearchHeader.tsx       # Ctrl+K search bar
-│
-└── shared/
-    ├── LoadingScreen.tsx
-    ├── ErrorBoundary.tsx
-    └── ConfirmDialog.tsx
-```
+**Impact:** `app/page.tsx` reduced from 483 → 160 lines (-67%)
 
 ---
 
-### Step 2.2: Create Custom Hooks
-**Effort:** 2 hours | **Impact:** High
-
-```typescript
-// hooks/useCommandsData.ts
-export function useCommandsData() {
-  const [data, setData] = useState<AppData>({ categories: [], commands: {} });
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchData = async () => { /* ... */ };
-  const saveData = async (newData: AppData) => { /* ... */ };
-  const addCommand = async (categoryId: string, command: Command) => { /* ... */ };
-  const updateCommand = async (categoryId: string, command: Command) => { /* ... */ };
-  const deleteCommand = async (categoryId: string, commandId: string) => { /* ... */ };
-
-  return { data, isLoading, fetchData, saveData, addCommand, updateCommand, deleteCommand };
-}
-```
-
----
-
-## Phase 3: Data Layer Migration (Priority: Critical for Deployment)
+## Phase 3: Data Layer Migration ⏳ PENDING
 
 ### Option A: SQLite with Turso (Recommended)
-**Effort:** 8 hours | **Impact:** Critical
-
-Turso provides edge-compatible SQLite:
-
-```bash
-npm install @libsql/client
-```
-
-```typescript
-// lib/db.ts
-import { createClient } from '@libsql/client';
-
-export const db = createClient({
-  url: process.env.TURSO_DATABASE_URL!,
-  authToken: process.env.TURSO_AUTH_TOKEN!
-});
-```
-
----
+- Edge-compatible SQLite
+- Easy migration from JSON
 
 ### Option B: Supabase
-**Effort:** 6 hours | **Impact:** Critical
-
-```bash
-npm install @supabase/supabase-js
-```
-
-Tables:
-- `categories(id, name, icon, order)`
-- `commands(id, category_id, label, command, type, ...)`
-
----
+- PostgreSQL with real-time
+- Built-in auth
 
 ### Option C: JSON in Cloud Storage
-**Effort:** 4 hours | **Impact:** Critical
+- Vercel Blob / AWS S3 / Cloudflare R2
+- Simplest migration path
 
-Store `commands.json` in:
-- Vercel Blob Storage
-- AWS S3
-- Cloudflare R2
-
-Simplest migration path but limited scalability.
+> **Note:** Phase 3 is deferred until serverless deployment is required.
 
 ---
 
-## Phase 4: Error Handling & UX Polish
+## Phase 4: Error Handling & UX Polish ✅ COMPLETED
 
-### Step 4.1: Global Error Boundary
-**Effort:** 1 hour
+### Step 4.1: Global Error Boundary ✅
+- Created `app/error.tsx` with reset functionality
+- Created `app/not-found.tsx` for 404 handling
 
-```typescript
-// app/error.tsx
-'use client';
+### Step 4.2: Loading States ✅
+- Created skeleton components
+- Integrated `DashboardSkeleton` in loading states
+- Created `app/loading.tsx` for SSR
 
-export default function Error({ error, reset }) {
-  return (
-    <div className="...">
-      <h2>Something went wrong!</h2>
-      <button onClick={reset}>Try again</button>
-    </div>
-  );
-}
-```
+### Step 4.3: Data Backup ✅
+- Export to JSON button (downloads file)
+- Import from JSON (validates structure)
+- Integrated in Admin panel header
 
 ---
 
-### Step 4.2: Loading States
-**Effort:** 1 hour
+## Phase 5: UX Excellence 📋 PLANNED
 
-Add loading skeletons for:
-- Command list
-- Category sidebar
-- Admin panels
+See [UX_IMPROVEMENT_PLAN.md](UX_IMPROVEMENT_PLAN.md) for detailed plan.
 
----
-
-### Step 4.3: Data Backup
-**Effort:** 2 hours
-
-- Export to JSON button
-- Import from JSON
-- Auto-backup to localStorage
+Key areas:
+- [ ] Keyboard-first navigation
+- [ ] Drag & Drop reordering
+- [ ] Fuzzy search (fuse.js)
+- [ ] Syntax highlighting
+- [ ] Dark/Light mode toggle
+- [ ] Micro-interactions
 
 ---
 
 ## Version Milestones
 
-| Version | Features | ETA |
-|---------|----------|-----|
-| **v0.2.0** | Zod validation, types, toasts | 1 day |
-| **v0.3.0** | Component refactor, hooks | 3 days |
-| **v0.4.0** | Database migration | 1 week |
-| **v1.0.0** | Production-ready | 2 weeks |
+| Version | Features | Status |
+|---------|----------|--------|
+| **v0.1.0** | MVP - Core functionality | ✅ Complete |
+| **v0.2.0** | Refactor - Architecture | ✅ Complete |
+| **v0.3.0** | UX Excellence | 📋 Planned |
+| **v0.4.0** | Database migration | 📋 Planned |
+| **v1.0.0** | Production-ready | 📋 Planned |
 
 ---
 
 ## Success Criteria for v1.0.0
 
+- [x] No `alert()` calls anywhere
+- [x] All API inputs validated with Zod
+- [x] No single file > 300 lines
+- [x] Shared types in one location
+- [x] Error boundaries catch failures
+- [x] Loading states for all async ops
+- [x] Export/import for backup
 - [ ] Deploys successfully to Vercel
-- [ ] No `alert()` calls anywhere
-- [ ] All API inputs validated with Zod
-- [ ] No single file > 300 lines
-- [ ] Shared types in one location
-- [ ] Error boundaries catch failures
-- [ ] Loading states for all async ops
-- [ ] Export/import for backup
+- [ ] Test coverage > 80%

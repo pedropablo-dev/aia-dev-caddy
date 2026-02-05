@@ -1,8 +1,12 @@
-# Dev-Caddy Architecture
+# Dev-Caddy Architecture v0.2.0
 
 ## Overview
 
-Dev-Caddy is a personal command palette application for developers. It stores commands, workflows, and AI prompts organized by categories with localStorage-persisted UI state.
+Dev-Caddy is a personal command palette application. After the v0.2.0 refactor, it features:
+- **Atomic component architecture** with clear separation of concerns
+- **Custom hooks** for data management
+- **Zod validation** for API security
+- **Error boundaries** for resilience
 
 ---
 
@@ -11,13 +15,22 @@ Dev-Caddy is a personal command palette application for developers. It stores co
 ```mermaid
 graph TB
     subgraph "Frontend (React/Next.js)"
-        UI["UI Components"]
+        Page["page.tsx (Orchestrator)"]
+        Hook["useCommands Hook"]
+        Components["Atomic Components"]
+        Page --> Hook
+        Page --> Components
+    end
+    
+    subgraph "Data Layer"
         Zustand["Zustand Stores"]
-        UI --> Zustand
+        Hook --> Zustand
     end
     
     subgraph "API Layer"
         API["Next.js API Routes"]
+        Zod["Zod Validation"]
+        API --> Zod
     end
     
     subgraph "Persistence"
@@ -25,73 +38,182 @@ graph TB
         LS["localStorage"]
     end
     
-    UI -->|"fetch/POST"| API
-    API -->|"fs.read/write"| JSON
+    Hook -->|"fetch/POST"| API
+    Zod -->|"validated"| JSON
     Zustand -->|"persist"| LS
 ```
 
 ---
 
-## Data Flow
+## Component Architecture
 
-### Read Flow
-```mermaid
-sequenceDiagram
-    participant C as Component
-    participant A as /api/commands
-    participant F as commands.json
-    
-    C->>A: GET /api/commands
-    A->>F: fs.readFile()
-    F-->>A: JSON data
-    A-->>C: Response
-    C->>C: setData(jsonData)
+### Atomic Design Pattern
+
+```
+components/dev-caddy/
+├── Sidebar.tsx          # 190 lines - Category navigation
+│   ├── CategoryList
+│   ├── CategorySearch
+│   ├── HelpDialog
+│   └── AdminLink
+│
+├── Header.tsx           # 24 lines - Search bar
+│   └── Ctrl+K input
+│
+├── CommandList.tsx      # 48 lines - ScrollArea wrapper
+│   └── Maps CommandCard
+│
+├── CommandCard.tsx      # 205 lines - Command display
+│   ├── SimpleCommand
+│   ├── WorkflowCard
+│   ├── PromptCard
+│   └── VariablesForm
+│
+├── skeletons.tsx        # 80 lines - Loading states
+│   ├── SidebarSkeleton
+│   ├── CommandListSkeleton
+│   └── DashboardSkeleton
+│
+└── backup-controls.tsx  # 108 lines - Export/Import
+    ├── handleExport
+    └── handleImport
 ```
 
-### Write Flow
-```mermaid
-sequenceDiagram
-    participant C as Component
-    participant A as /api/commands
-    participant F as commands.json
-    
-    C->>C: Modify local state
-    C->>A: POST /api/commands
-    A->>F: fs.writeFile()
-    F-->>A: Success
-    A-->>C: Response
+### Page Orchestration
+
+```typescript
+// app/page.tsx (160 lines - reduced from 483)
+export default function BroworksLaunchpad() {
+  // Data layer (hook)
+  const { data, isLoading, hasMounted, toggleFavorite } = useCommands()
+  
+  // UI state only
+  const [searchQuery, setSearchQuery] = useState("")
+  
+  // Loading state
+  if (isLoading || !hasMounted) {
+    return <DashboardSkeleton />
+  }
+  
+  // Render atomic components
+  return (
+    <div>
+      <Sidebar categories={...} />
+      <Header searchQuery={...} onSearchChange={...} />
+      <CommandList commands={...} onToggleFavorite={toggleFavorite} />
+    </div>
+  )
+}
 ```
 
 ---
 
-## Component Hierarchy
+## Data Layer
 
+### Custom Hook: useCommands
+
+```typescript
+// hooks/use-commands.ts (133 lines)
+export function useCommands() {
+  const [data, setData] = useState<AppData>({ categories: [], commands: {} })
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasMounted, setHasMounted] = useState(false)
+
+  const fetchData = useCallback(async () => { /* GET /api/commands */ }, [])
+  const saveData = useCallback(async (newData: AppData) => { /* POST */ }, [])
+  const toggleFavorite = useCallback((commandId: string) => { /* ... */ }, [data, saveData])
+  const importData = useCallback(async (newData: AppData) => { /* restore */ }, [saveData])
+
+  useEffect(() => { fetchData() }, [])
+
+  return { data, isLoading, hasMounted, fetchData, saveData, toggleFavorite, importData }
+}
 ```
-app/
-├── page.tsx              # Main launchpad (486 lines)
-│   ├── Sidebar
-│   │   ├── CategoryList
-│   │   ├── CategorySearch
-│   │   └── HelpDialog
-│   └── MainPanel
-│       ├── CommandSearch
-│       └── CommandCards
-│
-├── admin/
-│   ├── page.tsx          # Admin panel (398 lines)
-│   │   ├── CategoryManager
-│   │   ├── CommandManager
-│   │   └── CRUD Dialogs
-│   │
-│   └── editor/
-│       └── page.tsx      # Prompt editor (488 lines)
-│           ├── Toolbar
-│           ├── TextArea
-│           └── VariablesPanel
-│
-└── api/
-    └── commands/
-        └── route.ts      # GET/POST handlers
+
+**Benefits:**
+- ✅ Single responsibility
+- ✅ Reusable across pages
+- ✅ Centralized error handling (toast)
+- ✅ Memoized with useCallback
+
+---
+
+## API Validation Layer
+
+### Zod Schemas
+
+```typescript
+// lib/schemas.ts
+export const CommandSchema = z.object({
+  id: z.string().min(1),
+  label: z.string().min(1),
+  command: z.string(),
+  type: z.enum(['command', 'workflow', 'prompt']),
+  isFavorite: z.boolean().optional(),
+  order: z.number().optional(),
+  variables: z.union([z.array(VariableSchema), z.array(z.string())]).optional(),
+  steps: z.array(z.string()).optional()
+});
+
+export const AppDataSchema = z.object({
+  categories: z.array(CategorySchema),
+  commands: z.record(z.string(), z.array(CommandSchema))
+});
+```
+
+### Validated API Route
+
+```typescript
+// app/api/commands/route.ts
+export async function POST(request: Request) {
+  const body = await request.json();
+  const result = AppDataSchema.safeParse(body);
+  
+  if (!result.success) {
+    return NextResponse.json(
+      { message: "Validation failed", errors: result.error.flatten() },
+      { status: 400 }
+    );
+  }
+  
+  // Safe to write validated data
+  await fs.writeFile(filePath, JSON.stringify(result.data, null, 2));
+}
+```
+
+---
+
+## Error Handling
+
+### Global Error Boundary
+
+```typescript
+// app/error.tsx
+export default function Error({ error, reset }: ErrorProps) {
+  useEffect(() => { console.error("Application error:", error) }, [error])
+  
+  return (
+    <div>
+      <AlertTriangle />
+      <h1>Algo ha salido mal</h1>
+      <Button onClick={reset}>Intentar de nuevo</Button>
+    </div>
+  )
+}
+```
+
+### 404 Page
+
+```typescript
+// app/not-found.tsx
+export default function NotFound() {
+  return (
+    <div>
+      <h1>404</h1>
+      <Link href="/"><Button>Volver al inicio</Button></Link>
+    </div>
+  )
+}
 ```
 
 ---
@@ -106,39 +228,63 @@ app/
 | `appStore` | `adminSelectedCategory` | Current category in admin | localStorage |
 | `uiStore` | `isSidebarCollapsed` | Sidebar toggle state | localStorage |
 
-### Local Component State
+### Data Flow
 
-Each page manages its own:
-- `data: AppData` - Commands and categories
-- `isLoading: boolean` - Loading state
-- Form/dialog states for CRUD operations
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant C as Component
+    participant H as useCommands Hook
+    participant A as API Route
+    participant Z as Zod
+    participant F as commands.json
+    
+    U->>C: Click action
+    C->>H: toggleFavorite(id)
+    H->>A: POST /api/commands
+    A->>Z: validate(data)
+    Z-->>A: valid ✅
+    A->>F: fs.writeFile()
+    F-->>A: Success
+    A-->>H: Response
+    H->>H: setData(newData)
+    H-->>C: Re-render
+```
 
 ---
 
-## Data Model
+## Type System
+
+### Single Source of Truth
 
 ```typescript
-interface Category {
-  id: string          // Unique slug
-  name: string        // Display name
-  icon: string        // Emoji icon
-  order?: number      // Sort order
+// types/index.ts
+export interface Variable {
+  name: string;
+  placeholder: string;
 }
 
-interface Command {
-  id: string
-  label: string       // Display name
-  command: string     // Content/command text
-  type: "command" | "workflow" | "prompt"
-  isFavorite?: boolean
-  order?: number
-  variables?: Variable[] | string[]  // For templates
-  steps?: string[]                   // For workflows
+export interface Command {
+  id: string;
+  label: string;
+  command: string;
+  type: 'command' | 'workflow' | 'prompt';
+  isFavorite?: boolean;
+  order?: number;
+  variables?: Variable[] | string[];
+  steps?: string[];
 }
 
-interface AppData {
-  categories: Category[]
-  commands: Record<string, Command[]>  // categoryId -> commands
+export interface Category {
+  id: string;
+  name: string;
+  icon: string;
+  order?: number;
+}
+
+export interface AppData {
+  categories: Category[];
+  commands: Record<string, Command[]>;
 }
 ```
 
@@ -150,7 +296,6 @@ interface AppData {
 |---------|---------|---------|
 | `next` | 14.2.30 | Framework |
 | `zustand` | 5.0.6 | State management |
-| `zod` | 3.24.1 | Validation (installed, not used) |
+| `zod` | 3.24.1 | API validation ✅ |
 | `sonner` | 1.7.1 | Toast notifications |
-| `react-markdown` | 10.1.0 | Markdown rendering |
 | `lucide-react` | 0.454.0 | Icons |
