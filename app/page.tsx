@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
+import Fuse from "fuse.js"
 import { Toaster } from "@/components/ui/sonner"
 import type { Command, Category } from "@/types"
 import { Sidebar } from "@/components/dev-caddy/Sidebar"
@@ -51,28 +52,41 @@ export default function BroworksLaunchpad() {
     return [favCategory, ...regularCategories]
   }, [data.categories])
 
+  // --- All Commands (flattened for fuzzy search) ---
+  const allCommands = useMemo(() => {
+    return Object.values(data.commands).flat()
+  }, [data.commands])
+
+  // --- Fuse.js Instance (memoized) ---
+  const fuse = useMemo(() => {
+    return new Fuse(allCommands, {
+      keys: ['label', 'command', 'type'],
+      threshold: 0.3,
+      ignoreLocation: true,
+    })
+  }, [allCommands])
+
+  // --- Filtered Commands ---
   const filteredCommands = useMemo(() => {
+    // If search is active, use Fuse.js to search globally
+    if (searchQuery) {
+      const results = fuse.search(searchQuery)
+      return results.map(result => result.item)
+    }
+
+    // Otherwise, filter by category
     let commandsToShow: Command[]
 
     if (selectedCategory === 'favorites') {
-      commandsToShow = Object.values(data.commands)
-        .flat()
+      commandsToShow = allCommands
         .filter((cmd) => cmd.isFavorite)
         .sort((a, b) => (a.label > b.label) ? 1 : -1)
     } else {
       commandsToShow = [...(data.commands[selectedCategory] || [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     }
 
-    if (searchQuery) {
-      return commandsToShow.filter(
-        (cmd) =>
-          cmd.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          cmd.command.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    }
-
     return commandsToShow
-  }, [selectedCategory, data.commands, searchQuery])
+  }, [selectedCategory, data.commands, searchQuery, fuse, allCommands])
 
   // --- Reset selectedIndex when search or category changes ---
   useEffect(() => {
