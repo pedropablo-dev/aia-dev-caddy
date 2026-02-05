@@ -41,6 +41,12 @@
       "name": "asdfas",
       "icon": "🚀",
       "order": 6
+    },
+    {
+      "id": "dadfgasdfasfasdfasdfasdf-1770297072507",
+      "name": "dadfgasdfasfasdfasdfasdf",
+      "icon": "🤷‍♂️",
+      "order": 7
     }
   ],
   "commands": {
@@ -224,6 +230,29 @@
         "type": "command",
         "isFavorite": false,
         "order": 0
+      }
+    ],
+    "dadfgasdfasfasdfasdfasdf-1770297072507": [
+      {
+        "id": "cmd-1770297080196",
+        "label": "dafasdfasdfasdfasdfasdf",
+        "command": "asdfasdfasdfasdfa",
+        "type": "command",
+        "isFavorite": false,
+        "order": 0
+      },
+      {
+        "id": "cmd-1770297096574",
+        "label": "fasdfasdf",
+        "command": "workflow",
+        "type": "workflow",
+        "isFavorite": false,
+        "order": 1,
+        "steps": [
+          "fadfasd",
+          "asdfas",
+          "asdfa"
+        ]
       }
     ]
   }
