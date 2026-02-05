@@ -4,12 +4,12 @@
 
 ---
 
-## Current State: v0.2.0 (Refactor Complete)
+## Current State: v0.3.0 (UX Excellence)
 
-✅ Foundation hardened  
+✅ Drag & Drop Reordering  
+✅ Fuzzy Search & Keyboard Nav  
+✅ Syntax Highlighting  
 ✅ Component architecture  
-✅ Custom hooks  
-✅ Error handling  
 ⏳ Database migration pending  
 
 ---
@@ -89,17 +89,16 @@ Created `hooks/use-commands.ts` (133 lines):
 
 ---
 
-## Phase 5: UX Excellence 📋 PLANNED
+## Phase 5: UX Excellence ✅ COMPLETED
 
-See [UX_IMPROVEMENT_PLAN.md](UX_IMPROVEMENT_PLAN.md) for detailed plan.
+See [UX_IMPROVEMENT_PLAN.md](UX_IMPROVEMENT_PLAN.md) for details.
 
-Key areas:
-- [ ] Keyboard-first navigation
-- [ ] Drag & Drop reordering
-- [ ] Fuzzy search (fuse.js)
-- [ ] Syntax highlighting
-- [ ] Dark/Light mode toggle
-- [ ] Micro-interactions
+Key achievements:
+- [x] Keyboard-first navigation (Arrows + Enter)
+- [x] Drag & Drop reordering (dnd-kit)
+- [x] Fuzzy search (fuse.js)
+- [x] Syntax highlighting (prism-react-renderer)
+- [x] Micro-interactions & Visual Polish
 
 ---
 
@@ -109,7 +108,7 @@ Key areas:
 |---------|----------|--------|
 | **v0.1.0** | MVP - Core functionality | ✅ Complete |
 | **v0.2.0** | Refactor - Architecture | ✅ Complete |
-| **v0.3.0** | UX Excellence | 📋 Planned |
+| **v0.3.0** | UX Excellence | ✅ Complete |
 | **v0.4.0** | Database migration | 📋 Planned |
 | **v1.0.0** | Production-ready | 📋 Planned |
 

@@ -9,20 +9,23 @@ _¿Cansado de buscar en tu historial, notas o wikis internas el mismo comando un
 ## ✨ Características Principales
 
 - **Organización Intuitiva:** Agrupa tus comandos en **categorías** personalizables con iconos emoji
-- **Búsqueda Instantánea:** Filtro rápido con `Ctrl+K` para encontrar cualquier item en milisegundos
+- **Búsqueda Instantánea:** Filtro inteligente con `Ctrl+K` (Fuzzy Search) para encontrar items incluso con errores tipográficos
+- **Arrastrar y Soltar:** Reordena categorías y comandos libremente con una experiencia fluida (`@dnd-kit`)
+- **Navegación por Teclado:** Muévete con flechas `↑` `↓` y copia con `Enter`
+- **Sintaxis Resaltada:** Bloques de código con colores para mejor legibilidad
 - **⭐ Sistema de Favoritos:** Marca items con estrella para acceso rápido
-- **Panel de Administración:** Interfaz CRUD completa en `/admin` con reordenamiento
+- **Panel de Administración:** Interfaz CRUD completa en `/admin`
 - **Editor de Prompts:** Editor rico con toolbar Markdown, variables dinámicas y modo Zen
 
-### ✅ Nuevas Características v0.2.0
+### ✅ Nuevas Características v0.3.0
 
 | Característica | Descripción |
 |----------------|-------------|
-| **🔒 Validación Zod** | API protegida con validación de esquemas |
-| **🛡️ Error Boundaries** | Prevención de "pantalla blanca" con recuperación |
-| **⚡ Skeleton Loading** | Estados de carga con placeholders visuales |
-| **💾 Backup/Restore** | Exportar e importar datos en JSON |
-| **🧩 Arquitectura Atómica** | Componentes modulares y hooks reutilizables |
+| **🖐️ Drag & Drop** | Reordenación táctil y fluida en Admin |
+| **🔍 Fuzzy Search** | Búsqueda tolerante a fallos (typos) |
+| **⌨️ Keyboard Nav** | Navegación completa sin ratón |
+| **🎨 Syntax Highlighting** | Código coloreado (vsDark theme) |
+| **✨ Visual Polish** | Skeletons oscuros y micro-interacciones |
 
 ### Tipos de Items
 
@@ -42,50 +45,31 @@ _¿Cansado de buscar en tu historial, notas o wikis internas el mismo comando un
 | [Next.js](https://nextjs.org/) | 14.2.30 | Framework (App Router) |
 | [TypeScript](https://www.typescriptlang.org/) | 5.x | Lenguaje |
 | [Tailwind CSS](https://tailwindcss.com/) | 3.4.17 | Estilos |
-| [Shadcn UI](https://ui.shadcn.com/) | - | Componentes UI |
+| [dnd-kit](https://dndkit.com/) | Core | Drag & Drop |
+| [Fuse.js](https://fusejs.io/) | 7.0 | Búsqueda Fuzzy |
+| [Prism React](https://github.com/FormidableLabs/prism-react-renderer) | Latest | Syntax Highlighting |
 | [Zustand](https://github.com/pmndrs/zustand) | 5.0.6 | Estado global |
 | [Sonner](https://sonner.emilkowal.ski/) | 1.7.1 | Notificaciones toast |
 | [Zod](https://zod.dev/) | 3.24.1 | Validación de API |
 
 ---
 
-## 🏗️ Arquitectura v0.2.0
+## 🏗️ Arquitectura v0.3.0
 
 ```
 app/
-├── page.tsx              # Launchpad (160 líneas - orquestador)
-├── error.tsx             # Error boundary global
-├── not-found.tsx         # Página 404
-├── loading.tsx           # Skeleton SSR
+├── page.tsx              # Launchpad (Orquestador)
 ├── admin/
-│   ├── page.tsx          # Panel de administración
+│   ├── page.tsx          # Panel Admin (Drag & Drop context)
 │   └── editor/page.tsx   # Editor de prompts
-├── api/commands/route.ts # API REST (Zod validado)
-└── data/commands.json    # Fuente de datos
+├── ...
 
 components/dev-caddy/
-├── Sidebar.tsx           # Navegación lateral
-├── Header.tsx            # Barra de búsqueda
-├── CommandList.tsx       # Lista de comandos
-├── CommandCard.tsx       # Tarjeta individual
-├── skeletons.tsx         # Estados de carga
-└── backup-controls.tsx   # Export/Import
-
-hooks/
-└── use-commands.ts       # Data fetching + state
-
-types/
-└── index.ts              # Tipos centralizados (SSoT)
-
-lib/
-└── schemas.ts            # Esquemas Zod
+├── SortableCommandItem.tsx # Item reordenable
+├── SortableCategoryItem.tsx # Categoría reordenable
+├── CommandCard.tsx       # Tarjeta con Syntax Highlighting
+└── ...
 ```
-
-**Flujo de datos:**
-1. `types/index.ts` es la fuente única de tipos
-2. `useCommands` hook gestiona fetch/save/toggle
-3. API route valida con Zod antes de escribir
-4. Error boundaries capturan fallos
 
 ---
 
@@ -93,10 +77,10 @@ lib/
 
 | Documento | Descripción |
 |-----------|-------------|
-| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Diagramas, hooks y flujo de datos |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Diagramas, componentes y dependencias |
 | [PROJECT_BIBLE.md](docs/PROJECT_BIBLE.md) | Guía completa para desarrolladores |
-| [ROADMAP.md](docs/ROADMAP.md) | Plan de modernización (Fases 1-4 ✅) |
-| [UX_IMPROVEMENT_PLAN.md](docs/UX_IMPROVEMENT_PLAN.md) | Plan de mejoras UX |
+| [ROADMAP.md](docs/ROADMAP.md) | Plan de modernización (Fases 1-5 ✅) |
+| [UX_IMPROVEMENT_PLAN.md](docs/UX_IMPROVEMENT_PLAN.md) | Plan de mejoras UX (Completado) |
 
 ---
 
@@ -133,17 +117,16 @@ npm run dev
 
 ## 🔮 Estado del Proyecto
 
-**Versión actual:** 0.2.0 (Refactor Completo)
+**Versión actual:** 0.3.0 (UX Excellence)
 
 | Área | Estado |
 |------|--------|
 | Funcionalidad core | ✅ Completa |
+| UX / UI Polish | ✅ Completa |
+| Drag & Drop | ✅ Implementado |
+| Búsqueda Fuzzy | ✅ Implementada |
 | Validación API (Zod) | ✅ Implementada |
-| Error Boundaries | ✅ Implementadas |
-| Skeleton Loading | ✅ Implementado |
 | Backup/Restore | ✅ Implementado |
-| Componentes Atómicos | ✅ Completado |
-| Hooks Reutilizables | ✅ Completado |
 | Tests | ❌ Pendiente |
 | Despliegue serverless | ❌ Requiere DB |
 

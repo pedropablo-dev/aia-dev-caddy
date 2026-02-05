@@ -45,14 +45,25 @@ graph TB
 
 ---
 
+## Drag & Drop Strategy (v0.3.0)
+
+To support reordering of both Categories and Commands within a single `DndContext`, we use an **ID Prefix Strategy** to prevent collisions:
+
+- **Categories:** `cat-${category.id}`
+- **Commands:** `cmd-${command.id}`
+
+The `handleDragEnd` function in `app/admin/page.tsx` checks these prefixes to determine which list is being reordered and executes the appropriate logic (updating `categories` array vs updating `commands[categoryId]` array).
+
+---
+
 ## Component Architecture
 
 ### Atomic Design Pattern
 
 ```
 components/dev-caddy/
-├── Sidebar.tsx          # 190 lines - Category navigation
-│   ├── CategoryList
+├── Sidebar.tsx          # 190 lines - Category navigation / SortableContext
+│   ├── SortableCategoryItem # Draggable category
 │   ├── CategorySearch
 │   ├── HelpDialog
 │   └── AdminLink
@@ -68,6 +79,8 @@ components/dev-caddy/
 │   ├── WorkflowCard
 │   ├── PromptCard
 │   └── VariablesForm
+│
+├── SortableCommandItem.tsx # Draggable command wrapper
 │
 ├── skeletons.tsx        # 80 lines - Loading states
 │   ├── SidebarSkeleton
@@ -299,3 +312,7 @@ export interface AppData {
 | `zod` | 3.24.1 | API validation ✅ |
 | `sonner` | 1.7.1 | Toast notifications |
 | `lucide-react` | 0.454.0 | Icons |
+| `@dnd-kit/core` | 6.x | Drag & Drop Logic |
+| `@dnd-kit/sortable` | 8.x | Sortable Primitives |
+| `fuse.js` | 7.0 | Fuzzy Search |
+| `prism-react-renderer` | 2.x | Syntax Highlighting |
