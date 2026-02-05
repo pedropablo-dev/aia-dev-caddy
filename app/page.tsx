@@ -3,98 +3,24 @@
 import { useState, useEffect, useMemo } from "react"
 import Image from "next/image"
 import { Toaster } from "@/components/ui/sonner"
-import { toast } from "sonner"
-import type { Command, Category, AppData } from "@/types"
+import type { Command, Category } from "@/types"
 import { Sidebar } from "@/components/dev-caddy/Sidebar"
 import { Header } from "@/components/dev-caddy/Header"
 import { CommandList } from "@/components/dev-caddy/CommandList"
 import { useAppStore } from "@/store/appStore"
+import { useCommands } from "@/hooks/use-commands"
 
 export default function BroworksLaunchpad() {
-  // --- Estados de Datos y UI Principal ---
-  const [data, setData] = useState<AppData>({ categories: [], commands: {} })
-  const [isLoading, setIsLoading] = useState(true)
+  // --- Custom Hook for Data Logic ---
+  const { data, isLoading, hasMounted, toggleFavorite } = useCommands()
+
+  // --- UI State ---
   const { selectedCategory } = useAppStore()
   const [searchQuery, setSearchQuery] = useState("")
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [workflowStep, setWorkflowStep] = useState<Record<string, number>>({})
-  const [hasMounted, setHasMounted] = useState(false);
   const [helpContent, setHelpContent] = useState("")
-
-  // --- Lógica de Datos (Carga) ---
-  const fetchData = async () => {
-    if (!isLoading) setIsLoading(true)
-    try {
-      const response = await fetch("/api/commands")
-      if (!response.ok) throw new Error(`API call failed with status: ${response.status}`)
-
-      const jsonData: AppData = await response.json()
-
-      let needsSave = false;
-      jsonData.categories.forEach((cat, index) => {
-        if (cat.order === undefined) {
-          cat.order = index;
-          needsSave = true;
-        }
-      });
-
-      for (const categoryId in jsonData.commands) {
-        jsonData.commands[categoryId].forEach((cmd, index) => {
-          if (cmd.order === undefined) {
-            cmd.order = index;
-            needsSave = true;
-          }
-        });
-      }
-
-      setData(jsonData)
-
-      // Se mantiene la categoría seleccionada del store, no se resetea
-      if (needsSave) {
-        await saveData(jsonData, false);
-      }
-
-    } catch (error) {
-      console.error("Error loading commands:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const saveData = async (newData: AppData, shouldRefetch = true) => {
-    try {
-      const response = await fetch("/api/commands", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newData),
-      });
-
-      // 🔒 Check if validation failed (400) or server error (500)
-      if (!response.ok) {
-        const errorData = await response.json();
-        const errorMessage = errorData.message || "Error al guardar los datos";
-
-        // Show validation errors if available
-        if (errorData.errors) {
-          console.error("Validation errors:", errorData.errors);
-          toast.error(`${errorMessage}. Revisa los datos.`);
-        } else {
-          toast.error(errorMessage);
-        }
-        return;
-      }
-
-      if (shouldRefetch) {
-        // No se llama a fetchData para evitar bucles. 
-        // El estado se actualiza localmente en las funciones que guardan.
-        setData(newData);
-      }
-    } catch (error) {
-      console.error("Error saving data:", error);
-      toast.error("Error de conexión al guardar los datos.");
-    }
-  };
 
   // --- Lógica de Ayuda ---
   useEffect(() => {
@@ -112,25 +38,6 @@ export default function BroworksLaunchpad() {
     loadHelpContent()
   }, [])
 
-  // --- Lógica de Favoritos ---
-  const handleToggleFavorite = (commandId: string) => {
-    const newData = JSON.parse(JSON.stringify(data)) as AppData; // Deep clone
-    for (const categoryId in newData.commands) {
-      const cmd = newData.commands[categoryId].find((c) => c.id === commandId);
-      if (cmd) {
-        cmd.isFavorite = !cmd.isFavorite;
-        break;
-      }
-    }
-    saveData(newData);
-  };
-
-  useEffect(() => {
-    setHasMounted(true);
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // --- Categorías y Comandos Filtrados ---
   const sortedCategories = useMemo(() => {
     const favCategory: Category = {
@@ -138,21 +45,21 @@ export default function BroworksLaunchpad() {
       name: 'Favoritos',
       icon: '⭐',
       order: -1
-    };
-    const regularCategories = [...data.categories].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    return [favCategory, ...regularCategories];
-  }, [data.categories]);
+    }
+    const regularCategories = [...data.categories].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    return [favCategory, ...regularCategories]
+  }, [data.categories])
 
   const filteredCommands = useMemo(() => {
-    let commandsToShow: Command[];
+    let commandsToShow: Command[]
 
     if (selectedCategory === 'favorites') {
       commandsToShow = Object.values(data.commands)
         .flat()
         .filter((cmd) => cmd.isFavorite)
-        .sort((a, b) => (a.label > b.label) ? 1 : -1); // Ordenar favoritos alfabéticamente
+        .sort((a, b) => (a.label > b.label) ? 1 : -1)
     } else {
-      commandsToShow = [...(data.commands[selectedCategory] || [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+      commandsToShow = [...(data.commands[selectedCategory] || [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     }
 
     if (searchQuery) {
@@ -160,19 +67,18 @@ export default function BroworksLaunchpad() {
         (cmd) =>
           cmd.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
           cmd.command.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      )
     }
 
-    return commandsToShow;
-  }, [selectedCategory, data.commands, searchQuery]);
-
+    return commandsToShow
+  }, [selectedCategory, data.commands, searchQuery])
 
   // --- Lógica de Interacción con Comandos ---
   const handleCopyCommand = (commandId: string, baseCommand: string, variables?: any[]) => {
     let finalCommand = baseCommand
     if (variables) {
       variables.forEach((variable) => {
-        const varName = typeof variable === 'string' ? variable : variable.name;
+        const varName = typeof variable === 'string' ? variable : variable.name
         const value = variableValues[`${commandId}_${varName}`] || ""
         finalCommand = finalCommand.replace(`{${varName}}`, value)
       })
@@ -190,8 +96,8 @@ export default function BroworksLaunchpad() {
   }
 
   const handleVariableChange = (key: string, value: string) => {
-    setVariableValues((prev) => ({ ...prev, [key]: value }));
-  };
+    setVariableValues((prev) => ({ ...prev, [key]: value }))
+  }
 
   // --- Atajo de Teclado ---
   useEffect(() => {
@@ -236,7 +142,7 @@ export default function BroworksLaunchpad() {
               workflowStep={workflowStep}
               onCopyCommand={handleCopyCommand}
               onWorkflowStep={handleWorkflowStep}
-              onToggleFavorite={handleToggleFavorite}
+              onToggleFavorite={toggleFavorite}
               onVariableChange={handleVariableChange}
             />
           </div>

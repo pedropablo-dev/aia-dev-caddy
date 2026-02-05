@@ -47,6 +47,12 @@
       "name": "dadfgasdfasfasdfasdfasdf",
       "icon": "🤷‍♂️",
       "order": 7
+    },
+    {
+      "id": "dddddddddddddddddd-1770299076177",
+      "name": "dddddddddddddddddd",
+      "icon": "🛡️",
+      "order": 8
     }
   ],
   "commands": {
@@ -181,7 +187,7 @@
         "label": "Explicar Fragmento de Código",
         "command": "Actúa como un programador senior. Explica el siguiente fragmento de código de `{Language}` de forma clara y concisa. Céntrate en el porqué de su diseño y en las posibles mejoras.\n\n```\n{CodeSnippet}\n```",
         "type": "prompt",
-        "isFavorite": false,
+        "isFavorite": true,
         "order": 1,
         "variables": [
           "{Language}",
@@ -195,6 +201,7 @@
         "label": "Conectar a Servidor",
         "command": "ssh {user}@{host} -p {port}",
         "type": "command",
+        "isFavorite": true,
         "order": 0,
         "variables": [
           {
@@ -230,6 +237,22 @@
         "type": "command",
         "isFavorite": false,
         "order": 0
+      },
+      {
+        "id": "cmd-copy-1770299187804",
+        "label": "sdSD (Copia)",
+        "command": "asd",
+        "type": "command",
+        "isFavorite": false,
+        "order": 1
+      },
+      {
+        "id": "cmd-copy-1770299190023",
+        "label": "sdSD (Copia) (Copia)",
+        "command": "asd",
+        "type": "command",
+        "isFavorite": false,
+        "order": 2
       }
     ],
     "dadfgasdfasfasdfasdfasdf-1770297072507": [
@@ -253,6 +276,32 @@
           "asdfas",
           "asdfa"
         ]
+      }
+    ],
+    "dddddddddddddddddd-1770299076177": [
+      {
+        "id": "cmd-1770299083557",
+        "label": "asdfasdfasdf",
+        "command": "asdfasdfasdfasdfasdf",
+        "type": "command",
+        "isFavorite": false,
+        "order": 0
+      },
+      {
+        "id": "cmd-copy-1770299180434",
+        "label": "asdfasdfasdf (Copia)",
+        "command": "asdfasdfasdfasdfasdf",
+        "type": "command",
+        "isFavorite": false,
+        "order": 1
+      },
+      {
+        "id": "cmd-copy-1770299183444",
+        "label": "asdfasdfasdf (Copia) (Copia)",
+        "command": "asdfasdfasdfasdfasdf",
+        "type": "command",
+        "isFavorite": false,
+        "order": 2
       }
     ]
   }
