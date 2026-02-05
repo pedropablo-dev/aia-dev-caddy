@@ -35,30 +35,6 @@
       "name": "Test Zod",
       "icon": "🚦",
       "order": 5
-    },
-    {
-      "id": "asdfas-1770296269136",
-      "name": "asdfas",
-      "icon": "🚀",
-      "order": 6
-    },
-    {
-      "id": "dadfgasdfasfasdfasdfasdf-1770297072507",
-      "name": "dadfgasdfasfasdfasdfasdf",
-      "icon": "🤷‍♂️",
-      "order": 7
-    },
-    {
-      "id": "dddddddddddddddddd-1770299076177",
-      "name": "dddddddddddddddddd",
-      "icon": "🛡️",
-      "order": 8
-    },
-    {
-      "id": "aaaaaaaaaaaaaaaaaaaa-1770301862914",
-      "name": "aaaaaaaaaaaaaaaaaaaa",
-      "icon": "a",
-      "order": 9
     }
   ],
   "commands": {
@@ -104,7 +80,7 @@
         "label": "Deshacer Último Commit (Local)",
         "command": "git reset --soft HEAD~1",
         "type": "command",
-        "order": 4
+        "order": 3
       },
       {
         "id": "cmd-1770295010475",
@@ -112,7 +88,7 @@
         "command": "fghdfgh",
         "type": "command",
         "isFavorite": false,
-        "order": 3
+        "order": 4
       }
     ],
     "docker-commands": [
@@ -223,6 +199,14 @@
             "placeholder": "ej: 22"
           }
         ]
+      },
+      {
+        "id": "cmd-1770306125107",
+        "label": " gsdg",
+        "command": "sdfgsd",
+        "type": "command",
+        "isFavorite": false,
+        "order": 1
       }
     ],
     "test-zod-1770295061923": [
@@ -232,91 +216,6 @@
         "command": "dfhd",
         "type": "command",
         "isFavorite": false,
-        "order": 0
-      }
-    ],
-    "asdfas-1770296269136": [
-      {
-        "id": "cmd-1770296275717",
-        "label": "sdSD",
-        "command": "asd",
-        "type": "command",
-        "isFavorite": false,
-        "order": 0
-      },
-      {
-        "id": "cmd-copy-1770299187804",
-        "label": "sdSD (Copia)",
-        "command": "asd",
-        "type": "command",
-        "isFavorite": false,
-        "order": 1
-      },
-      {
-        "id": "cmd-copy-1770299190023",
-        "label": "sdSD (Copia) (Copia)",
-        "command": "asd",
-        "type": "command",
-        "isFavorite": false,
-        "order": 2
-      }
-    ],
-    "dadfgasdfasfasdfasdfasdf-1770297072507": [
-      {
-        "id": "cmd-1770297080196",
-        "label": "dafasdfasdfasdfasdfasdf",
-        "command": "asdfasdfasdfasdfa",
-        "type": "command",
-        "isFavorite": false,
-        "order": 0
-      },
-      {
-        "id": "cmd-1770297096574",
-        "label": "fasdfasdf",
-        "command": "workflow",
-        "type": "workflow",
-        "isFavorite": false,
-        "order": 1,
-        "steps": [
-          "fadfasd",
-          "asdfas",
-          "asdfa"
-        ]
-      }
-    ],
-    "dddddddddddddddddd-1770299076177": [
-      {
-        "id": "cmd-1770299083557",
-        "label": "asdfasdfasdf",
-        "command": "asdfasdfasdfasdfasdf",
-        "type": "command",
-        "isFavorite": false,
-        "order": 0
-      },
-      {
-        "id": "cmd-copy-1770299180434",
-        "label": "asdfasdfasdf (Copia)",
-        "command": "asdfasdfasdfasdfasdf",
-        "type": "command",
-        "isFavorite": false,
-        "order": 1
-      },
-      {
-        "id": "cmd-copy-1770299183444",
-        "label": "asdfasdfasdf (Copia) (Copia)",
-        "command": "asdfasdfasdfasdfasdf",
-        "type": "command",
-        "isFavorite": false,
-        "order": 2
-      }
-    ],
-    "aaaaaaaaaaaaaaaaaaaa-1770301862914": [
-      {
-        "id": "cmd-1770301872368",
-        "label": "aaaaaaaaaaaa",
-        "command": "aaaaaaaaaaaaa",
-        "type": "command",
-        "isFavorite": true,
         "order": 0
       }
     ]

@@ -8,11 +8,11 @@ import {
     Sparkles,
     Star,
 } from "lucide-react"
+import { Highlight, themes } from "prism-react-renderer"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Textarea } from "@/components/ui/textarea"
 import type { Command } from "@/types"
 
 interface CommandCardProps {
@@ -103,12 +103,26 @@ export function CommandCard({
             <CardContent className="space-y-4 pt-2">
                 {cmd.type === "prompt" ? (
                     <>
-                        <Textarea
-                            value={cmd.command}
-                            readOnly
-                            className="font-sans bg-gray-800 border-gray-700 text-white text-sm"
-                            rows={Math.min(10, cmd.command.split("\n").length)}
-                        />
+                        <Highlight
+                            theme={themes.vsDark}
+                            code={cmd.command}
+                            language="markdown"
+                        >
+                            {({ className, style, tokens, getLineProps, getTokenProps }) => (
+                                <pre
+                                    className="p-4 rounded-md text-sm border border-gray-700 whitespace-pre-wrap break-words max-w-full"
+                                    style={style}
+                                >
+                                    {tokens.map((line, i) => (
+                                        <div key={i} {...getLineProps({ line })}>
+                                            {line.map((token, key) => (
+                                                <span key={key} {...getTokenProps({ token })} />
+                                            ))}
+                                        </div>
+                                    ))}
+                                </pre>
+                            )}
+                        </Highlight>
                         <Button
                             size="sm"
                             onClick={() => onCopy(cmd.id, cmd.command)}
@@ -127,11 +141,26 @@ export function CommandCard({
                         <div className="text-sm text-gray-400">
                             Step {currentStep + 1} of {cmd.steps?.length}
                         </div>
-                        <Input
-                            value={cmd.steps?.[currentStep] || ""}
-                            readOnly
-                            className="font-mono bg-gray-800 border-gray-700 text-white"
-                        />
+                        <Highlight
+                            theme={themes.vsDark}
+                            code={cmd.steps?.[currentStep] || ""}
+                            language="bash"
+                        >
+                            {({ className, style, tokens, getLineProps, getTokenProps }) => (
+                                <pre
+                                    className="p-3 rounded-md overflow-x-auto text-sm border border-gray-700 max-w-full"
+                                    style={style}
+                                >
+                                    {tokens.map((line, i) => (
+                                        <div key={i} {...getLineProps({ line })}>
+                                            {line.map((token, key) => (
+                                                <span key={key} {...getTokenProps({ token })} />
+                                            ))}
+                                        </div>
+                                    ))}
+                                </pre>
+                            )}
+                        </Highlight>
                         <Button
                             onClick={() => onWorkflowStep(cmd.id, cmd.steps || [])}
                             className="bg-purple-600 hover:bg-purple-700 active:scale-95 transition-transform"
@@ -142,11 +171,26 @@ export function CommandCard({
                     </div>
                 ) : (
                     <>
-                        <Input
-                            value={cmd.command}
-                            readOnly
-                            className="font-mono bg-gray-800 border-gray-700 text-white"
-                        />
+                        <Highlight
+                            theme={themes.vsDark}
+                            code={cmd.command}
+                            language="bash"
+                        >
+                            {({ className, style, tokens, getLineProps, getTokenProps }) => (
+                                <pre
+                                    className="p-3 rounded-md overflow-x-auto text-sm border border-gray-700 max-w-full"
+                                    style={style}
+                                >
+                                    {tokens.map((line, i) => (
+                                        <div key={i} {...getLineProps({ line })}>
+                                            {line.map((token, key) => (
+                                                <span key={key} {...getTokenProps({ token })} />
+                                            ))}
+                                        </div>
+                                    ))}
+                                </pre>
+                            )}
+                        </Highlight>
                         {cmd.variables && (
                             <div className="grid gap-2 mt-4">
                                 {cmd.variables.map((variable) => {
