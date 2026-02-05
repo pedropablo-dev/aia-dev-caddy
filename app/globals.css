@@ -88,7 +88,9 @@ body {
   * {
     @apply border-border;
   }
-  body {
+  html, body {
     @apply bg-background text-foreground;
+    background-color: #0a0a0a; /* Force dark background immediately */
+    color: #fafafa;
   }
 }

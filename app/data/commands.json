@@ -7,15 +7,15 @@
       "order": 0
     },
     {
-      "id": "ssh-connections",
-      "name": "SSH Connections",
-      "icon": "🐧",
-      "order": 1
-    },
-    {
       "id": "test-zod-1770295061923",
       "name": "Test Zod",
       "icon": "🚦",
+      "order": 1
+    },
+    {
+      "id": "ssh-connections",
+      "name": "SSH Connections",
+      "icon": "🐧",
       "order": 2
     },
     {
@@ -107,18 +107,18 @@
         "order": 0
       },
       {
-        "id": "docker-simple-2",
-        "label": "Listar Todos los Contenedores",
-        "command": "docker ps -a",
-        "type": "command",
-        "order": 1
-      },
-      {
         "id": "docker-simple-1",
         "label": "Listar Contenedores en Ejecución",
         "command": "docker ps",
         "type": "command",
         "isFavorite": false,
+        "order": 1
+      },
+      {
+        "id": "docker-simple-2",
+        "label": "Listar Todos los Contenedores",
+        "command": "docker ps -a",
+        "type": "command",
         "order": 2
       },
       {
