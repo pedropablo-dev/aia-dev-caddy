@@ -28,7 +28,7 @@ export function SortableCategoryItem({
         transform,
         transition,
         isDragging,
-    } = useSortable({ id: category.id })
+    } = useSortable({ id: `cat-${category.id}` })
 
     const style = {
         transform: CSS.Transform.toString(transform),

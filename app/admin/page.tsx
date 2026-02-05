@@ -40,6 +40,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Textarea } from "@/components/ui/textarea"
 import { BackupControls } from "@/components/dev-caddy/backup-controls"
 import { SortableCategoryItem } from "@/components/dev-caddy/SortableCategoryItem"
+import { SortableCommandItem } from "@/components/dev-caddy/SortableCommandItem"
 import { useAppStore } from "@/store/appStore"
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
@@ -89,26 +90,63 @@ export default function AdminPage() {
     })
   )
 
-  // Handle category drag end
-  const handleCategoryDragEnd = (event: DragEndEvent) => {
+  // Handle drag end for both categories and commands
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
 
     if (!over || active.id === over.id) return
 
-    const oldIndex = sortedCategories.findIndex((cat) => cat.id === active.id)
-    const newIndex = sortedCategories.findIndex((cat) => cat.id === over.id)
+    // 1. Handle Categories Reordering
+    if ((active.id as string).startsWith('cat-')) {
+      const activeId = (active.id as string).replace('cat-', '')
+      const overId = (over.id as string).replace('cat-', '')
 
-    const newCategories = arrayMove(sortedCategories, oldIndex, newIndex)
+      const oldIndex = sortedCategories.findIndex((cat) => cat.id === activeId)
+      const newIndex = sortedCategories.findIndex((cat) => cat.id === overId)
 
-    // Update order property
-    const updatedCategories = newCategories.map((cat, index) => ({
-      ...cat,
-      order: index,
-    }))
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newCategories = arrayMove(sortedCategories, oldIndex, newIndex)
+        // Update order property
+        const updatedCategories = newCategories.map((cat, index) => ({
+          ...cat,
+          order: index,
+        }))
+        // Update state and persist
+        const newData = { ...data, categories: updatedCategories }
+        saveData(newData, false) // avoid refetch to keep UI snappy
+      }
+    }
 
-    // Update state and persist
-    const newData = { ...data, categories: updatedCategories }
-    saveData(newData)
+    // 2. Handle Commands Reordering
+    if ((active.id as string).startsWith('cmd-')) {
+      if (!adminSelectedCategory) return
+
+      const activeId = (active.id as string).replace('cmd-', '')
+      const overId = (over.id as string).replace('cmd-', '')
+
+      const currentCommands = data.commands[adminSelectedCategory] || []
+      const oldIndex = currentCommands.findIndex((cmd) => cmd.id === activeId)
+      const newIndex = currentCommands.findIndex((cmd) => cmd.id === overId)
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newCommandsList = arrayMove(currentCommands, oldIndex, newIndex)
+        // Update order property
+        const updatedCommandsList = newCommandsList.map((cmd, index) => ({
+          ...cmd,
+          order: index,
+        }))
+
+        // Update state and persist
+        const newData = {
+          ...data,
+          commands: {
+            ...data.commands,
+            [adminSelectedCategory]: updatedCommandsList
+          }
+        }
+        saveData(newData, false) // avoid refetch
+      }
+    }
   }
 
   const fetchData = async () => {
@@ -243,7 +281,8 @@ export default function AdminPage() {
 
   const handleSaveCommand = () => { if (!adminSelectedCategory || !newCommandLabel) { alert("Debes seleccionar una categoría y añadir un label para el item."); return; } let commandList = [...(data.commands[adminSelectedCategory] || [])]; if (editingCommand) { commandList = commandList.map(cmd => { if (cmd.id !== editingCommand.id) return cmd; const baseCommand = { ...cmd, label: newCommandLabel, command: newCommandText }; if (newCommandType === 'workflow') return { ...baseCommand, type: 'workflow', steps: newWorkflowSteps.filter(s => s.trim()), variables: undefined }; if (newCommandType === 'variables') return { ...baseCommand, type: 'command', variables: newVariables.filter(v => v.name.trim()), steps: undefined }; return { ...baseCommand, type: 'command', variables: undefined, steps: undefined }; }); } else { const id = `cmd-${Date.now()}`; const order = commandList.length; let newCommand: Omit<Command, 'type'> & { type: 'command' | 'workflow' }; if (newCommandType === "workflow") { newCommand = { id, label: newCommandLabel, command: "workflow", type: "workflow", steps: newWorkflowSteps.filter(s => s.trim()), isFavorite: false, order }; } else if (newCommandType === "variables") { newCommand = { id, label: newCommandLabel, command: newCommandText, type: "command", variables: newVariables.filter(v => v.name.trim()), isFavorite: false, order }; } else { newCommand = { id, label: newCommandLabel, command: newCommandText, type: "command", isFavorite: false, order }; } commandList.push(newCommand as Command); } const newCommandsData = { ...data.commands, [adminSelectedCategory]: commandList }; saveData({ ...data, commands: newCommandsData }); setAddCommandOpen(false); }
   const triggerDeleteCommand = (command: Command) => { setDeleteAlert({ isOpen: true, type: 'command', id: command.id, name: command.label }); };
-  const handleReorder = (listType: 'categories' | 'commands', index: number, direction: 'up' | 'down') => { const list = listType === 'categories' ? sortedCategories : sortedCommands; if ((direction === 'up' && index === 0) || (direction === 'down' && index === list.length - 1)) { return; } const item1 = list[index]; const item2 = list[index + (direction === 'up' ? -1 : 1)]; const item1Order = item1.order ?? index; const item2Order = item2.order ?? index + (direction === 'up' ? -1 : 1); const updatedData = JSON.parse(JSON.stringify(data)); if (listType === 'categories') { const cat1 = updatedData.categories.find((c: Category) => c.id === item1.id); const cat2 = updatedData.categories.find((c: Category) => c.id === item2.id); if (cat1) cat1.order = item2Order; if (cat2) cat2.order = item1Order; saveData(updatedData, false); } else if (adminSelectedCategory) { const cmd1 = updatedData.commands[adminSelectedCategory].find((c: Command) => c.id === item1.id); const cmd2 = updatedData.commands[adminSelectedCategory].find((c: Command) => c.id === item2.id); if (cmd1) cmd1.order = item2Order; if (cmd2) cmd2.order = item1Order; saveData(updatedData, false); } }
+
+  // Removed manual handleReorder as we now use Drag & Drop
   const handleConfirmDelete = () => { let newData: AppData = JSON.parse(JSON.stringify(data)); if (deleteAlert.type === 'category') { newData.categories = newData.categories.filter(c => c.id !== deleteAlert.id); delete newData.commands[deleteAlert.id!]; const reorderedCategories = newData.categories.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((cat, index) => ({ ...cat, order: index })); newData.categories = reorderedCategories; setAdminSelectedCategory(reorderedCategories[0]?.id || null); } else if (deleteAlert.type === 'command' && adminSelectedCategory) { newData.commands[adminSelectedCategory] = newData.commands[adminSelectedCategory].filter(c => c.id !== deleteAlert.id).map((cmd, index) => ({ ...cmd, order: index })); } saveData(newData); setDeleteAlert({ isOpen: false, type: null, id: null }); };
   const updateStep = (idx: number, value: string) => setNewWorkflowSteps((s) => s.map((v, i) => (i === idx ? value : v)))
   const removeStep = (idx: number) => setNewWorkflowSteps((s) => s.filter((_, i) => i !== idx))
@@ -278,20 +317,20 @@ export default function AdminPage() {
         </div>
 
         <div className="flex-1 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-6 p-4 sm:p-6 pt-6 overflow-y-hidden">
-          <div className="col-span-1 flex flex-col gap-2 min-h-0">
-            <h3 className="font-bold text-lg">Categorías</h3>
-            <div className="flex gap-2">
-              <Button size="sm" className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700" onClick={handleOpenAddCategory}><PlusCircle size={16} />Añadir</Button>
-              <Button size="sm" variant="destructive" className="gap-2" onClick={triggerDeleteCategory} disabled={!adminSelectedCategory}><Trash2 size={16} />Eliminar</Button>
-            </div>
-            <ScrollArea className="flex-1 bg-gray-950/50 rounded-md border border-gray-700">
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleCategoryDragEnd}
-              >
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="col-span-1 flex flex-col gap-2 min-h-0">
+              <h3 className="font-bold text-lg">Categorías</h3>
+              <div className="flex gap-2">
+                <Button size="sm" className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700" onClick={handleOpenAddCategory}><PlusCircle size={16} />Añadir</Button>
+                <Button size="sm" variant="destructive" className="gap-2" onClick={triggerDeleteCategory} disabled={!adminSelectedCategory}><Trash2 size={16} />Eliminar</Button>
+              </div>
+              <ScrollArea className="flex-1 bg-gray-950/50 rounded-md border border-gray-700">
                 <SortableContext
-                  items={sortedCategories.map(cat => cat.id)}
+                  items={sortedCategories.map(cat => `cat-${cat.id}`)}
                   strategy={verticalListSortingStrategy}
                 >
                   <div className="p-2 space-y-1">
@@ -307,42 +346,39 @@ export default function AdminPage() {
                     ))}
                   </div>
                 </SortableContext>
-              </DndContext>
-            </ScrollArea>
-          </div>
-
-          <div className="md:col-span-2 flex flex-col gap-2 min-w-0 min-h-0">
-            <h3 className="font-bold text-lg">Contenido en: <span className="text-blue-400">{data.categories.find(c => c.id === adminSelectedCategory)?.name || "..."}</span></h3>
-            <div className="flex gap-2">
-              <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700" onClick={handleOpenAddCommand} disabled={!adminSelectedCategory}><PlusCircle size={16} />Añadir Item (Simple/Workflow)</Button>
-              <Button size="sm" className="gap-2 bg-yellow-600 hover:bg-yellow-700" onClick={() => router.push(`/admin/editor?categoryId=${adminSelectedCategory}`)} disabled={!adminSelectedCategory}><PlusCircle size={16} />Añadir Prompt</Button>
+              </ScrollArea>
             </div>
-            <ScrollArea className="flex-1 bg-gray-950/50 rounded-md border border-gray-700 mt-2">
-              <div className="p-2 space-y-2">
-                {sortedCommands.map((cmd, index) => (
-                  <div key={cmd.id} className="group grid grid-cols-[auto_1fr_auto] items-center gap-4 p-2 bg-gray-800 rounded-md">
-                    <div className="flex flex-col">
-                      <Button variant="ghost" size="icon" className="h-5 w-5" onClick={(e) => { e.stopPropagation(); handleReorder('commands', index, 'up'); }} disabled={index === 0}><ArrowUp size={14} /></Button>
-                      <Button variant="ghost" size="icon" className="h-5 w-5" onClick={(e) => { e.stopPropagation(); handleReorder('commands', index, 'down'); }} disabled={index === sortedCommands.length - 1}><ArrowDown size={14} /></Button>
-                    </div>
-                    <div className="flex flex-col overflow-hidden min-w-0">
-                      <span className="font-semibold text-sm truncate">{cmd.label}</span>
-                      <span className="text-xs text-gray-400 font-mono truncate">{cmd.command}</span>
-                    </div>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => adminSelectedCategory && handleDuplicateCommand(cmd.id, adminSelectedCategory)}><Copy size={16} /></Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleOpenEditCommand(cmd)}><Pencil size={16} /></Button>
-                      <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => triggerDeleteCommand(cmd)}><Trash2 size={16} /></Button>
-                    </div>
-                  </div>
-                ))}
+
+            <div className="md:col-span-2 flex flex-col gap-2 min-w-0 min-h-0">
+              <h3 className="font-bold text-lg">Contenido en: <span className="text-blue-400">{data.categories.find(c => c.id === adminSelectedCategory)?.name || "..."}</span></h3>
+              <div className="flex gap-2">
+                <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700" onClick={handleOpenAddCommand} disabled={!adminSelectedCategory}><PlusCircle size={16} />Añadir Item (Simple/Workflow)</Button>
+                <Button size="sm" className="gap-2 bg-yellow-600 hover:bg-yellow-700" onClick={() => router.push(`/admin/editor?categoryId=${adminSelectedCategory}`)} disabled={!adminSelectedCategory}><PlusCircle size={16} />Añadir Prompt</Button>
               </div>
-            </ScrollArea>
-          </div>
+              <ScrollArea className="flex-1 bg-gray-950/50 rounded-md border border-gray-700 mt-2">
+                <SortableContext
+                  items={sortedCommands.map(cmd => `cmd-${cmd.id}`)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="p-2 space-y-2">
+                    {sortedCommands.map((cmd) => (
+                      <SortableCommandItem
+                        key={cmd.id}
+                        command={cmd}
+                        onEdit={() => handleOpenEditCommand(cmd)}
+                        onDelete={() => triggerDeleteCommand(cmd)}
+                        onDuplicate={() => adminSelectedCategory && handleDuplicateCommand(cmd.id, adminSelectedCategory)}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </ScrollArea>
+            </div>
+          </DndContext>
         </div>
 
         {/* DIALOGS DE FORMULARIOS */}
-        <Dialog open={addCategoryOpen} onOpenChange={setAddCategoryOpen}>
+        < Dialog open={addCategoryOpen} onOpenChange={setAddCategoryOpen} >
           <DialogContent className="bg-gray-900 border-gray-800 text-white">
             <DialogHeader>
               <DialogTitle>{editingCategory ? 'Editar' : 'Nueva'} Categoría</DialogTitle>
@@ -356,7 +392,7 @@ export default function AdminPage() {
               <DialogClose asChild><Button type="button" variant="destructive">Cancelar</Button></DialogClose>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </Dialog >
 
         <Dialog open={addCommandOpen} onOpenChange={setAddCommandOpen}>
           <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-lg flex flex-col">
@@ -442,7 +478,7 @@ export default function AdminPage() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
+      </div >
     </>
   )
 }

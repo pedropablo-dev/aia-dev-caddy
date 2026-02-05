@@ -7,21 +7,21 @@
       "order": 0
     },
     {
-      "id": "project-urls",
-      "name": "Project URLs",
-      "icon": "🔗",
-      "order": 1
-    },
-    {
       "id": "ssh-connections",
       "name": "SSH Connections",
       "icon": "🐧",
-      "order": 2
+      "order": 1
     },
     {
       "id": "test-zod-1770295061923",
       "name": "Test Zod",
       "icon": "🚦",
+      "order": 2
+    },
+    {
+      "id": "project-urls",
+      "name": "Project URLs",
+      "icon": "🔗",
       "order": 3
     },
     {
@@ -35,6 +35,12 @@
       "name": "Git Essentials",
       "icon": "😺",
       "order": 5
+    },
+    {
+      "id": "categoría-de-prueba-1770310311229",
+      "name": "Categoría de prueba",
+      "icon": "🚀",
+      "order": 6
     }
   ],
   "commands": {
@@ -44,7 +50,7 @@
         "label": "Secuencia de Guardado Completa",
         "command": "workflow",
         "type": "workflow",
-        "isFavorite": true,
+        "isFavorite": false,
         "order": 1,
         "steps": [
           "git status",
@@ -72,7 +78,7 @@
         "label": "Ver Historial de Commits (Bonito)",
         "command": "git log --graph --oneline --decorate",
         "type": "command",
-        "isFavorite": true,
+        "isFavorite": false,
         "order": 0
       },
       {
@@ -93,9 +99,9 @@
     ],
     "docker-commands": [
       {
-        "id": "docker-simple-1",
-        "label": "Listar Contenedores en Ejecución",
-        "command": "docker ps",
+        "id": "docker-simple-3",
+        "label": "Eliminar Todos los Contenedores Detenidos",
+        "command": "docker container prune -f",
         "type": "command",
         "isFavorite": false,
         "order": 0
@@ -108,11 +114,11 @@
         "order": 1
       },
       {
-        "id": "docker-simple-3",
-        "label": "Eliminar Todos los Contenedores Detenidos",
-        "command": "docker container prune -f",
+        "id": "docker-simple-1",
+        "label": "Listar Contenedores en Ejecución",
+        "command": "docker ps",
         "type": "command",
-        "isFavorite": true,
+        "isFavorite": false,
         "order": 2
       },
       {
@@ -131,16 +137,16 @@
     ],
     "project-urls": [
       {
-        "id": "url-simple-1",
-        "label": "Local - App Principal",
-        "command": "http://localhost:3000",
+        "id": "url-simple-2",
+        "label": "Local - Panel de Admin",
+        "command": "http://localhost:3000/admin",
         "type": "command",
         "order": 0
       },
       {
-        "id": "url-simple-2",
-        "label": "Local - Panel de Admin",
-        "command": "http://localhost:3000/admin",
+        "id": "url-simple-1",
+        "label": "Local - App Principal",
+        "command": "http://localhost:3000",
         "type": "command",
         "order": 1
       },
@@ -158,7 +164,7 @@
         "label": "Generar Código de Componente React",
         "command": "Crea un componente de React funcional utilizando TypeScript y Tailwind CSS llamado `{ComponentName}`.\n\n**Requisitos:**\n- El componente debe aceptar una prop `title` (string) y una prop `items` (array de strings).\n- Debe renderizar un título `<h2>` con el valor de `title`.\n- Debe renderizar una lista no ordenada (`<ul>`) con los `items`.\n- El componente debe estar contenido en una tarjeta (`<div>`) con sombra y bordes redondeados.\n\n**Ejemplo de uso:**\n```jsx\n<ComponentName title=\"Mi Lista\" items={['Item 1', 'Item 2']} />\n```",
         "type": "prompt",
-        "isFavorite": true,
+        "isFavorite": false,
         "order": 0,
         "variables": [
           "{ComponentName}"
@@ -167,9 +173,9 @@
       {
         "id": "prompt-2",
         "label": "Explicar Fragmento de Código",
-        "command": "Actúa como un programador senior. Explica el siguiente fragmento de código de `{Language}` de forma clara y concisa. Céntrate en el porqué de su diseño y en las posibles mejoras.\n\n```\n{CodeSnippet}\n```",
+        "command": "Actúa como un programador senior. Explica el siguiente fragmento de código de `{Language}` de forma clara y concisa. Céntrate en el porqué de su diseño y en las posibles mejoras.\n\n```\n{CodeSnippet}r3r3r3r\n```",
         "type": "prompt",
-        "isFavorite": true,
+        "isFavorite": false,
         "order": 1,
         "variables": [
           "{Language}",
@@ -217,6 +223,45 @@
         "type": "command",
         "isFavorite": false,
         "order": 0
+      }
+    ],
+    "categoría-de-prueba-1770310311229": [
+      {
+        "id": "cmd-1770310338739",
+        "label": "2",
+        "command": "2",
+        "type": "command",
+        "isFavorite": false,
+        "order": 0
+      },
+      {
+        "id": "cmd-1770310347305",
+        "label": "22",
+        "command": "workflow",
+        "type": "workflow",
+        "isFavorite": false,
+        "order": 1,
+        "steps": [
+          "22",
+          "333"
+        ]
+      },
+      {
+        "id": "cmd-1770310331437",
+        "label": "1",
+        "command": "1",
+        "type": "command",
+        "isFavorite": false,
+        "order": 2
+      },
+      {
+        "id": "cmd-1770310392618",
+        "label": "asdfasdf",
+        "command": "dasfasdfa",
+        "type": "prompt",
+        "isFavorite": false,
+        "order": 3,
+        "variables": []
       }
     ]
   }
