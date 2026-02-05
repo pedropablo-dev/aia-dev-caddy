@@ -29,6 +29,12 @@
       "name": "SSH Connections",
       "icon": "🐧",
       "order": 4
+    },
+    {
+      "id": "test-zod-1770295061923",
+      "name": "Test Zod",
+      "icon": "🚦",
+      "order": 5
     }
   ],
   "commands": {
@@ -38,36 +44,36 @@
         "label": "Secuencia de Guardado Completa",
         "command": "workflow",
         "type": "workflow",
+        "isFavorite": true,
+        "order": 0,
         "steps": [
           "git status",
           "git add .",
           "git commit -m \"Escribe tu mensaje aquí\"",
           "git push origin main"
-        ],
-        "order": 0,
-        "isFavorite": true
+        ]
       },
       {
         "id": "git-variables-1",
         "label": "Crear y Cambiar a Nueva Rama",
         "command": "git checkout -b {branch-name}",
         "type": "command",
+        "isFavorite": false,
+        "order": 1,
         "variables": [
           {
             "name": "branch-name",
             "placeholder": "Ej: feature/nueva-funcionalidad"
           }
-        ],
-        "order": 1,
-        "isFavorite": false
+        ]
       },
       {
         "id": "git-simple-1",
         "label": "Ver Historial de Commits (Bonito)",
         "command": "git log --graph --oneline --decorate",
         "type": "command",
-        "order": 2,
-        "isFavorite": true
+        "isFavorite": true,
+        "order": 2
       },
       {
         "id": "git-simple-2",
@@ -75,6 +81,14 @@
         "command": "git reset --soft HEAD~1",
         "type": "command",
         "order": 3
+      },
+      {
+        "id": "cmd-1770295010475",
+        "label": "ghdgh",
+        "command": "fghdfgh",
+        "type": "command",
+        "isFavorite": false,
+        "order": 4
       }
     ],
     "docker-commands": [
@@ -83,8 +97,8 @@
         "label": "Listar Contenedores en Ejecución",
         "command": "docker ps",
         "type": "command",
-        "order": 0,
-        "isFavorite": false
+        "isFavorite": false,
+        "order": 0
       },
       {
         "id": "docker-simple-2",
@@ -98,21 +112,21 @@
         "label": "Eliminar Todos los Contenedores Detenidos",
         "command": "docker container prune -f",
         "type": "command",
-        "order": 2,
-        "isFavorite": true
+        "isFavorite": true,
+        "order": 2
       },
       {
         "id": "docker-variables-1",
         "label": "Ver Logs de un Contenedor",
         "command": "docker logs -f {container_name}",
         "type": "command",
+        "order": 3,
         "variables": [
           {
             "name": "container_name",
             "placeholder": "Nombre o ID del contenedor"
           }
-        ],
-        "order": 3
+        ]
       }
     ],
     "project-urls": [
@@ -144,8 +158,8 @@
         "label": "Generar Código de Componente React",
         "command": "Crea un componente de React funcional utilizando TypeScript y Tailwind CSS llamado `{ComponentName}`.\n\n**Requisitos:**\n- El componente debe aceptar una prop `title` (string) y una prop `items` (array de strings).\n- Debe renderizar un título `<h2>` con el valor de `title`.\n- Debe renderizar una lista no ordenada (`<ul>`) con los `items`.\n- El componente debe estar contenido en una tarjeta (`<div>`) con sombra y bordes redondeados.\n\n**Ejemplo de uso:**\n```jsx\n<ComponentName title=\"Mi Lista\" items={['Item 1', 'Item 2']} />\n```",
         "type": "prompt",
-        "order": 0,
         "isFavorite": true,
+        "order": 0,
         "variables": [
           "{ComponentName}"
         ]
@@ -155,8 +169,8 @@
         "label": "Explicar Fragmento de Código",
         "command": "Actúa como un programador senior. Explica el siguiente fragmento de código de `{Language}` de forma clara y concisa. Céntrate en el porqué de su diseño y en las posibles mejoras.\n\n```\n{CodeSnippet}\n```",
         "type": "prompt",
-        "order": 1,
         "isFavorite": false,
+        "order": 1,
         "variables": [
           "{Language}",
           "{CodeSnippet}"
@@ -169,6 +183,7 @@
         "label": "Conectar a Servidor",
         "command": "ssh {user}@{host} -p {port}",
         "type": "command",
+        "order": 0,
         "variables": [
           {
             "name": "user",
@@ -182,7 +197,16 @@
             "name": "port",
             "placeholder": "ej: 22"
           }
-        ],
+        ]
+      }
+    ],
+    "test-zod-1770295061923": [
+      {
+        "id": "cmd-1770295074784",
+        "label": "dghd",
+        "command": "dfhd",
+        "type": "command",
+        "isFavorite": false,
         "order": 0
       }
     ]

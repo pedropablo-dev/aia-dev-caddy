@@ -1,6 +1,6 @@
 # 🧰 Dev-Caddy: Tu Arsenal de Comandos Personal
 
-**Dev-Caddy** es una paleta de comandos personal, ultrarrápida y centralizada. Ha sido diseñada para eliminar la fricción de buscar y recordar comandos de terminal, rutas, URLs y prompts complejos de uso frecuente. Organiza todo tu conocimiento de desarrollo en un arsenal lógico y accesible al instante.
+**Dev-Caddy** es una paleta de comandos personal, ultrarrápida y centralizada. Ha sido diseñada para eliminar la fricción de buscar y recordar comandos de terminal, rutas, URLs y prompts complejos de uso frecuente.
 
 _¿Cansado de buscar en tu historial, notas o wikis internas el mismo comando una y otra vez? Dev-Caddy es la solución._
 
@@ -8,61 +8,115 @@ _¿Cansado de buscar en tu historial, notas o wikis internas el mismo comando un
 
 ## ✨ Características Principales
 
-* **Organización Intuitiva:** Agrupa tus comandos en **categorías** personalizables con iconos para una fácil identificación visual.
-* **Búsqueda Instantánea:** Un potente cuadro de búsqueda (`Ctrl+K`) te permite filtrar categorías y encontrar cualquier item por su nombre o contenido en milisegundos.
-* **⭐ Sistema de Favoritos:** Marca cualquier item con una estrella para anclarlo a la sección de "Favoritos" y tener un acceso aún más rápido.
-* **Panel de Administración Integrado:** Una interfaz de administrador (`/admin`) te permite realizar operaciones CRUD, **duplicar** y **reordenar** tanto categorías como items mediante una sencilla interfaz de arrastrar y soltar (drag-and-drop).
-* **Interfaz Eficiente y Persistente:** El estado de la UI, como la categoría seleccionada o si la barra lateral está colapsada, se guarda en el `localStorage` para que tu espacio de trabajo se mantenga entre sesiones.
+- **Organización Intuitiva:** Agrupa tus comandos en **categorías** personalizables con iconos emoji
+- **Búsqueda Instantánea:** Filtro rápido con `Ctrl+K` para encontrar cualquier item en milisegundos
+- **⭐ Sistema de Favoritos:** Marca items con estrella para acceso rápido
+- **Panel de Administración:** Interfaz CRUD completa en `/admin` con drag-and-drop para reordenar
+- **Editor de Prompts:** Editor rico con toolbar Markdown, variables dinámicas y modo Zen
 
-###  versatile Item Types
-
-Dev-Caddy soporta múltiples tipos de "items" para adaptarse a cualquier necesidad:
+### Tipos de Items
 
 | Tipo | Icono | Descripción |
-| :--- | :---: | :--- |
-| **Comando Simple** | `▶️` | Un comando directo listo para copiar y pegar. |
-| **Workflow** | `🚀` | Una secuencia de comandos guiada. Copia un paso y avanza al siguiente con un solo clic, ideal para procesos complejos. |
-| **Con Variables** | `📝` | Plantillas de comandos con "huecos" que puedes rellenar dinámicamente antes de copiar el resultado final. |
-| **Prompt de IA** | `✨` | Almacena, visualiza y gestiona prompts multilínea complejos para reutilizarlos fácilmente con modelos de lenguaje. Incluye un editor avanzado con formato Markdown y gestión de variables. |
+|:-----|:-----:|:------------|
+| **Comando Simple** | ▶️ | Comando directo listo para copiar |
+| **Workflow** | 🚀 | Secuencia de comandos guiada paso a paso |
+| **Con Variables** | 📝 | Plantillas con placeholders dinámicos |
+| **Prompt de IA** | ✨ | Prompts multilínea con soporte Markdown |
 
 ---
 
 ## 🛠️ Stack Tecnológico
 
-* **Framework:** [Next.js](https://nextjs.org/) (con App Router)
-* **Lenguaje:** [TypeScript](https://www.typescriptlang.org/)
-* **Estilos:** [Tailwind CSS](https://tailwindcss.com/)
-* **Componentes UI:** [Shadcn UI](https://ui.shadcn.com/)
-* **Gestión de Estado Global:** [Zustand](https://github.com/pmndrs/zustand)
-* **Renderizado de Markdown:** `react-markdown`
+| Tecnología | Versión | Uso |
+|------------|---------|-----|
+| [Next.js](https://nextjs.org/) | 14.2.30 | Framework (App Router) |
+| [TypeScript](https://www.typescriptlang.org/) | 5.x | Lenguaje |
+| [Tailwind CSS](https://tailwindcss.com/) | 3.4.17 | Estilos |
+| [Shadcn UI](https://ui.shadcn.com/) | - | Componentes UI |
+| [Zustand](https://github.com/pmndrs/zustand) | 5.0.6 | Estado global |
+| [Sonner](https://sonner.emilkowal.ski/) | 1.7.1 | Notificaciones toast |
+| [Zod](https://zod.dev/) | 3.24.1 | Validación (pendiente) |
 
 ---
 
 ## 🏗️ Arquitectura
 
-1.  **Fuente de Datos (`app/data/commands.json`):** El proyecto funciona sin una base de datos tradicional. `commands.json` es la fuente única y absoluta de verdad para todas las categorías e items.
-2.  **API Local (`app/api/commands/route.ts`):** Un endpoint de Next.js se encarga de leer y escribir en el archivo `commands.json` de forma desacoplada, permitiendo que el frontend y el panel de administración interactúen con los datos.
-3.  **Gestión de Estado (`store/*.ts`):** Zustand maneja estados globales que persisten en `localStorage`, como la categoría seleccionada por el usuario (`appStore.ts`) y el estado de la barra lateral (`uiStore.ts`).
+```
+app/
+├── page.tsx              # Launchpad principal
+├── admin/
+│   ├── page.tsx          # Panel de administración
+│   └── editor/page.tsx   # Editor de prompts
+├── api/commands/route.ts # API REST
+└── data/commands.json    # Fuente de datos
+```
+
+**Flujo de datos:**
+1. `commands.json` es la fuente única de verdad
+2. API route (`/api/commands`) lee/escribe el archivo JSON
+3. Zustand persiste estado de UI en `localStorage`
+
+> ⚠️ **Nota:** El almacenamiento basado en archivos no es compatible con despliegues serverless (Vercel). Ver [docs/ROADMAP.md](docs/ROADMAP.md) para plan de migración.
+
+---
+
+## 📚 Documentación
+
+| Documento | Descripción |
+|-----------|-------------|
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Diagramas del sistema y flujo de datos |
+| [PROJECT_BIBLE.md](docs/PROJECT_BIBLE.md) | Guía completa para desarrolladores |
+| [AUDIT_REPORT.md](docs/AUDIT_REPORT.md) | Análisis crítico y deuda técnica |
+| [ROADMAP.md](docs/ROADMAP.md) | Plan de modernización a producción |
 
 ---
 
 ## 🚀 Cómo Empezar
 
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone [https://github.com/TU_USUARIO/dev-caddy-public.git](https://github.com/TU_USUARIO/dev-caddy-public.git)
-    cd dev-caddy-public
-    ```
+```bash
+# Clonar el repositorio
+git clone https://github.com/TU_USUARIO/dev-caddy.git
+cd dev-caddy
 
-2.  **Instalar dependencias:**
-    ```bash
-    npm install
-    ```
+# Instalar dependencias
+npm install
 
-3.  **Iniciar el servidor de desarrollo:**
-    ```bash
-    npm run dev
-    ```
+# Iniciar servidor de desarrollo
+npm run dev
+```
 
-4.  Abre [http://localhost:3002](http://localhost:3002) en tu navegador para ver la aplicación.
-    * El panel de administración está disponible en [http://localhost:3002/admin](http://localhost:3002/admin).
+**URLs:**
+- App principal: http://localhost:3002
+- Panel admin: http://localhost:3002/admin
+
+---
+
+## 📋 Scripts Disponibles
+
+| Comando | Descripción |
+|---------|-------------|
+| `npm run dev` | Servidor de desarrollo (puerto 3002) |
+| `npm run build` | Build de producción |
+| `npm run start` | Iniciar build de producción |
+| `npm run lint` | Ejecutar ESLint |
+
+---
+
+## 🔮 Estado del Proyecto
+
+**Versión actual:** 0.1.0 (MVP)
+
+| Área | Estado |
+|------|--------|
+| Funcionalidad core | ✅ Completa |
+| Validación API | ⚠️ Pendiente |
+| Despliegue serverless | ❌ No soportado |
+| Tests | ❌ No implementados |
+
+Ver [ROADMAP.md](docs/ROADMAP.md) para el plan hacia v1.0.0.
+
+---
+
+## 📄 Licencia
+
+MIT
