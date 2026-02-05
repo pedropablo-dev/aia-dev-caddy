@@ -1,12 +1,12 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import Image from "next/image"
 import { Toaster } from "@/components/ui/sonner"
 import type { Command, Category } from "@/types"
 import { Sidebar } from "@/components/dev-caddy/Sidebar"
 import { Header } from "@/components/dev-caddy/Header"
 import { CommandList } from "@/components/dev-caddy/CommandList"
+import { DashboardSkeleton } from "@/components/dev-caddy/skeletons"
 import { useAppStore } from "@/store/appStore"
 import { useCommands } from "@/hooks/use-commands"
 
@@ -113,12 +113,10 @@ export default function BroworksLaunchpad() {
 
   if (isLoading || !hasMounted) {
     return (
-      <div className="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center">
-        <div className="flex items-center gap-3">
-          <Image src="/logo.png" alt="Dev-Caddy Logo" width={32} height={32} className="flex-shrink-0" />
-          <h1 className="text-2xl font-bold text-yellow-500">Loading Dev-Caddy...</h1>
-        </div>
-      </div>
+      <>
+        <Toaster richColors />
+        <DashboardSkeleton />
+      </>
     )
   }
 

@@ -1,3 +1,5 @@
+import { DashboardSkeleton } from "@/components/dev-caddy/skeletons"
+
 export default function Loading() {
-  return null
+  return <DashboardSkeleton />
 }

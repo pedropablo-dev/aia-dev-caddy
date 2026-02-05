@@ -53,6 +53,12 @@
       "name": "dddddddddddddddddd",
       "icon": "🛡️",
       "order": 8
+    },
+    {
+      "id": "aaaaaaaaaaaaaaaaaaaa-1770301862914",
+      "name": "aaaaaaaaaaaaaaaaaaaa",
+      "icon": "a",
+      "order": 9
     }
   ],
   "commands": {
@@ -302,6 +308,16 @@
         "type": "command",
         "isFavorite": false,
         "order": 2
+      }
+    ],
+    "aaaaaaaaaaaaaaaaaaaa-1770301862914": [
+      {
+        "id": "cmd-1770301872368",
+        "label": "aaaaaaaaaaaa",
+        "command": "aaaaaaaaaaaaa",
+        "type": "command",
+        "isFavorite": true,
+        "order": 0
       }
     ]
   }
