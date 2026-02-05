@@ -13,6 +13,8 @@ import {
   ExternalLink
 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { DndContext, closestCenter, DragEndEvent, useSensor, useSensors, PointerSensor, KeyboardSensor } from "@dnd-kit/core"
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -37,6 +39,7 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Textarea } from "@/components/ui/textarea"
 import { BackupControls } from "@/components/dev-caddy/backup-controls"
+import { SortableCategoryItem } from "@/components/dev-caddy/SortableCategoryItem"
 import { useAppStore } from "@/store/appStore"
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
@@ -73,6 +76,40 @@ export default function AdminPage() {
   useEffect(() => {
     setHasMounted(true);
   }, []);
+
+  // Drag & Drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Requires 8px movement before drag starts (prevents accidental drags)
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  // Handle category drag end
+  const handleCategoryDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (!over || active.id === over.id) return
+
+    const oldIndex = sortedCategories.findIndex((cat) => cat.id === active.id)
+    const newIndex = sortedCategories.findIndex((cat) => cat.id === over.id)
+
+    const newCategories = arrayMove(sortedCategories, oldIndex, newIndex)
+
+    // Update order property
+    const updatedCategories = newCategories.map((cat, index) => ({
+      ...cat,
+      order: index,
+    }))
+
+    // Update state and persist
+    const newData = { ...data, categories: updatedCategories }
+    saveData(newData)
+  }
 
   const fetchData = async () => {
     if (!isLoading) setIsLoading(true)
@@ -248,23 +285,29 @@ export default function AdminPage() {
               <Button size="sm" variant="destructive" className="gap-2" onClick={triggerDeleteCategory} disabled={!adminSelectedCategory}><Trash2 size={16} />Eliminar</Button>
             </div>
             <ScrollArea className="flex-1 bg-gray-950/50 rounded-md border border-gray-700">
-              <div className="p-2 space-y-1">
-                {sortedCategories.map((cat, index) => (
-                  <div key={cat.id} className={`group grid grid-cols-[auto_1fr_auto_auto] items-center gap-2 p-2 rounded-md cursor-pointer ${adminSelectedCategory === cat.id ? 'bg-blue-600 text-white' : 'hover:bg-gray-800'}`}
-                    onClick={() => setAdminSelectedCategory(cat.id)}>
-                    <div className="flex flex-col">
-                      <Button variant="ghost" size="icon" className="h-5 w-5" onClick={(e) => { e.stopPropagation(); handleReorder('categories', index, 'up'); }} disabled={index === 0}><ArrowUp size={14} /></Button>
-                      <Button variant="ghost" size="icon" className="h-5 w-5" onClick={(e) => { e.stopPropagation(); handleReorder('categories', index, 'down'); }} disabled={index === sortedCategories.length - 1}><ArrowDown size={14} /></Button>
-                    </div>
-                    <div className="flex items-center gap-2 overflow-hidden min-w-0">
-                      <span className="text-lg">{cat.icon}</span>
-                      <span className="truncate">{cat.name}</span>
-                    </div>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={(e) => { e.stopPropagation(); handleDuplicateCategory(cat.id) }}><Copy size={14} /></Button>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={(e) => { e.stopPropagation(); handleOpenEditCategory(cat) }}><Pencil size={14} /></Button>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleCategoryDragEnd}
+              >
+                <SortableContext
+                  items={sortedCategories.map(cat => cat.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="p-2 space-y-1">
+                    {sortedCategories.map((cat) => (
+                      <SortableCategoryItem
+                        key={cat.id}
+                        category={cat}
+                        isSelected={adminSelectedCategory === cat.id}
+                        onSelect={() => setAdminSelectedCategory(cat.id)}
+                        onEdit={() => handleOpenEditCategory(cat)}
+                        onDelete={() => triggerDeleteCategory()}
+                      />
+                    ))}
                   </div>
-                ))}
-              </div>
+                </SortableContext>
+              </DndContext>
             </ScrollArea>
           </div>
 

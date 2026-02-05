@@ -1,39 +1,39 @@
 {
   "categories": [
     {
-      "id": "git-essentials",
-      "name": "Git Essentials",
-      "icon": "😺",
-      "order": 0
-    },
-    {
       "id": "docker-commands",
       "name": "Docker",
       "icon": "🐳",
-      "order": 1
+      "order": 0
     },
     {
       "id": "project-urls",
       "name": "Project URLs",
       "icon": "🔗",
-      "order": 2
-    },
-    {
-      "id": "ai-prompts",
-      "name": "AI Prompts",
-      "icon": "✨",
-      "order": 3
+      "order": 1
     },
     {
       "id": "ssh-connections",
       "name": "SSH Connections",
       "icon": "🐧",
-      "order": 4
+      "order": 2
     },
     {
       "id": "test-zod-1770295061923",
       "name": "Test Zod",
       "icon": "🚦",
+      "order": 3
+    },
+    {
+      "id": "ai-prompts",
+      "name": "AI Prompts 2",
+      "icon": "✨",
+      "order": 4
+    },
+    {
+      "id": "git-essentials",
+      "name": "Git Essentials",
+      "icon": "😺",
       "order": 5
     }
   ],
