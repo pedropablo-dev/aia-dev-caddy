@@ -17,6 +17,7 @@ import type { Command } from "@/types"
 
 interface CommandCardProps {
     command: Command;
+    isActive?: boolean;
     isCopied: boolean;
     variableValues: Record<string, string>;
     currentStep: number;
@@ -28,6 +29,7 @@ interface CommandCardProps {
 
 export function CommandCard({
     command: cmd,
+    isActive = false,
     isCopied,
     variableValues,
     currentStep,
@@ -37,7 +39,8 @@ export function CommandCard({
     onVariableChange,
 }: CommandCardProps) {
     return (
-        <Card className="bg-gray-900 border-gray-800">
+        <Card className={`bg-gray-900 border-gray-800 transition-all duration-200 ${isActive ? 'ring-2 ring-blue-500 shadow-lg shadow-blue-500/20' : ''
+            }`}>
             <CardHeader className="flex flex-row items-center justify-between pb-3">
                 <div className="flex items-center gap-3">
                     <Button
@@ -73,7 +76,7 @@ export function CommandCard({
                             <Button
                                 size="sm"
                                 onClick={() => onCopy(cmd.id, cmd.command)}
-                                className="bg-blue-600 hover:bg-blue-700"
+                                className="bg-blue-600 hover:bg-blue-700 active:scale-95 transition-transform"
                             >
                                 {isCopied ? (
                                     <Check className="w-4 h-4" />
@@ -109,7 +112,7 @@ export function CommandCard({
                         <Button
                             size="sm"
                             onClick={() => onCopy(cmd.id, cmd.command)}
-                            className="bg-yellow-600 hover:bg-yellow-700"
+                            className="bg-yellow-600 hover:bg-yellow-700 active:scale-95 transition-transform"
                         >
                             {isCopied ? (
                                 <Check className="w-4 h-4" />
@@ -131,7 +134,7 @@ export function CommandCard({
                         />
                         <Button
                             onClick={() => onWorkflowStep(cmd.id, cmd.steps || [])}
-                            className="bg-purple-600 hover:bg-purple-700"
+                            className="bg-purple-600 hover:bg-purple-700 active:scale-95 transition-transform"
                         >
                             <Copy className="w-4 h-4 mr-2" />
                             Copy Step & Next
@@ -166,7 +169,7 @@ export function CommandCard({
                                 <Button
                                     size="sm"
                                     onClick={() => onCopy(cmd.id, cmd.command, cmd.variables)}
-                                    className="bg-green-600 hover:bg-green-700 w-fit"
+                                    className="bg-green-600 hover:bg-green-700 active:scale-95 transition-transform w-fit"
                                 >
                                     {isCopied ? (
                                         <Check className="w-4 h-4" />

@@ -17,6 +17,7 @@ export default function BroworksLaunchpad() {
   // --- UI State ---
   const { selectedCategory } = useAppStore()
   const [searchQuery, setSearchQuery] = useState("")
+  const [selectedIndex, setSelectedIndex] = useState(0)
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [workflowStep, setWorkflowStep] = useState<Record<string, number>>({})
@@ -73,6 +74,11 @@ export default function BroworksLaunchpad() {
     return commandsToShow
   }, [selectedCategory, data.commands, searchQuery])
 
+  // --- Reset selectedIndex when search or category changes ---
+  useEffect(() => {
+    setSelectedIndex(0)
+  }, [searchQuery, selectedCategory])
+
   // --- Lógica de Interacción con Comandos ---
   const handleCopyCommand = (commandId: string, baseCommand: string, variables?: any[]) => {
     let finalCommand = baseCommand
@@ -99,17 +105,57 @@ export default function BroworksLaunchpad() {
     setVariableValues((prev) => ({ ...prev, [key]: value }))
   }
 
-  // --- Atajo de Teclado ---
+  // --- Keyboard Navigation ---
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+K: Focus search
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault()
         document.getElementById("command-search")?.focus()
+        return
+      }
+
+      // Don't interfere with typing in inputs
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return
+      }
+
+      const maxIndex = filteredCommands.length - 1
+
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault()
+          setSelectedIndex(prev => prev >= maxIndex ? 0 : prev + 1)
+          break
+
+        case "ArrowUp":
+          e.preventDefault()
+          setSelectedIndex(prev => prev <= 0 ? maxIndex : prev - 1)
+          break
+
+        case "Enter":
+          e.preventDefault()
+          const selectedCommand = filteredCommands[selectedIndex]
+          if (selectedCommand) {
+            if (selectedCommand.type === "workflow" && selectedCommand.steps) {
+              handleWorkflowStep(selectedCommand.id, selectedCommand.steps)
+            } else {
+              handleCopyCommand(selectedCommand.id, selectedCommand.command, selectedCommand.variables)
+            }
+          }
+          break
+
+        case "Escape":
+          e.preventDefault()
+          setSearchQuery("")
+          document.getElementById("command-search")?.blur()
+          break
       }
     }
+
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [])
+  }, [filteredCommands, selectedIndex, variableValues])
 
   if (isLoading || !hasMounted) {
     return (
@@ -135,6 +181,9 @@ export default function BroworksLaunchpad() {
             />
             <CommandList
               commands={filteredCommands}
+              selectedIndex={selectedIndex}
+              searchQuery={searchQuery}
+              onClearSearch={() => setSearchQuery("")}
               copiedCommand={copiedCommand}
               variableValues={variableValues}
               workflowStep={workflowStep}
