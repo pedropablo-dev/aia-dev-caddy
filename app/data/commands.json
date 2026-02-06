@@ -188,21 +188,21 @@
     ],
     "ai-prompts": [
       {
-        "id": "cmd-1770390597340",
-        "label": "PROMPT_LIFO_TEST",
-        "command": "sadfaf\nasd\nfa\nsdf\nasd\nf\nasd\nf\nasd\nf\nasdf\n",
-        "type": "prompt",
-        "isFavorite": false,
-        "order": 0,
-        "variables": []
-      },
-      {
         "id": "cmd-1770390117913-ka8nlzpbg",
         "label": "afafasdf",
         "command": "asdfasdfa",
         "type": "command",
-        "isFavorite": false,
-        "order": 1
+        "isFavorite": true,
+        "order": 0
+      },
+      {
+        "id": "cmd-1770390597340",
+        "label": "PROMPT_LIFO_TEST",
+        "command": "sadfaf\nasd\nfa\nsdf\nasd\nf\nasd\nf\nasd\nf\nasdf\ngdsfg\ndf\ngs\nf\ngsd\nfg\nsd\nfg\nsd\nfg\nsd\nfg\nsd\nf\n",
+        "type": "prompt",
+        "isFavorite": true,
+        "order": 1,
+        "variables": []
       },
       {
         "id": "prompt-1",

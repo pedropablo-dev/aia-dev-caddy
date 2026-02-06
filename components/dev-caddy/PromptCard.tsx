@@ -52,7 +52,7 @@ export function PromptCard({
             >
                 {({ className, style, tokens, getLineProps, getTokenProps }) => (
                     <pre
-                        className="p-4 rounded-md text-sm border border-gray-700 whitespace-pre-wrap break-words max-w-full line-clamp-3 mb-4"
+                        className="p-4 rounded-md text-sm border border-gray-700 whitespace-pre-wrap break-words max-w-full max-h-36 overflow-y-auto mb-4 custom-scrollbar"
                         style={style}
                     >
                         {tokens.map((line, i) => (
