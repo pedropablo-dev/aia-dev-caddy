@@ -11,7 +11,13 @@ import { Header } from "@/components/dev-caddy/Header"
 import { CommandList } from "@/components/dev-caddy/CommandList"
 import { DashboardSkeleton } from "@/components/dev-caddy/skeletons"
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { Plus, Sparkles, Terminal } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { useAppStore } from "@/store/appStore"
 import { useCommands } from "@/hooks/use-commands"
 
@@ -157,6 +163,19 @@ export default function BroworksLaunchpad() {
   const handleCreate = () => {
     setActiveCommand(null)
     setIsFormOpen(true)
+  }
+
+  const handleCreatePrompt = () => {
+    // Set skeleton prompt object so EditorOverlay knows it's a new prompt
+    setActiveCommand({
+      id: '',
+      label: '',
+      command: '',
+      type: 'prompt',
+      isFavorite: false,
+      order: 0,
+    })
+    setIsEditorOpen(true)
   }
 
   const handleEdit = (command: Command) => {
@@ -353,16 +372,39 @@ export default function BroworksLaunchpad() {
           </div>
         </div>
 
-        {/* Edit Mode: Floating Action Button */}
+        {/* Edit Mode: Floating Action Button with Dropdown */}
         {isEditMode && (
-          <Button
-            onClick={handleCreate}
-            size="lg"
-            className="fixed bottom-8 right-8 h-14 w-14 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 z-40"
-            title="Crear nuevo comando"
-          >
-            <Plus className="h-6 w-6" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="lg"
+                className="fixed bottom-8 right-8 h-14 w-14 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 z-40"
+                title="Crear nuevo"
+              >
+                <Plus className="h-6 w-6" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side="top"
+              align="end"
+              className="bg-gray-900 border-gray-800 text-white"
+            >
+              <DropdownMenuItem
+                onClick={handleCreate}
+                className="hover:bg-gray-800 cursor-pointer flex items-center gap-2"
+              >
+                <Terminal className="h-4 w-4" />
+                Nuevo Comando
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={handleCreatePrompt}
+                className="hover:bg-gray-800 cursor-pointer flex items-center gap-2"
+              >
+                <Sparkles className="h-4 w-4" />
+                Nuevo Prompt
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
 
         {/* Edit Mode: Admin Components (Lazy Loaded) */}

@@ -11,6 +11,12 @@
       "name": "Nueva Categoría de Prueba",
       "icon": "🛡️",
       "order": 1
+    },
+    {
+      "id": "villamartin-1770377500228",
+      "name": "villamartin",
+      "icon": "dd",
+      "order": 2
     }
   ],
   "commands": {
@@ -22,14 +28,6 @@
         "type": "command",
         "isFavorite": false,
         "order": 0
-      },
-      {
-        "id": "cmd-1770374448642-kkpxpwkcv",
-        "label": "asdfasdf",
-        "command": "asdfasdf",
-        "type": "command",
-        "isFavorite": false,
-        "order": 1
       },
       {
         "id": "cmd-1770374469927-jtnacx7da",
@@ -52,6 +50,17 @@
         "type": "command",
         "isFavorite": false,
         "order": 3
+      },
+      {
+        "id": "cmd-1770377444426",
+        "label": "villa martin",
+        "command": "fddfdfdfdfgsdfgs**dfgsdfg** \nasdfasd\nas\ndf\nasd\nf\nas\n\n\nasdfasdf\n\n",
+        "type": "prompt",
+        "isFavorite": false,
+        "order": 4,
+        "variables": [
+          "{nombre de la casa}"
+        ]
       }
     ],
     "nueva-categoría-de-prueba-1770368102106": [
@@ -62,6 +71,36 @@
         "type": "command",
         "isFavorite": false,
         "order": 0
+      }
+    ],
+    "villamartin-1770377500228": [
+      {
+        "id": "cmd-1770377810351",
+        "label": "dfgsdfgsfgsdg",
+        "command": "fdsfsdfgsdfg {referencia} \nsd\nfg\nsdf\ng\nsdf\ng\n\nsdfgsdgfs\n\n\nsdg \nasdf\nasd\nfa\nsd\nfa\nsdf\na\nsdf\nas\ndf\nas\ndf\nasd\nf\nasd\nf\nasd\nfa\nsdf\na\nsd\nfas\nf",
+        "type": "prompt",
+        "isFavorite": false,
+        "order": 0,
+        "variables": [
+          "{referencia}"
+        ]
+      },
+      {
+        "id": "cmd-1770377512868",
+        "label": "asdfasdf",
+        "command": "dfasdfasdf",
+        "type": "prompt",
+        "isFavorite": false,
+        "order": 1,
+        "variables": []
+      },
+      {
+        "id": "cmd-1770377886734-me67qy3yz",
+        "label": "dfasf",
+        "command": "asdfas",
+        "type": "command",
+        "isFavorite": false,
+        "order": 2
       }
     ]
   }
