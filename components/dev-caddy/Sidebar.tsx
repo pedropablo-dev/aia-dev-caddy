@@ -8,9 +8,13 @@ import {
     HelpCircle,
     PanelLeftClose,
     Search,
+    Lock,
+    Unlock,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
     Dialog,
@@ -43,7 +47,7 @@ const markdownComponents: Components = {
 }
 
 export function Sidebar({ categories, helpContent }: SidebarProps) {
-    const { selectedCategory, setSelectedCategory } = useAppStore();
+    const { selectedCategory, setSelectedCategory, isEditMode, toggleEditMode } = useAppStore();
     const { isSidebarCollapsed, toggleSidebar } = useUIStore();
     const [categorySearch, setCategorySearch] = useState("");
     const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -107,8 +111,8 @@ export function Sidebar({ categories, helpContent }: SidebarProps) {
                             key={category.id}
                             onClick={() => setSelectedCategory(category.id)}
                             className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${selectedCategory === category.id
-                                    ? "bg-blue-600 text-white"
-                                    : "text-gray-300 hover:bg-gray-800"
+                                ? "bg-blue-600 text-white"
+                                : "text-gray-300 hover:bg-gray-800"
                                 } ${isSidebarCollapsed ? 'justify-center' : ''}`}
                         >
                             <span className="text-lg">{category.icon}</span>
@@ -121,6 +125,26 @@ export function Sidebar({ categories, helpContent }: SidebarProps) {
             </ScrollArea>
 
             <div className="p-2 border-t border-gray-800 flex flex-col gap-2">
+                {/* Edit Mode Toggle */}
+                <div className={`flex items-center gap-3 px-2 py-2 rounded-lg bg-gray-800/50 border border-gray-700 ${isSidebarCollapsed ? 'justify-center' : 'justify-between'}`}>
+                    {!isSidebarCollapsed && (
+                        <Label htmlFor="edit-mode-toggle" className="flex items-center gap-2 text-sm font-semibold text-gray-200 cursor-pointer">
+                            {isEditMode ? (
+                                <Unlock className="h-4 w-4 text-green-400" />
+                            ) : (
+                                <Lock className="h-4 w-4 text-gray-400" />
+                            )}
+                            <span>Modo Edición</span>
+                        </Label>
+                    )}
+                    <Switch
+                        id="edit-mode-toggle"
+                        checked={isEditMode}
+                        onCheckedChange={toggleEditMode}
+                        className="data-[state=checked]:bg-green-600"
+                    />
+                </div>
+
                 <Dialog open={isHelpOpen} onOpenChange={setIsHelpOpen}>
                     <DialogTrigger asChild>
                         <Button
