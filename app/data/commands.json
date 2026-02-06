@@ -20,7 +20,7 @@
         "label": "Item de Prueba 1",
         "command": "comando simple",
         "type": "command",
-        "isFavorite": false,
+        "isFavorite": true,
         "order": 0
       }
     ],
