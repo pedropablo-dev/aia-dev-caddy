@@ -53,7 +53,7 @@ const markdownComponents: Components = {
 export function Sidebar({ categories, helpContent }: SidebarProps) {
     const { selectedCategory, setSelectedCategory, isEditMode, toggleEditMode } = useAppStore();
     const { isSidebarCollapsed, toggleSidebar } = useUIStore();
-    const { data, saveData } = useCommands();
+    const { data, saveData, importData } = useCommands();
     const [categorySearch, setCategorySearch] = useState("");
     const [isHelpOpen, setIsHelpOpen] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -105,9 +105,8 @@ export function Sidebar({ categories, helpContent }: SidebarProps) {
                     return;
                 }
 
-                // Restore data
-                saveData(parsedData);
-                toast.success('Datos importados correctamente');
+                // Restore data using importData (updates UI immediately)
+                importData(parsedData);
             } catch (error) {
                 toast.error('Error al leer el archivo: JSON malformado');
                 console.error('Import error:', error);

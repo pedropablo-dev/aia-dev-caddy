@@ -19,8 +19,6 @@ export const useAppStore = create(
     {
       name: 'dev-caddy-app-state',
       storage: createJSONStorage(() => localStorage),
-      // Only persist selectedCategory, not isEditMode (reset to View Mode on reload for safety)
-      partialize: (state) => ({ selectedCategory: state.selectedCategory })
     }
   )
 )
