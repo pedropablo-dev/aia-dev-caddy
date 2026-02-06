@@ -38,7 +38,7 @@ import { useUIStore } from "@/store/uiStore"
 import { useAppStore } from "@/store/appStore"
 import { useCommands } from "@/hooks/use-commands"
 import { toast } from "sonner"
-import type { Category } from "@/types"
+import type { Category, AppData } from "@/types"
 import {
     DndContext,
     closestCenter,
@@ -199,7 +199,7 @@ export function Sidebar({
     };
 
     return (
-        <div className={`transition-all duration-300 ${sidebarClasses} bg-gray-900 border-r border-gray-800 flex flex-col h-full`}>
+        <div className={`transition-all duration-300 ${sidebarClasses} bg-gray-900 border-r border-gray-800 flex flex-col h-full overflow-x-hidden`}>
             <div className="p-4 border-b border-gray-800">
                 <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'justify-center' : ''}`}>
                     <Image
@@ -241,7 +241,7 @@ export function Sidebar({
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-6 w-6 text-gray-400 hover:text-white hover:bg-gray-800"
+                                className="h-6 w-6 text-gray-400 hover:text-white hover:bg-gray-800 flex-shrink-0"
                                 onClick={onCreateCategory}
                                 title="Nueva categoría"
                             >
@@ -259,14 +259,14 @@ export function Sidebar({
                             className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors group ${selectedCategory === category.id
                                 ? "bg-blue-600 text-white"
                                 : "text-gray-300 hover:bg-gray-800"
-                                } ${isSidebarCollapsed ? 'justify-center' : ''}`}
+                                } ${isSidebarCollapsed ? 'justify-center' : ''} min-w-0`}
                         >
                             <button
                                 onClick={() => setSelectedCategory(category.id)}
-                                className="flex items-center gap-3 flex-1 text-left"
+                                className="flex items-center gap-3 flex-1 text-left w-0 min-w-0"
                             >
-                                <span className="text-lg">{category.icon}</span>
-                                <span className={`font-medium whitespace-nowrap ${contentClasses}`}>
+                                <span className="text-lg flex-shrink-0">{category.icon}</span>
+                                <span className={`font-medium truncate flex-1 ${contentClasses}`}>
                                     {category.name}
                                 </span>
                             </button>

@@ -56,7 +56,7 @@ export function SortableCategoryItem({
             className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors group ${isSelected
                 ? "bg-blue-600 text-white"
                 : "text-gray-300 hover:bg-gray-800"
-                } ${isCollapsed ? "justify-center" : ""}`}
+                } ${isCollapsed ? "justify-center" : ""}min-w-0`}
         >
             {/* Drag Handle - Only in Edit Mode and Not Collapsed */}
             {isEditMode && !isCollapsed && (
@@ -71,10 +71,10 @@ export function SortableCategoryItem({
 
             <button
                 onClick={() => onSelect(category.id)}
-                className="flex items-center gap-3 flex-1 text-left min-w-0"
+                className="flex items-center gap-3 flex-1 text-left w-0 min-w-0"
             >
                 <span className="text-lg flex-shrink-0">{category.icon}</span>
-                <span className={`font-medium truncate block ${contentClasses}`}>
+                <span className={`font-medium truncate flex-1 ${contentClasses}`}>
                     {category.name}
                 </span>
             </button>

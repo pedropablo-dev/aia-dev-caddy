@@ -1,27 +1,27 @@
 {
   "categories": [
     {
-      "id": "ai-prompts",
-      "name": "AI Prompts",
-      "icon": "✨",
-      "order": 0
-    },
-    {
-      "id": "docker-commands",
-      "name": "Docker",
-      "icon": "🐳",
-      "order": 1
-    },
-    {
       "id": "project-urls",
       "name": "Project URLs",
       "icon": "🔗",
-      "order": 2
+      "order": 0
+    },
+    {
+      "id": "ai-prompts",
+      "name": "AI Promptse",
+      "icon": "✨",
+      "order": 1
     },
     {
       "id": "git-essentials",
-      "name": "Git Essentials",
+      "name": "Categoría de Pruebas de Desarrollo Frontend con Nombres Extremadamente Largos 2026",
       "icon": "😺",
+      "order": 2
+    },
+    {
+      "id": "ssh-connections",
+      "name": "SSH Connections",
+      "icon": "🐧",
       "order": 3
     },
     {
@@ -31,10 +31,64 @@
       "order": 4
     },
     {
-      "id": "ssh-connections",
-      "name": "SSH Connections",
-      "icon": "🐧",
+      "id": "docker-commands",
+      "name": "Docker",
+      "icon": "🐳",
       "order": 5
+    },
+    {
+      "id": "cmd-1770410782097-si4ht6t0n",
+      "name": "e",
+      "icon": "e",
+      "order": 6
+    },
+    {
+      "id": "cmd-1770410776749-d08f3cl55",
+      "name": "e",
+      "icon": "e",
+      "order": 7
+    },
+    {
+      "id": "cmd-1770410767529-39mxoxel3",
+      "name": "e",
+      "icon": "e",
+      "order": 8
+    },
+    {
+      "id": "cmd-1770410762733-1h52d83uq",
+      "name": "e",
+      "icon": "e",
+      "order": 9
+    },
+    {
+      "id": "cmd-1770410758882-9reymm2ok",
+      "name": "e",
+      "icon": "e",
+      "order": 10
+    },
+    {
+      "id": "cmd-1770410752344-c6s6dftu5",
+      "name": "e",
+      "icon": "e",
+      "order": 11
+    },
+    {
+      "id": "cmd-1770410742112-d9k73x5rh",
+      "name": "e",
+      "icon": "e",
+      "order": 12
+    },
+    {
+      "id": "cmd-1770410736795-zo2r7menw",
+      "name": "e",
+      "icon": "e",
+      "order": 13
+    },
+    {
+      "id": "cmd-1770410732419-cyvs6g0m3",
+      "name": "e",
+      "icon": "e",
+      "order": 14
     }
   ],
   "commands": {
@@ -97,7 +151,7 @@
         "label": "Listar Contenedores en Ejecución",
         "command": "docker ps",
         "type": "command",
-        "isFavorite": false,
+        "isFavorite": true,
         "order": 0
       },
       {
@@ -113,7 +167,6 @@
         "label": "Ver Logs de un Contenedor",
         "command": "docker logs -f {container_name}",
         "type": "command",
-        "isFavorite": true,
         "order": 2,
         "variables": [
           {
@@ -140,16 +193,16 @@
     ],
     "project-urls": [
       {
-        "id": "url-simple-1",
-        "label": "Local - App Principal",
-        "command": "http://localhost:3000",
+        "id": "url-simple-2",
+        "label": "Local - Panel de Admin",
+        "command": "http://localhost:3000/admin",
         "type": "command",
         "order": 0
       },
       {
-        "id": "url-simple-2",
-        "label": "Local - Panel de Admin",
-        "command": "http://localhost:3000/admin",
+        "id": "url-simple-1",
+        "label": "Local - App Principal",
+        "command": "http://localhost:3000",
         "type": "command",
         "order": 1
       },
@@ -177,26 +230,26 @@
     ],
     "ai-prompts": [
       {
-        "id": "prompt-2",
-        "label": "Explicar Fragmento de Código",
-        "command": "Actúa como un programador senior. Explica el siguiente fragmento de código de `{Language}` de forma clara y concisa. Céntrate en el porqué de su diseño y en las posibles mejoras.\n\n```\n{CodeSnippet}\n```kjlkasjfas\ndfa\nsdf\nasd\nf\nasd\nfa\nsdf\nasdf",
-        "type": "prompt",
-        "isFavorite": false,
-        "order": 0,
-        "variables": [
-          "{Language}",
-          "{CodeSnippet}"
-        ]
-      },
-      {
         "id": "prompt-1",
         "label": "Generar Código de Componente React",
         "command": "Crea un componente de React funcional utilizando TypeScript y Tailwind CSS llamado `{ComponentName}`.\n",
         "type": "prompt",
         "isFavorite": true,
-        "order": 1,
+        "order": 0,
         "variables": [
           "{ComponentName}"
+        ]
+      },
+      {
+        "id": "prompt-2",
+        "label": "Explicar Fragmento de Código",
+        "command": "Actúa como un programador senior. Explica el siguiente fragmento de código de `{Language}` de forma clara y concisa. Céntrate en el porqué de su diseño y en las posibles mejoras.\n\n```\n{CodeSnippet}\n```kjlkasjfas\ndfa\nsdf\nasd\nf\nasd\nfa\nsdf\nasdf",
+        "type": "prompt",
+        "isFavorite": true,
+        "order": 1,
+        "variables": [
+          "{Language}",
+          "{CodeSnippet}"
         ]
       },
       {
@@ -346,6 +399,15 @@
         "isFavorite": false,
         "order": 5
       }
-    ]
+    ],
+    "cmd-1770410732419-cyvs6g0m3": [],
+    "cmd-1770410736795-zo2r7menw": [],
+    "cmd-1770410742112-d9k73x5rh": [],
+    "cmd-1770410752344-c6s6dftu5": [],
+    "cmd-1770410758882-9reymm2ok": [],
+    "cmd-1770410762733-1h52d83uq": [],
+    "cmd-1770410767529-39mxoxel3": [],
+    "cmd-1770410776749-d08f3cl55": [],
+    "cmd-1770410782097-si4ht6t0n": []
   }
 }
