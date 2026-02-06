@@ -183,6 +183,14 @@
           "{Language}",
           "{CodeSnippet}"
         ]
+      },
+      {
+        "id": "cmd-1770385391354-bzg5bqv3d",
+        "label": "asdfasdf",
+        "command": "asdfasdf",
+        "type": "command",
+        "isFavorite": false,
+        "order": 2
       }
     ],
     "ssh-connections": [
@@ -225,6 +233,32 @@
         "type": "command",
         "isFavorite": false,
         "order": 0
+      }
+    ],
+    "all": [
+      {
+        "id": "cmd-1770385331397-c0sggtw5k",
+        "label": "sgdfgsdf",
+        "command": "sdfgsdg",
+        "type": "command",
+        "isFavorite": false,
+        "order": 0
+      },
+      {
+        "id": "cmd-1770385359565-ztrrjy2td",
+        "label": "donde crea aesto?",
+        "command": "asfafa",
+        "type": "command",
+        "isFavorite": false,
+        "order": 1
+      },
+      {
+        "id": "cmd-1770385407103-vv50ikdof",
+        "label": "fasdfasdf",
+        "command": "asdfasdf",
+        "type": "command",
+        "isFavorite": false,
+        "order": 2
       }
     ]
   }

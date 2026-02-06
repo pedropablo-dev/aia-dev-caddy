@@ -1,10 +1,8 @@
 "use client"
 
-import Link from "next/link"
 import Image from "next/image"
 import { useState, useRef } from "react"
 import {
-    Settings,
     HelpCircle,
     PanelLeftClose,
     Search,
@@ -204,14 +202,7 @@ export function Sidebar({ categories, helpContent, onCreateCategory, onEditCateg
                     </h1>
                 </div>
 
-                <div className={`flex items-center mt-3 mb-4 gap-2 ${isSidebarCollapsed ? 'justify-center' : 'justify-start'}`}>
-                    <Link href="/admin" className="w-full">
-                        <Button variant="ghost" className={`w-full gap-2 text-gray-400 hover:bg-gray-800/50 hover:text-gray-200 px-2 ${isSidebarCollapsed ? 'justify-center' : 'justify-start'}`}>
-                            <Settings className="h-5 w-5 flex-shrink-0" />
-                            <span className={`font-bold text-sm ${contentClasses}`}>Panel de Administración</span>
-                        </Button>
-                    </Link>
-                </div>
+
 
                 {!isSidebarCollapsed && (
                     <div className="relative mt-2">
