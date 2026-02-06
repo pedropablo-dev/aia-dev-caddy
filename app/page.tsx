@@ -252,7 +252,8 @@ export default function BroworksLaunchpad() {
     const categoryId = selectedCategory === 'favorites' ? 'all' : selectedCategory
 
     // Step 3: Check if updating or creating
-    if (activeCommand) {
+    // If ID is present and NOT empty string, try to update
+    if (activeCommand && activeCommand.id) {
       // Update existing command across all categories
       for (const catId in newData.commands) {
         const idx = newData.commands[catId].findIndex(cmd => cmd.id === activeCommand.id)
@@ -327,9 +328,16 @@ export default function BroworksLaunchpad() {
         id: generateUniqueId(),
         name: categoryData.name!,
         icon: categoryData.icon!,
-        order: newData.categories.length,
+        order: 0, // LIFO: New categories at top
       }
-      newData.categories.push(newCategory)
+      // UX: Add to beginning of array
+      newData.categories.unshift(newCategory)
+
+      // Re-index
+      newData.categories.forEach((cat, idx) => {
+        cat.order = idx;
+      });
+
       newData.commands[newCategory.id] = []
       saveData(newData)
       toast.success('Categoría creada')
