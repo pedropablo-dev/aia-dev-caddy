@@ -57,7 +57,7 @@ export default function AdminPage() {
   const router = useRouter();
   const [data, setData] = useState<AppData>({ categories: [], commands: {} })
   const [isLoading, setIsLoading] = useState(true)
-  const { adminSelectedCategory, setAdminSelectedCategory } = useAppStore();
+  const { selectedCategory, setSelectedCategory } = useAppStore();
   const [hasMounted, setHasMounted] = useState(false);
 
   const [addCategoryOpen, setAddCategoryOpen] = useState(false)
@@ -119,12 +119,12 @@ export default function AdminPage() {
 
     // 2. Handle Commands Reordering
     if ((active.id as string).startsWith('cmd-')) {
-      if (!adminSelectedCategory) return
+      if (!selectedCategory) return
 
       const activeId = (active.id as string).replace('cmd-', '')
       const overId = (over.id as string).replace('cmd-', '')
 
-      const currentCommands = data.commands[adminSelectedCategory] || []
+      const currentCommands = data.commands[selectedCategory] || []
       const oldIndex = currentCommands.findIndex((cmd) => cmd.id === activeId)
       const newIndex = currentCommands.findIndex((cmd) => cmd.id === overId)
 
@@ -141,7 +141,7 @@ export default function AdminPage() {
           ...data,
           commands: {
             ...data.commands,
-            [adminSelectedCategory]: updatedCommandsList
+            [selectedCategory]: updatedCommandsList
           }
         }
         saveData(newData, false) // avoid refetch
@@ -231,13 +231,13 @@ export default function AdminPage() {
   useEffect(() => {
     if (hasMounted && !isLoading && data.categories.length > 0) {
       const sorted = [...data.categories].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-      const storedCategoryExists = sorted.some(c => c.id === adminSelectedCategory);
+      const storedCategoryExists = sorted.some(c => c.id === selectedCategory);
 
-      if (!adminSelectedCategory || !storedCategoryExists) {
-        setAdminSelectedCategory(sorted[0].id);
+      if (!selectedCategory || !storedCategoryExists) {
+        setSelectedCategory(sorted[0].id);
       }
     }
-  }, [hasMounted, isLoading, data.categories, adminSelectedCategory, setAdminSelectedCategory]);
+  }, [hasMounted, isLoading, data.categories, selectedCategory, setSelectedCategory]);
 
 
   const sortedCategories = useMemo(() => {
@@ -245,23 +245,23 @@ export default function AdminPage() {
   }, [data.categories]);
 
   const sortedCommands = useMemo(() => {
-    if (!adminSelectedCategory || !data.commands[adminSelectedCategory]) return [];
-    return [...data.commands[adminSelectedCategory]].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  }, [adminSelectedCategory, data.commands]);
+    if (!selectedCategory || !data.commands[selectedCategory]) return [];
+    return [...data.commands[selectedCategory]].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  }, [selectedCategory, data.commands]);
 
 
   const handleOpenAddCategory = () => { setEditingCategory(null); setNewCategoryName(""); setNewCategoryIcon(""); setAddCategoryOpen(true); }
   const handleOpenEditCategory = (category: Category) => { setEditingCategory(category); setNewCategoryName(category.name); setNewCategoryIcon(category.icon); setAddCategoryOpen(true); }
   const handleSaveCategory = () => { let newData: AppData; if (editingCategory) { newData = { ...data, categories: data.categories.map(c => c.id === editingCategory.id ? { ...c, name: newCategoryName, icon: newCategoryIcon } : c) } } else { const newOrder = data.categories.length; const newId = newCategoryName.toLowerCase().replace(/\s+/g, "-") + `-${Date.now()}`; const newCategory: Category = { id: newId, name: newCategoryName, icon: newCategoryIcon, order: newOrder }; newData = { ...data, categories: [...data.categories, newCategory], commands: { ...data.commands, [newId]: [] }, } } saveData(newData); setAddCategoryOpen(false); }
-  const triggerDeleteCategory = () => { if (!adminSelectedCategory) return; const categoryName = data.categories.find(c => c.id === adminSelectedCategory)?.name; setDeleteAlert({ isOpen: true, type: 'category', id: adminSelectedCategory, name: categoryName }); }
+  const triggerDeleteCategory = () => { if (!selectedCategory) return; const categoryName = data.categories.find(c => c.id === selectedCategory)?.name; setDeleteAlert({ isOpen: true, type: 'category', id: selectedCategory, name: categoryName }); }
   const handleDuplicateCategory = (categoryId: string) => { const categoryToDuplicate = data.categories.find(c => c.id === categoryId); if (!categoryToDuplicate) return; const newOrder = data.categories.length; const newCategory: Category = { ...JSON.parse(JSON.stringify(categoryToDuplicate)), id: `cat-copy-${Date.now()}`, name: `${categoryToDuplicate.name} (Copia)`, order: newOrder }; const commandsToDuplicate = (data.commands[categoryId] || []).map((cmd, index) => ({ ...JSON.parse(JSON.stringify(cmd)), id: `cmd-copy-${Date.now()}-${index}`, order: index })); const newData = { ...data, categories: [...data.categories, newCategory], commands: { ...data.commands, [newCategory.id]: commandsToDuplicate } }; saveData(newData); };
   const handleDuplicateCommand = (commandId: string, categoryId: string) => { const commandsList = data.commands[categoryId] || []; const commandToDuplicate = commandsList.find(c => c.id === commandId); if (!commandToDuplicate) return; const newOrder = commandsList.length; const newCommand = { ...JSON.parse(JSON.stringify(commandToDuplicate)), id: `cmd-copy-${Date.now()}`, label: `${commandToDuplicate.label} (Copia)`, order: newOrder }; const newCommandsForCategory = [...commandsList, newCommand]; const newCommands = { ...data.commands, [categoryId]: newCommandsForCategory }; saveData({ ...data, commands: newCommands }); };
 
-  const handleOpenAddCommand = () => { if (!adminSelectedCategory) return; setEditingCommand(null); setNewCommandLabel(""); setNewCommandText(""); setNewCommandType("simple"); setNewWorkflowSteps([""]); setNewVariables([{ name: "", placeholder: "" }]); setAddCommandOpen(true); }
+  const handleOpenAddCommand = () => { if (!selectedCategory) return; setEditingCommand(null); setNewCommandLabel(""); setNewCommandText(""); setNewCommandType("simple"); setNewWorkflowSteps([""]); setNewVariables([{ name: "", placeholder: "" }]); setAddCommandOpen(true); }
 
   const handleOpenEditCommand = (command: Command) => {
     if (command.type === 'prompt') {
-      router.push(`/admin/editor?commandId=${command.id}&categoryId=${adminSelectedCategory}`);
+      router.push(`/admin/editor?commandId=${command.id}&categoryId=${selectedCategory}`);
     } else {
       setEditingCommand(command);
       setNewCommandLabel(command.label);
@@ -279,11 +279,11 @@ export default function AdminPage() {
     }
   }
 
-  const handleSaveCommand = () => { if (!adminSelectedCategory || !newCommandLabel) { alert("Debes seleccionar una categoría y añadir un label para el item."); return; } let commandList = [...(data.commands[adminSelectedCategory] || [])]; if (editingCommand) { commandList = commandList.map(cmd => { if (cmd.id !== editingCommand.id) return cmd; const baseCommand = { ...cmd, label: newCommandLabel, command: newCommandText }; if (newCommandType === 'workflow') return { ...baseCommand, type: 'workflow', steps: newWorkflowSteps.filter(s => s.trim()), variables: undefined }; if (newCommandType === 'variables') return { ...baseCommand, type: 'command', variables: newVariables.filter(v => v.name.trim()), steps: undefined }; return { ...baseCommand, type: 'command', variables: undefined, steps: undefined }; }); } else { const id = `cmd-${Date.now()}`; const order = commandList.length; let newCommand: Omit<Command, 'type'> & { type: 'command' | 'workflow' }; if (newCommandType === "workflow") { newCommand = { id, label: newCommandLabel, command: "workflow", type: "workflow", steps: newWorkflowSteps.filter(s => s.trim()), isFavorite: false, order }; } else if (newCommandType === "variables") { newCommand = { id, label: newCommandLabel, command: newCommandText, type: "command", variables: newVariables.filter(v => v.name.trim()), isFavorite: false, order }; } else { newCommand = { id, label: newCommandLabel, command: newCommandText, type: "command", isFavorite: false, order }; } commandList.push(newCommand as Command); } const newCommandsData = { ...data.commands, [adminSelectedCategory]: commandList }; saveData({ ...data, commands: newCommandsData }); setAddCommandOpen(false); }
+  const handleSaveCommand = () => { if (!selectedCategory || !newCommandLabel) { alert("Debes seleccionar una categoría y añadir un label para el item."); return; } let commandList = [...(data.commands[selectedCategory] || [])]; if (editingCommand) { commandList = commandList.map(cmd => { if (cmd.id !== editingCommand.id) return cmd; const baseCommand = { ...cmd, label: newCommandLabel, command: newCommandText }; if (newCommandType === 'workflow') return { ...baseCommand, type: 'workflow', steps: newWorkflowSteps.filter(s => s.trim()), variables: undefined }; if (newCommandType === 'variables') return { ...baseCommand, type: 'command', variables: newVariables.filter(v => v.name.trim()), steps: undefined }; return { ...baseCommand, type: 'command', variables: undefined, steps: undefined }; }); } else { const id = `cmd-${Date.now()}`; const order = commandList.length; let newCommand: Omit<Command, 'type'> & { type: 'command' | 'workflow' }; if (newCommandType === "workflow") { newCommand = { id, label: newCommandLabel, command: "workflow", type: "workflow", steps: newWorkflowSteps.filter(s => s.trim()), isFavorite: false, order }; } else if (newCommandType === "variables") { newCommand = { id, label: newCommandLabel, command: newCommandText, type: "command", variables: newVariables.filter(v => v.name.trim()), isFavorite: false, order }; } else { newCommand = { id, label: newCommandLabel, command: newCommandText, type: "command", isFavorite: false, order }; } commandList.push(newCommand as Command); } const newCommandsData = { ...data.commands, [selectedCategory]: commandList }; saveData({ ...data, commands: newCommandsData }); setAddCommandOpen(false); }
   const triggerDeleteCommand = (command: Command) => { setDeleteAlert({ isOpen: true, type: 'command', id: command.id, name: command.label }); };
 
   // Removed manual handleReorder as we now use Drag & Drop
-  const handleConfirmDelete = () => { let newData: AppData = JSON.parse(JSON.stringify(data)); if (deleteAlert.type === 'category') { newData.categories = newData.categories.filter(c => c.id !== deleteAlert.id); delete newData.commands[deleteAlert.id!]; const reorderedCategories = newData.categories.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((cat, index) => ({ ...cat, order: index })); newData.categories = reorderedCategories; setAdminSelectedCategory(reorderedCategories[0]?.id || null); } else if (deleteAlert.type === 'command' && adminSelectedCategory) { newData.commands[adminSelectedCategory] = newData.commands[adminSelectedCategory].filter(c => c.id !== deleteAlert.id).map((cmd, index) => ({ ...cmd, order: index })); } saveData(newData); setDeleteAlert({ isOpen: false, type: null, id: null }); };
+  const handleConfirmDelete = () => { let newData: AppData = JSON.parse(JSON.stringify(data)); if (deleteAlert.type === 'category') { newData.categories = newData.categories.filter(c => c.id !== deleteAlert.id); delete newData.commands[deleteAlert.id!]; const reorderedCategories = newData.categories.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((cat, index) => ({ ...cat, order: index })); newData.categories = reorderedCategories; setSelectedCategory(reorderedCategories[0]?.id || 'favorites'); } else if (deleteAlert.type === 'command' && selectedCategory) { newData.commands[selectedCategory] = newData.commands[selectedCategory].filter(c => c.id !== deleteAlert.id).map((cmd, index) => ({ ...cmd, order: index })); } saveData(newData); setDeleteAlert({ isOpen: false, type: null, id: null }); };
   const updateStep = (idx: number, value: string) => setNewWorkflowSteps((s) => s.map((v, i) => (i === idx ? value : v)))
   const removeStep = (idx: number) => setNewWorkflowSteps((s) => s.filter((_, i) => i !== idx))
   const addStepField = () => setNewWorkflowSteps((s) => [...s, ""])
@@ -326,7 +326,7 @@ export default function AdminPage() {
               <h3 className="font-bold text-lg">Categorías</h3>
               <div className="flex gap-2">
                 <Button size="sm" className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700" onClick={handleOpenAddCategory}><PlusCircle size={16} />Añadir</Button>
-                <Button size="sm" variant="destructive" className="gap-2" onClick={triggerDeleteCategory} disabled={!adminSelectedCategory}><Trash2 size={16} />Eliminar</Button>
+                <Button size="sm" variant="destructive" className="gap-2" onClick={triggerDeleteCategory} disabled={!selectedCategory}><Trash2 size={16} />Eliminar</Button>
               </div>
               <ScrollArea className="flex-1 bg-gray-950/50 rounded-md border border-gray-700">
                 <SortableContext
@@ -338,8 +338,8 @@ export default function AdminPage() {
                       <SortableCategoryItem
                         key={cat.id}
                         category={cat}
-                        isSelected={adminSelectedCategory === cat.id}
-                        onSelect={() => setAdminSelectedCategory(cat.id)}
+                        isSelected={selectedCategory === cat.id}
+                        onSelect={() => setSelectedCategory(cat.id)}
                         onEdit={() => handleOpenEditCategory(cat)}
                         onDelete={() => triggerDeleteCategory()}
                       />
@@ -350,10 +350,10 @@ export default function AdminPage() {
             </div>
 
             <div className="md:col-span-2 flex flex-col gap-2 min-w-0 min-h-0">
-              <h3 className="font-bold text-lg">Contenido en: <span className="text-blue-400">{data.categories.find(c => c.id === adminSelectedCategory)?.name || "..."}</span></h3>
+              <h3 className="font-bold text-lg">Contenido en: <span className="text-blue-400">{data.categories.find(c => c.id === selectedCategory)?.name || "..."}</span></h3>
               <div className="flex gap-2">
-                <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700" onClick={handleOpenAddCommand} disabled={!adminSelectedCategory}><PlusCircle size={16} />Añadir Item (Simple/Workflow)</Button>
-                <Button size="sm" className="gap-2 bg-yellow-600 hover:bg-yellow-700" onClick={() => router.push(`/admin/editor?categoryId=${adminSelectedCategory}`)} disabled={!adminSelectedCategory}><PlusCircle size={16} />Añadir Prompt</Button>
+                <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700" onClick={handleOpenAddCommand} disabled={!selectedCategory}><PlusCircle size={16} />Añadir Item (Simple/Workflow)</Button>
+                <Button size="sm" className="gap-2 bg-yellow-600 hover:bg-yellow-700" onClick={() => router.push(`/admin/editor?categoryId=${selectedCategory}`)} disabled={!selectedCategory}><PlusCircle size={16} />Añadir Prompt</Button>
               </div>
               <ScrollArea className="flex-1 bg-gray-950/50 rounded-md border border-gray-700 mt-2">
                 <SortableContext
@@ -367,7 +367,7 @@ export default function AdminPage() {
                         command={cmd}
                         onEdit={() => handleOpenEditCommand(cmd)}
                         onDelete={() => triggerDeleteCommand(cmd)}
-                        onDuplicate={() => adminSelectedCategory && handleDuplicateCommand(cmd.id, adminSelectedCategory)}
+                        onDuplicate={() => selectedCategory && handleDuplicateCommand(cmd.id, selectedCategory)}
                       />
                     ))}
                   </div>

@@ -5,9 +5,25 @@
       "name": "Git Essentials",
       "icon": "😺",
       "order": 0
+    },
+    {
+      "id": "nueva-categoría-de-prueba-1770368102106",
+      "name": "Nueva Categoría de Prueba",
+      "icon": "🛡️",
+      "order": 1
     }
   ],
   "commands": {
-    "git-essentials": []
+    "git-essentials": [
+      {
+        "id": "cmd-1770368135994",
+        "label": "Item de Prueba 1",
+        "command": "comando simple",
+        "type": "command",
+        "isFavorite": false,
+        "order": 0
+      }
+    ],
+    "nueva-categoría-de-prueba-1770368102106": []
   }
 }
