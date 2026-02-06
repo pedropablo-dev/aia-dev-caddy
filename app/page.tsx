@@ -352,6 +352,33 @@ export default function BroworksLaunchpad() {
     setEditingCategory(null)
   }
 
+  const handleReorderCommands = (newOrder: Command[]) => {
+    // 1. Determine local category context
+    const categoryId = selectedCategory === 'favorites' ? 'all' : selectedCategory
+
+    // 2. Deep clone data
+    const newData: AppData = JSON.parse(JSON.stringify(data))
+
+    // 3. Update the specific category
+    // Note: If 'favorites' or search is active, we might be reordering a subset
+    // For MVP, we only allow reordering when a specific category is selected (not favorites/search)
+    if (categoryId === 'all' || searchQuery) {
+      toast.error('Solo puedes reordenar dentro de una categoría específica')
+      return
+    }
+
+    if (newData.commands[categoryId]) {
+      // Update order property for each command to match new index
+      const updatedCommands = newOrder.map((cmd, index) => ({
+        ...cmd,
+        order: index
+      }))
+
+      newData.commands[categoryId] = updatedCommands
+      saveData(newData)
+    }
+  }
+
   // Form submit handler - transforms form data to Command
   const onFormSubmit = (formData: any) => {
     // Convert form type to command type
@@ -474,6 +501,7 @@ export default function BroworksLaunchpad() {
               onEdit={handleEdit}
               onDelete={handleDelete}
               onDuplicate={handleDuplicate}
+              onReorder={handleReorderCommands}
             />
           </div>
         </div>
