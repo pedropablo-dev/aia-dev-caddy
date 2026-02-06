@@ -35,7 +35,9 @@ interface CommandListProps {
     onEdit?: (command: Command) => void;
     onDelete?: (commandId: string) => void;
     onDuplicate?: (command: Command) => void;
+    onDuplicate?: (command: Command) => void;
     onReorder?: (newOrder: Command[]) => void;
+    onSelect: (index: number) => void; // New prop for selection
 }
 
 export function CommandList({
@@ -54,6 +56,7 @@ export function CommandList({
     onDelete,
     onDuplicate,
     onReorder,
+    onSelect, // New prop
 }: CommandListProps) {
     const selectedRef = useRef<HTMLDivElement>(null)
 
@@ -105,6 +108,8 @@ export function CommandList({
                             <div
                                 key={cmd.id}
                                 ref={index === selectedIndex ? selectedRef : null}
+                                onClick={() => onSelect(index)} // Enable mouse selection
+                                className="cursor-pointer" // Visual feedback
                             >
                                 <CommandCard
                                     command={cmd}

@@ -189,7 +189,7 @@
       {
         "id": "prompt-2",
         "label": "Explicar Fragmento de Código",
-        "command": "Actúa como un programador senior. Explica el siguiente fragmento de código de `{Language}` de forma clara y concisa. Céntrate en el porqué de su diseño y en las posibles mejoras.\n\n```\n{CodeSnippet}\n```",
+        "command": "Actúa como un programador senior. Explica el siguiente fragmento de código de `{Language}` de forma clara y concisa. Céntrate en el porqué de su diseño y en las posibles mejoras.\n\n```\n{CodeSnippet}\n```kjlkasjfas\ndfa\nsdf\nasd\nf\nasd\nfa\nsdf\nasdf",
         "type": "prompt",
         "isFavorite": true,
         "order": 1,
@@ -271,12 +271,29 @@
     ],
     "test-zod-1770295061923": [
       {
+        "id": "cmd-1770389852253-7u2wbwhvn",
+        "label": "ASDEFADSF",
+        "command": "ASDFASF",
+        "type": "command",
+        "isFavorite": false,
+        "order": 0
+      },
+      {
+        "id": "cmd-1770389882829",
+        "label": "FDSFASDFASD",
+        "command": "FASDFASDF\nASD\nFA\nSDF\nA\nSDF\nAS\nDF\nASD\nFA",
+        "type": "prompt",
+        "isFavorite": false,
+        "order": 1,
+        "variables": []
+      },
+      {
         "id": "cmd-1770295074784",
         "label": "dghd",
         "command": "dfhd",
         "type": "command",
         "isFavorite": false,
-        "order": 0
+        "order": 2
       }
     ],
     "all": [

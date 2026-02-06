@@ -39,7 +39,8 @@ const CategoryFormModal = dynamic(
 
 export default function BroworksLaunchpad() {
   // --- Custom Hook for Data Logic ---
-  const { data, isLoading, hasMounted, saveData, toggleFavorite } = useCommands()
+  // --- Custom Hook for Data Logic ---
+  const { data, isLoading, hasMounted, saveData, toggleFavorite, importData } = useCommands()
 
   // --- UI State ---
   const { selectedCategory, isEditMode } = useAppStore()
@@ -271,14 +272,21 @@ export default function BroworksLaunchpad() {
       const newCommand: Command = {
         ...updatedCommand,
         id: updatedCommand.id || generateUniqueId(), // Ensure ID exists for new commands
-        order: newData.commands[categoryId]?.length || 0,
+        order: 0, // NEW: New items always at top
       }
 
       if (!newData.commands[categoryId]) {
         newData.commands[categoryId] = []
       }
 
-      newData.commands[categoryId].push(newCommand)
+      // UX: Add to beginning of array (LIFO)
+      newData.commands[categoryId].unshift(newCommand)
+
+      // Re-index subsequent items to keep order clean
+      newData.commands[categoryId].forEach((cmd, idx) => {
+        cmd.order = idx;
+      });
+
       saveData(newData)
       toast.success('Comando creado correctamente')
       setIsFormOpen(false)
@@ -492,10 +500,12 @@ export default function BroworksLaunchpad() {
         <div className="max-w-7xl mx-auto flex h-screen">
           <Sidebar
             categories={sortedCategories}
+            data={data}
             helpContent={helpContent}
             onCreateCategory={handleCreateCategory}
             onEditCategory={handleEditCategory}
             onReorderCategories={handleReorderCategories}
+            onImport={importData}
           />
 
           {/* Central Panel */}
@@ -520,6 +530,7 @@ export default function BroworksLaunchpad() {
               onDelete={handleDelete}
               onDuplicate={handleDuplicate}
               onReorder={handleReorderCommands}
+              onSelect={setSelectedIndex}
             />
           </div>
         </div>

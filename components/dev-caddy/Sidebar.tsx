@@ -57,10 +57,12 @@ import { SortableCategoryItem } from "./SortableCategoryItem"
 
 interface SidebarProps {
     categories: Category[];
+    data: AppData; // Added for Export
     helpContent: string;
     onCreateCategory: () => void;
     onEditCategory: (category: Category) => void;
     onReorderCategories?: (newOrder: Category[]) => void;
+    onImport: (info: AppData) => Promise<void>; // Added for Import
 }
 
 const markdownComponents: Components = {
@@ -74,10 +76,18 @@ const markdownComponents: Components = {
     code: ({ ...props }) => <code className="bg-gray-800 text-purple-300 font-mono rounded-md px-1.5 py-0.5 text-sm" {...props} />
 }
 
-export function Sidebar({ categories, helpContent, onCreateCategory, onEditCategory, onReorderCategories }: SidebarProps) {
+export function Sidebar({
+    categories,
+    data,
+    helpContent,
+    onCreateCategory,
+    onEditCategory,
+    onReorderCategories,
+    onImport
+}: SidebarProps) {
     const { selectedCategory, setSelectedCategory, isEditMode, toggleEditMode } = useAppStore();
     const { isSidebarCollapsed, toggleSidebar } = useUIStore();
-    const { data, saveData, importData, refreshCommands } = useCommands();
+    // useCommands removed to fix state isolation
     const [categorySearch, setCategorySearch] = useState("");
     const [isHelpOpen, setIsHelpOpen] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -168,11 +178,11 @@ export function Sidebar({ categories, helpContent, onCreateCategory, onEditCateg
                     return;
                 }
 
-                // Restore data using importData (updates file and state)
-                await importData(parsedData);
+                // Restore data using parent handler (updates page state)
+                await onImport(parsedData);
 
-                // Force UI refresh by re-fetching from API
-                await refreshCommands();
+                // Success feedback handled by parent or here if needed
+                // refreshCommands() is no longer needed as parent state update triggers re-render
             } catch (error) {
                 toast.error('Error al leer el archivo: JSON malformado');
                 console.error('Import error:', error);
