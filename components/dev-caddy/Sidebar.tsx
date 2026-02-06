@@ -324,7 +324,7 @@ export function Sidebar({
                                 className="flex-1 gap-2 text-gray-300 bg-gray-800 border-gray-700 hover:bg-gray-700 hover:text-white"
                                 size="sm"
                             >
-                                <Download className="h-4 w-4" />
+                                <Upload className="h-4 w-4" />
                                 Exportar
                             </Button>
                             <Button
@@ -333,7 +333,7 @@ export function Sidebar({
                                 className="flex-1 gap-2 text-gray-300 bg-gray-800 border-gray-700 hover:bg-gray-700 hover:text-white"
                                 size="sm"
                             >
-                                <Upload className="h-4 w-4" />
+                                <Download className="h-4 w-4" />
                                 Importar
                             </Button>
                         </div>
