@@ -20,6 +20,7 @@ interface CommandListProps {
     onVariableChange: (key: string, value: string) => void;
     onEdit?: (command: Command) => void;
     onDelete?: (commandId: string) => void;
+    onDuplicate?: (command: Command) => void;
 }
 
 export function CommandList({
@@ -36,6 +37,7 @@ export function CommandList({
     onVariableChange,
     onEdit,
     onDelete,
+    onDuplicate,
 }: CommandListProps) {
     const selectedRef = useRef<HTMLDivElement>(null)
 
@@ -72,6 +74,7 @@ export function CommandList({
                             onVariableChange={onVariableChange}
                             onEdit={onEdit}
                             onDelete={onDelete}
+                            onDuplicate={onDuplicate}
                         />
                     </div>
                 ))}

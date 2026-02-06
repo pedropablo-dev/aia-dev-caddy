@@ -9,6 +9,7 @@ import {
     Star,
     Pencil,
     Trash2,
+    Files,
 } from "lucide-react"
 import { Highlight, themes } from "prism-react-renderer"
 import { Button } from "@/components/ui/button"
@@ -30,6 +31,7 @@ interface CommandCardProps {
     onVariableChange: (key: string, value: string) => void;
     onEdit?: (command: Command) => void;
     onDelete?: (commandId: string) => void;
+    onDuplicate?: (command: Command) => void;
 }
 
 export function CommandCard({
@@ -44,6 +46,7 @@ export function CommandCard({
     onVariableChange,
     onEdit,
     onDelete,
+    onDuplicate,
 }: CommandCardProps) {
     const { isEditMode } = useAppStore();
     return (
@@ -105,6 +108,20 @@ export function CommandCard({
                                     <Trash2 className="h-4 w-4" />
                                 </Button>
                             )}
+                            {onDuplicate && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-gray-400 hover:text-green-400 hover:bg-green-500/10"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onDuplicate(cmd);
+                                    }}
+                                    title="Duplicar"
+                                >
+                                    <Files className="h-4 w-4" />
+                                </Button>
+                            )}
                         </div>
                     )}
                     {/* View Mode Actions */}
@@ -152,7 +169,7 @@ export function CommandCard({
                         >
                             {({ className, style, tokens, getLineProps, getTokenProps }) => (
                                 <pre
-                                    className="p-4 rounded-md text-sm border border-gray-700 whitespace-pre-wrap break-words max-w-full"
+                                    className="p-4 rounded-md text-sm border border-gray-700 whitespace-pre-wrap break-words max-w-full line-clamp-3"
                                     style={style}
                                 >
                                     {tokens.map((line, i) => (
@@ -190,7 +207,7 @@ export function CommandCard({
                         >
                             {({ className, style, tokens, getLineProps, getTokenProps }) => (
                                 <pre
-                                    className="p-3 rounded-md overflow-x-auto text-sm border border-gray-700 max-w-full"
+                                    className="p-3 rounded-md overflow-x-auto text-sm border border-gray-700 max-w-full line-clamp-3"
                                     style={style}
                                 >
                                     {tokens.map((line, i) => (
@@ -220,7 +237,7 @@ export function CommandCard({
                         >
                             {({ className, style, tokens, getLineProps, getTokenProps }) => (
                                 <pre
-                                    className="p-3 rounded-md overflow-x-auto text-sm border border-gray-700 max-w-full"
+                                    className="p-3 rounded-md overflow-x-auto text-sm border border-gray-700 max-w-full line-clamp-3"
                                     style={style}
                                 >
                                     {tokens.map((line, i) => (

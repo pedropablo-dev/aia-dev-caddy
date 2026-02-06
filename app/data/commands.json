@@ -34,7 +34,7 @@
         "label": "asdfasf",
         "command": "asdfa",
         "type": "command",
-        "isFavorite": false,
+        "isFavorite": true,
         "order": 2,
         "variables": [
           {
@@ -61,6 +61,70 @@
         "variables": [
           "{nombre de la casa}"
         ]
+      },
+      {
+        "id": "cmd-1770378649059-bwkz8gcv1",
+        "label": "Item de Prueba 1 (Copia)",
+        "command": "comando simple",
+        "type": "command",
+        "isFavorite": false,
+        "order": 4
+      },
+      {
+        "id": "cmd-1770378659883-c6rzm779a",
+        "label": "asdfasf (Copia)",
+        "command": "asdfa",
+        "type": "command",
+        "isFavorite": false,
+        "order": 5,
+        "variables": [
+          {
+            "name": "asdf",
+            "placeholder": "asdf"
+          }
+        ]
+      },
+      {
+        "id": "cmd-1770378673317-wmwd5exyv",
+        "label": "asdfasf (Copia) (Copia)",
+        "command": "asdfa",
+        "type": "command",
+        "isFavorite": false,
+        "order": 6,
+        "variables": [
+          {
+            "name": "asdf",
+            "placeholder": "asdf"
+          }
+        ]
+      },
+      {
+        "id": "cmd-1770378682611-ubip904sg",
+        "label": "asdfasf (Copia)",
+        "command": "asdfa",
+        "type": "command",
+        "isFavorite": true,
+        "order": 7,
+        "variables": [
+          {
+            "name": "asdf",
+            "placeholder": "asdf"
+          }
+        ]
+      },
+      {
+        "id": "cmd-1770378690353-a43zy7wrn",
+        "label": "asdfasf (Copia)",
+        "command": "asdfa",
+        "type": "command",
+        "isFavorite": true,
+        "order": 8,
+        "variables": [
+          {
+            "name": "asdf",
+            "placeholder": "asdf"
+          }
+        ]
       }
     ],
     "nueva-categoría-de-prueba-1770368102106": [
@@ -69,8 +133,16 @@
         "label": "asdfasdf",
         "command": "asdfasdf",
         "type": "command",
-        "isFavorite": false,
+        "isFavorite": true,
         "order": 0
+      },
+      {
+        "id": "cmd-1770378708655-fvltj5yr9",
+        "label": "asdfasdf (Copia)",
+        "command": "asdfasdf",
+        "type": "command",
+        "isFavorite": true,
+        "order": 1
       }
     ],
     "villamartin-1770377500228": [

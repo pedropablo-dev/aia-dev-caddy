@@ -206,6 +206,34 @@ export default function BroworksLaunchpad() {
     }
   }
 
+  const handleDuplicate = (command: Command) => {
+    // Deep clone the command
+    const newData: AppData = JSON.parse(JSON.stringify(data))
+
+    // Find which category the command belongs to
+    const categoryId = findCommandCategoryId(command.id, newData)
+
+    if (!categoryId) {
+      toast.error('No se pudo encontrar la categoría del comando')
+      return
+    }
+
+    // Create duplicate with new ID and modified label
+    const duplicatedCommand: Command = {
+      ...command,
+      id: generateUniqueId(),  // Generate new unique ID
+      label: `${command.label} (Copia)`,  // Append (Copia) to label
+      order: newData.commands[categoryId].length,  // Set order to end of list
+    }
+
+    // Add to same category
+    newData.commands[categoryId].push(duplicatedCommand)
+
+    // Save and notify
+    saveData(newData)
+    toast.success('Comando duplicado correctamente')
+  }
+
   const handleSave = (updatedCommand: Command) => {
     // Step 1: Deep clone to ensure immutability
     const newData: AppData = JSON.parse(JSON.stringify(data))
@@ -368,6 +396,7 @@ export default function BroworksLaunchpad() {
               onVariableChange={handleVariableChange}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onDuplicate={handleDuplicate}
             />
           </div>
         </div>
