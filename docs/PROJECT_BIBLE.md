@@ -1,4 +1,4 @@
-# Dev-Caddy Project Bible v0.2.0
+# Dev-Caddy Project Bible v1.2.0
 
 > The comprehensive guide for developers working on Dev-Caddy.
 
@@ -18,46 +18,51 @@ A personal command palette for developers to:
 
 ```
 broworks-dev-caddy/
-├── app/                      # Next.js App Router pages
-│   ├── page.tsx              # Main launchpad (160 lines)
+├── app/                      # Next.js App Router
+│   ├── page.tsx              # Main SPA (660 lines)
 │   ├── error.tsx             # Global error boundary
 │   ├── not-found.tsx         # 404 page
 │   ├── loading.tsx           # Skeleton SSR
-│   ├── admin/
-│   │   ├── page.tsx          # Admin panel (CRUD)
-│   │   └── editor/page.tsx   # Rich text prompt editor
 │   ├── api/commands/
 │   │   └── route.ts          # REST API (Zod validated)
 │   ├── data/
-│   │   └── commands.json     # Data file
+│   │   └── commands.json     # Persistent data file
 │   ├── globals.css           # Tailwind + CSS variables
 │   └── layout.tsx            # Root layout
 │
 ├── components/
-│   ├── dev-caddy/            # 🆕 Atomic components
-│   │   ├── Sidebar.tsx       # Category navigation
+│   ├── dev-caddy/            # Business components
+│   │   ├── Sidebar.tsx       # Category nav + Edit Mode
 │   │   ├── Header.tsx        # Search bar
-│   │   ├── CommandList.tsx   # Command list
+│   │   ├── CommandList.tsx   # Command grid
 │   │   ├── CommandCard.tsx   # Command display
+│   │   ├── PromptCard.tsx    # Prompt rendering
+│   │   ├── SortableCategoryItem.tsx
+│   │   ├── SortableCommandItem.tsx
 │   │   ├── skeletons.tsx     # Loading states
-│   │   └── backup-controls.tsx # Export/Import
+│   │   ├── editor/
+│   │   │   └── EditorOverlay.tsx
+│   │   └── forms/
+│   │       ├── CommandFormModal.tsx
+│   │       └── CategoryFormModal.tsx
 │   └── ui/                   # Shadcn UI components
 │
-├── hooks/                    # 🆕 Custom React hooks
+├── hooks/
 │   └── use-commands.ts       # Data fetching + state
 │
 ├── lib/
 │   ├── utils.ts              # Utility functions (cn)
-│   └── schemas.ts            # 🆕 Zod validation schemas
+│   └── schemas.ts            # Zod validation schemas
 │
-├── types/                    # 🆕 Centralized types (SSoT)
-│   └── index.ts              # All type definitions
+├── types/
+│   └── index.ts              # Centralized type definitions
 │
 ├── store/                    # Zustand state management
-│   ├── appStore.ts           # App state
-│   └── uiStore.ts            # UI state
+│   ├── appStore.ts           # App state (selectedCategory, isEditMode)
+│   └── uiStore.ts            # UI state (isSidebarCollapsed)
 │
-└── public/                   # Static assets
+└── public/
+    └── help.md               # User Guide markdown
 ```
 
 ---
@@ -66,7 +71,7 @@ broworks-dev-caddy/
 
 ### 1. Single Source of Truth (SSoT)
 
-**Types:** All type definitions live in `types/index.ts`
+**Types:** All type definitions in `types/index.ts`
 ```typescript
 import type { Command, Category, AppData } from "@/types"
 ```
@@ -82,12 +87,12 @@ import type { Command, Category, AppData } from "@/types"
 | State | Global UI | `store/` |
 | Validation | API security | `lib/schemas.ts` |
 
-### 3. Atomic Component Design
+### 3. Admin-Zero Architecture
 
-Components are small, focused, and reusable:
-- **Sidebar** handles navigation only
-- **CommandCard** handles display only
-- **useCommands** handles data only
+**No separate admin routes.** All management via Edit Mode toggle in the Sidebar:
+- Toggle the lock icon to enable editing
+- Drag handles appear for reordering
+- Context menus appear for Edit/Duplicate/Delete
 
 ---
 
@@ -134,7 +139,8 @@ Components are small, focused, and reusable:
   "id": "prompt-1",
   "label": "Generate Component",
   "command": "Create a React component...",
-  "type": "prompt"
+  "type": "prompt",
+  "variables": ["{ComponentName}"]
 }
 ```
 
@@ -146,10 +152,9 @@ Components are small, focused, and reusable:
 Returns all data from `commands.json`.
 
 ### POST /api/commands
-**🔒 Zod validated** - Overwrites `commands.json` with new data.
+**🔒 Zod validated** - Overwrites `commands.json` with validated data.
 
 ```typescript
-// Validation
 const result = AppDataSchema.safeParse(body);
 if (!result.success) {
   return NextResponse.json(
@@ -166,16 +171,24 @@ if (!result.success) {
 ### Global State (Zustand)
 ```typescript
 // appStore - persisted in localStorage
-selectedCategory: string      // Main view selection
-adminSelectedCategory: string // Admin view selection
+selectedCategory: string    // Selected category ID
+isEditMode: boolean         // Edit mode toggle
 
-// uiStore
-isSidebarCollapsed: boolean   // Sidebar toggle
+// uiStore - persisted in localStorage
+isSidebarCollapsed: boolean // Sidebar toggle
 ```
 
 ### Data State (useCommands Hook)
 ```typescript
-const { data, isLoading, hasMounted, fetchData, saveData, toggleFavorite, importData } = useCommands()
+const { 
+  data, 
+  isLoading, 
+  hasMounted, 
+  fetchData, 
+  saveData, 
+  toggleFavorite, 
+  importData 
+} = useCommands()
 ```
 
 ---
@@ -188,17 +201,19 @@ const { data, isLoading, hasMounted, fetchData, saveData, toggleFavorite, import
 
 ### Search
 - `Ctrl+K` focuses search input
-- Filters by label and command content
+- Fuzzy search via Fuse.js across all commands
 
-### Backup System 🆕
+### Backup System
 - **Export:** Downloads `dev-caddy-backup-YYYY-MM-DD.json`
-- **Import:** Upload JSON, validates structure, restores data
-- Located in Admin panel header
+- **Import:** Upload JSON, validates, restores data
+- Located in Sidebar (Edit Mode)
 
-### Error Handling 🆕
-- **Error boundary:** Catches crashes, shows reset button
-- **404 page:** Branded navigation back home
-- **Toast notifications:** All errors show toasts
+### Edit Mode Features
+- **Drag & Drop**: Reorder categories and commands
+- **Create**: Floating Action Button (bottom-right)
+- **Edit**: Click pencil icon or context menu
+- **Delete**: Click trash icon or context menu
+- **Duplicate**: Click files icon or context menu "Duplicar"
 
 ---
 
@@ -206,15 +221,10 @@ const { data, isLoading, hasMounted, fetchData, saveData, toggleFavorite, import
 
 ```bash
 npm install     # Install dependencies
-npm run dev     # Start dev server (port 3002)
+npm run dev     # Start dev server (port 3000)
 npm run build   # Build for production
 npm start       # Start production server
 ```
-
-**URLs:**
-- Main app: http://localhost:3002
-- Admin panel: http://localhost:3002/admin
-- Prompt editor: http://localhost:3002/admin/editor
 
 ---
 
@@ -222,37 +232,17 @@ npm start       # Start production server
 
 | Type | Convention | Example |
 |------|------------|---------|
-| Category IDs | `kebab-case` | `git-essentials` |
-| Command IDs | `type-category-number` | `git-simple-1` |
+| Category IDs | Generated or `kebab-case` | `git-essentials` |
+| Command IDs | `cmd-{timestamp}-{random}` | `cmd-1770412922670-m0jq0gqgr` |
 | Components | `PascalCase.tsx` | `CommandCard.tsx` |
 | Hooks | `use-kebab-case.ts` | `use-commands.ts` |
 | Stores | `camelCase.ts` | `appStore.ts` |
 
 ---
 
-## Common Tasks
-
-### Adding a New Category
-1. Go to `/admin`
-2. Click "Añadir" under Categories
-3. Enter name and emoji icon
-4. Save
-
-### Creating a Backup
-1. Go to `/admin`
-2. Click "Exportar Backup" in header
-3. JSON file downloads automatically
-
-### Restoring from Backup
-1. Go to `/admin`
-2. Click "Importar Backup"
-3. Select `.json` file
-4. Data restores automatically
-
----
-
 ## Known Limitations
 
 1. **Single-user:** No authentication
-2. **Local only:** File-based storage (no serverless)
+2. **Local only:** File-based storage
 3. **No undo:** Deletions are permanent (use backups!)
+4. **No auto-backup:** Manual export required

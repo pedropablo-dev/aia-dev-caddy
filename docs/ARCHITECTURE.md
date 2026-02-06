@@ -1,48 +1,88 @@
-# Dev-Caddy Architecture
+# Dev-Caddy Architecture v1.2.0
 
 ## Overview
-Dev-Caddy is a **Single Page Application (SPA)** designed for developers to manage and execute frequent commands, prompts, and workflows. It is built with **Next.js 14** (App Router) and uses **Local Storage** for data persistence.
+Dev-Caddy is a **Single Page Application (SPA)** for developers to manage CLI commands, AI prompts, and workflows. Built with **Next.js 14** (App Router) with **file-based JSON persistence**.
 
 ## Tech Stack
 - **Framework**: Next.js 14 (React 18)
 - **Styling**: Tailwind CSS + Shadcn UI
-- **State Management**: Zustand
+- **State Management**: Zustand (2 stores)
 - **Icons**: Lucide React
 - **Drag & Drop**: @dnd-kit
+- **Search**: Fuse.js (fuzzy search)
+- **Validation**: Zod schemas
+- **Notifications**: Sonner (toast)
 
-## Core Concepts
+## Core Architecture
 
-### 1. Single Page Design
-The entire application lives in `/app/page.tsx`.
-- **Sidebar**: Manages Categories.
-- **Main Area**: Displays Commands for the selected category.
-- **Modals**: Handle creation/editing of Commands and Categories.
+### Single Page Design
+The entire application lives in `/app/page.tsx` (~660 lines):
+- **Sidebar**: Category navigation + Edit Mode toggle + Import/Export
+- **Main Area**: Displays Commands for selected category with fuzzy search
+- **Modals**: Lazy-loaded forms for Commands/Categories (via `next/dynamic`)
 
-### 2. Data Persistence
-Data is stored directly in the local file system (in dev mode) or LocalStorage (in production demo) via a unified hook `useCommands`.
-- **Data Structure**:
-    ```typescript
-    interface AppData {
-        categories: Category[];
-        commands: Record<string, Command[]>; // Keyed by Category ID
-    }
-    ```
-- **Backup**: Users can export/import their entire configuration as a JSON file.
+### Data Persistence
+Data is stored in `app/data/commands.json` via REST API:
+- **GET /api/commands**: Read all data
+- **POST /api/commands**: Write data (Zod-validated)
 
-### 3. State Management
-- **AppStore (Zustand)**: UI state like `isEditMode`, `selectedCategory`, `sidebarCollapsed`.
-- **Local State**: Form inputs, drag-and-drop temporary state.
+```typescript
+// Data Schema
+interface AppData {
+    categories: Category[];
+    commands: Record<string, Command[]>; // Keyed by Category ID
+}
+```
 
-### 4. Edit Mode
-A global toggle switch in the Sidebar enables "Admin Features":
-- **Drag & Drop**: Reorder categories and commands.
-- **CRUD Operations**: Create, Edit, Delete categories and commands.
-- **Visual Feedback**: Drag handles and extra menus appear only in Edit Mode.
+### State Management
+
+| Store | Purpose | Persisted |
+|-------|---------|-----------|
+| `appStore` | `selectedCategory`, `isEditMode` | LocalStorage |
+| `uiStore` | `isSidebarCollapsed` | LocalStorage |
+
+Data state managed by `useCommands` hook (fetching, saving, toggling favorites).
+
+### Edit Mode
+A global toggle switch in the Sidebar enables admin features:
+- **Drag & Drop**: Reorder categories and commands
+- **CRUD Operations**: Create, Edit, Delete, Duplicate
+- **Visual Feedback**: Drag handles and action buttons appear only in Edit Mode
+
+### Component Structure
+```
+components/dev-caddy/
+├── Sidebar.tsx           # Navigation + Edit Mode + Import/Export
+├── Header.tsx            # Search bar (Ctrl+K)
+├── CommandList.tsx       # Command grid with DnD
+├── CommandCard.tsx       # Single command display
+├── PromptCard.tsx        # Prompt-specific rendering
+├── SortableCategoryItem.tsx  # Draggable category item
+├── SortableCommandItem.tsx   # Draggable command wrapper
+├── skeletons.tsx         # Loading states
+├── forms/
+│   ├── CommandFormModal.tsx
+│   └── CategoryFormModal.tsx
+└── editor/
+    └── EditorOverlay.tsx # Rich text prompt editor
+```
 
 ## Directory Structure
-- `app/`: Main application routes (only `page.tsx` and `api/`).
-- `components/dev-caddy/`: All UI components (Cards, Sidebar, Forms).
-- `hooks/`: Custom hooks (`use-commands.tsx`).
-- `store/`: Zustand stores.
-- `types/`: TypeScript definitions.
-- `docs/`: project documentation.
+```
+broworks-dev-caddy/
+├── app/
+│   ├── page.tsx          # Main SPA (~660 lines)
+│   ├── api/commands/     # REST API endpoint
+│   └── data/commands.json
+├── components/dev-caddy/ # Business components
+├── hooks/use-commands.ts # Data fetching hook
+├── store/                # Zustand stores
+├── types/index.ts        # Centralized types
+├── lib/schemas.ts        # Zod validation
+└── docs/                 # Documentation
+```
+
+## Security
+- **Input Validation**: All POST data validated with Zod schemas
+- **File-based Storage**: No external database exposure
+- **Local-only**: Designed for single-user localhost operation
