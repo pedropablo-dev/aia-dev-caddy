@@ -7,172 +7,317 @@
       "order": 0
     },
     {
-      "id": "nueva-categoría-de-prueba-1770368102106",
-      "name": "Nueva Categoría de Prueba",
-      "icon": "🛡️",
+      "id": "docker-commands",
+      "name": "Docker",
+      "icon": "🐳",
       "order": 1
     },
     {
-      "id": "villamartin-1770377500228",
-      "name": "villamartin",
-      "icon": "dd",
+      "id": "project-urls",
+      "name": "Project URLs",
+      "icon": "🔗",
       "order": 2
+    },
+    {
+      "id": "ai-prompts",
+      "name": "AI Prompts",
+      "icon": "✨",
+      "order": 3
+    },
+    {
+      "id": "ssh-connections",
+      "name": "SSH Connections",
+      "icon": "🐧",
+      "order": 4
+    },
+    {
+      "id": "test-zod-1770295061923",
+      "name": "Test Zod",
+      "icon": "🚦",
+      "order": 5
+    },
+    {
+      "id": "asdfas-1770296269136",
+      "name": "asdfas",
+      "icon": "🚀",
+      "order": 6
+    },
+    {
+      "id": "dadfgasdfasfasdfasdfasdf-1770297072507",
+      "name": "dadfgasdfasfasdfasdfasdf",
+      "icon": "🤷‍♂️",
+      "order": 7
+    },
+    {
+      "id": "dddddddddddddddddd-1770299076177",
+      "name": "dddddddddddddddddd",
+      "icon": "🛡️",
+      "order": 8
+    },
+    {
+      "id": "aaaaaaaaaaaaaaaaaaaa-1770301862914",
+      "name": "aaaaaaaaaaaaaaaaaaaa",
+      "icon": "a",
+      "order": 9
     }
   ],
   "commands": {
     "git-essentials": [
       {
-        "id": "cmd-1770368135994",
-        "label": "Item de Prueba 1",
-        "command": "comando simple",
-        "type": "command",
-        "isFavorite": false,
-        "order": 0
+        "id": "git-workflow-1",
+        "label": "Secuencia de Guardado Completa",
+        "command": "workflow",
+        "type": "workflow",
+        "isFavorite": true,
+        "order": 1,
+        "steps": [
+          "git status",
+          "git add .",
+          "git commit -m \"Escribe tu mensaje aquí\"",
+          "git push origin main"
+        ]
       },
       {
-        "id": "cmd-1770374469927-jtnacx7da",
-        "label": "asdfasf",
-        "command": "asdfa",
+        "id": "git-variables-1",
+        "label": "Crear y Cambiar a Nueva Rama",
+        "command": "git checkout -b {branch-name}",
         "type": "command",
-        "isFavorite": true,
+        "isFavorite": false,
         "order": 2,
         "variables": [
           {
-            "name": "asdf",
-            "placeholder": "asdf"
+            "name": "branch-name",
+            "placeholder": "Ej: feature/nueva-funcionalidad"
           }
         ]
       },
       {
-        "id": "cmd-1770374512480-l9shdvstw",
-        "label": "fsfasdfa",
-        "command": "asdfasdf",
-        "type": "command",
-        "isFavorite": false,
-        "order": 3
-      },
-      {
-        "id": "cmd-1770377444426",
-        "label": "villa martin",
-        "command": "fddfdfdfdfgsdfgs**dfgsdfg** \nasdfasd\nas\ndf\nasd\nf\nas\n\n\nasdfasdf\n\n",
-        "type": "prompt",
-        "isFavorite": false,
-        "order": 4,
-        "variables": [
-          "{nombre de la casa}"
-        ]
-      },
-      {
-        "id": "cmd-1770378649059-bwkz8gcv1",
-        "label": "Item de Prueba 1 (Copia)",
-        "command": "comando simple",
-        "type": "command",
-        "isFavorite": false,
-        "order": 4
-      },
-      {
-        "id": "cmd-1770378659883-c6rzm779a",
-        "label": "asdfasf (Copia)",
-        "command": "asdfa",
-        "type": "command",
-        "isFavorite": false,
-        "order": 5,
-        "variables": [
-          {
-            "name": "asdf",
-            "placeholder": "asdf"
-          }
-        ]
-      },
-      {
-        "id": "cmd-1770378673317-wmwd5exyv",
-        "label": "asdfasf (Copia) (Copia)",
-        "command": "asdfa",
-        "type": "command",
-        "isFavorite": false,
-        "order": 6,
-        "variables": [
-          {
-            "name": "asdf",
-            "placeholder": "asdf"
-          }
-        ]
-      },
-      {
-        "id": "cmd-1770378682611-ubip904sg",
-        "label": "asdfasf (Copia)",
-        "command": "asdfa",
-        "type": "command",
-        "isFavorite": true,
-        "order": 7,
-        "variables": [
-          {
-            "name": "asdf",
-            "placeholder": "asdf"
-          }
-        ]
-      },
-      {
-        "id": "cmd-1770378690353-a43zy7wrn",
-        "label": "asdfasf (Copia)",
-        "command": "asdfa",
-        "type": "command",
-        "isFavorite": true,
-        "order": 8,
-        "variables": [
-          {
-            "name": "asdf",
-            "placeholder": "asdf"
-          }
-        ]
-      }
-    ],
-    "nueva-categoría-de-prueba-1770368102106": [
-      {
-        "id": "cmd-1770374529056-zu0keaf5u",
-        "label": "asdfasdf",
-        "command": "asdfasdf",
+        "id": "git-simple-1",
+        "label": "Ver Historial de Commits (Bonito)",
+        "command": "git log --graph --oneline --decorate",
         "type": "command",
         "isFavorite": true,
         "order": 0
       },
       {
-        "id": "cmd-1770378708655-fvltj5yr9",
-        "label": "asdfasdf (Copia)",
-        "command": "asdfasdf",
+        "id": "git-simple-2",
+        "label": "Deshacer Último Commit (Local)",
+        "command": "git reset --soft HEAD~1",
         "type": "command",
-        "isFavorite": true,
-        "order": 1
+        "order": 4
+      },
+      {
+        "id": "cmd-1770295010475",
+        "label": "ghdgh",
+        "command": "fghdfgh",
+        "type": "command",
+        "isFavorite": false,
+        "order": 3
       }
     ],
-    "villamartin-1770377500228": [
+    "docker-commands": [
       {
-        "id": "cmd-1770377810351",
-        "label": "dfgsdfgsfgsdg",
-        "command": "fdsfsdfgsdfg {referencia} \nsd\nfg\nsdf\ng\nsdf\ng\n\nsdfgsdgfs\n\n\nsdg \nasdf\nasd\nfa\nsd\nfa\nsdf\na\nsdf\nas\ndf\nas\ndf\nasd\nf\nasd\nf\nasd\nfa\nsdf\na\nsd\nfas\nf",
-        "type": "prompt",
+        "id": "docker-simple-1",
+        "label": "Listar Contenedores en Ejecución",
+        "command": "docker ps",
+        "type": "command",
         "isFavorite": false,
+        "order": 0
+      },
+      {
+        "id": "docker-simple-2",
+        "label": "Listar Todos los Contenedores",
+        "command": "docker ps -a",
+        "type": "command",
+        "order": 1
+      },
+      {
+        "id": "docker-simple-3",
+        "label": "Eliminar Todos los Contenedores Detenidos",
+        "command": "docker container prune -f",
+        "type": "command",
+        "isFavorite": true,
+        "order": 2
+      },
+      {
+        "id": "docker-variables-1",
+        "label": "Ver Logs de un Contenedor",
+        "command": "docker logs -f {container_name}",
+        "type": "command",
+        "order": 3,
+        "variables": [
+          {
+            "name": "container_name",
+            "placeholder": "Nombre o ID del contenedor"
+          }
+        ]
+      }
+    ],
+    "project-urls": [
+      {
+        "id": "url-simple-1",
+        "label": "Local - App Principal",
+        "command": "http://localhost:3000",
+        "type": "command",
+        "order": 0
+      },
+      {
+        "id": "url-simple-2",
+        "label": "Local - Panel de Admin",
+        "command": "http://localhost:3000/admin",
+        "type": "command",
+        "order": 1
+      },
+      {
+        "id": "url-simple-3",
+        "label": "Staging - Despliegue de Pruebas",
+        "command": "https://staging.tu-app.com",
+        "type": "command",
+        "order": 2
+      }
+    ],
+    "ai-prompts": [
+      {
+        "id": "prompt-1",
+        "label": "Generar Código de Componente React",
+        "command": "Crea un componente de React funcional utilizando TypeScript y Tailwind CSS llamado `{ComponentName}`.\n\n**Requisitos:**\n- El componente debe aceptar una prop `title` (string) y una prop `items` (array de strings).\n- Debe renderizar un título `<h2>` con el valor de `title`.\n- Debe renderizar una lista no ordenada (`<ul>`) con los `items`.\n- El componente debe estar contenido en una tarjeta (`<div>`) con sombra y bordes redondeados.\n\n**Ejemplo de uso:**\n```jsx\n<ComponentName title=\"Mi Lista\" items={['Item 1', 'Item 2']} />\n```",
+        "type": "prompt",
+        "isFavorite": true,
         "order": 0,
         "variables": [
-          "{referencia}"
+          "{ComponentName}"
         ]
       },
       {
-        "id": "cmd-1770377512868",
-        "label": "asdfasdf",
-        "command": "dfasdfasdf",
+        "id": "prompt-2",
+        "label": "Explicar Fragmento de Código",
+        "command": "Actúa como un programador senior. Explica el siguiente fragmento de código de `{Language}` de forma clara y concisa. Céntrate en el porqué de su diseño y en las posibles mejoras.\n\n```\n{CodeSnippet}\n```",
         "type": "prompt",
-        "isFavorite": false,
+        "isFavorite": true,
         "order": 1,
-        "variables": []
+        "variables": [
+          "{Language}",
+          "{CodeSnippet}"
+        ]
+      }
+    ],
+    "ssh-connections": [
+      {
+        "id": "ssh-variables-1",
+        "label": "Conectar a Servidor",
+        "command": "ssh {user}@{host} -p {port}",
+        "type": "command",
+        "isFavorite": true,
+        "order": 0,
+        "variables": [
+          {
+            "name": "user",
+            "placeholder": "ej: root"
+          },
+          {
+            "name": "host",
+            "placeholder": "ej: 192.168.1.100"
+          },
+          {
+            "name": "port",
+            "placeholder": "ej: 22"
+          }
+        ]
+      }
+    ],
+    "test-zod-1770295061923": [
+      {
+        "id": "cmd-1770295074784",
+        "label": "dghd",
+        "command": "dfhd",
+        "type": "command",
+        "isFavorite": false,
+        "order": 0
+      }
+    ],
+    "asdfas-1770296269136": [
+      {
+        "id": "cmd-1770296275717",
+        "label": "sdSD",
+        "command": "asd",
+        "type": "command",
+        "isFavorite": false,
+        "order": 0
       },
       {
-        "id": "cmd-1770377886734-me67qy3yz",
-        "label": "dfasf",
-        "command": "asdfas",
+        "id": "cmd-copy-1770299187804",
+        "label": "sdSD (Copia)",
+        "command": "asd",
+        "type": "command",
+        "isFavorite": false,
+        "order": 1
+      },
+      {
+        "id": "cmd-copy-1770299190023",
+        "label": "sdSD (Copia) (Copia)",
+        "command": "asd",
         "type": "command",
         "isFavorite": false,
         "order": 2
+      }
+    ],
+    "dadfgasdfasfasdfasdfasdf-1770297072507": [
+      {
+        "id": "cmd-1770297080196",
+        "label": "dafasdfasdfasdfasdfasdf",
+        "command": "asdfasdfasdfasdfa",
+        "type": "command",
+        "isFavorite": false,
+        "order": 0
+      },
+      {
+        "id": "cmd-1770297096574",
+        "label": "fasdfasdf",
+        "command": "workflow",
+        "type": "workflow",
+        "isFavorite": false,
+        "order": 1,
+        "steps": [
+          "fadfasd",
+          "asdfas",
+          "asdfa"
+        ]
+      }
+    ],
+    "dddddddddddddddddd-1770299076177": [
+      {
+        "id": "cmd-1770299083557",
+        "label": "asdfasdfasdf",
+        "command": "asdfasdfasdfasdfasdf",
+        "type": "command",
+        "isFavorite": false,
+        "order": 0
+      },
+      {
+        "id": "cmd-copy-1770299180434",
+        "label": "asdfasdfasdf (Copia)",
+        "command": "asdfasdfasdfasdfasdf",
+        "type": "command",
+        "isFavorite": false,
+        "order": 1
+      },
+      {
+        "id": "cmd-copy-1770299183444",
+        "label": "asdfasdfasdf (Copia) (Copia)",
+        "command": "asdfasdfasdfasdfasdf",
+        "type": "command",
+        "isFavorite": false,
+        "order": 2
+      }
+    ],
+    "aaaaaaaaaaaaaaaaaaaa-1770301862914": [
+      {
+        "id": "cmd-1770301872368",
+        "label": "aaaaaaaaaaaa",
+        "command": "aaaaaaaaaaaaa",
+        "type": "command",
+        "isFavorite": true,
+        "order": 0
       }
     ]
   }

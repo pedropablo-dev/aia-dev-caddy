@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import {
     Settings,
     HelpCircle,
@@ -10,6 +10,8 @@ import {
     Search,
     Lock,
     Unlock,
+    Download,
+    Upload,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -28,6 +30,8 @@ import {
 import ReactMarkdown, { Components } from "react-markdown"
 import { useUIStore } from "@/store/uiStore"
 import { useAppStore } from "@/store/appStore"
+import { useCommands } from "@/hooks/use-commands"
+import { toast } from "sonner"
 import type { Category } from "@/types"
 
 interface SidebarProps {
@@ -49,8 +53,10 @@ const markdownComponents: Components = {
 export function Sidebar({ categories, helpContent }: SidebarProps) {
     const { selectedCategory, setSelectedCategory, isEditMode, toggleEditMode } = useAppStore();
     const { isSidebarCollapsed, toggleSidebar } = useUIStore();
+    const { data, saveData } = useCommands();
     const [categorySearch, setCategorySearch] = useState("");
     const [isHelpOpen, setIsHelpOpen] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const filteredCategories = categorySearch
         ? categories.filter((cat) =>
@@ -60,6 +66,60 @@ export function Sidebar({ categories, helpContent }: SidebarProps) {
 
     const sidebarClasses = isSidebarCollapsed ? "w-20" : "w-80";
     const contentClasses = isSidebarCollapsed ? "hidden" : "";
+
+    // Export handler - downloads JSON backup
+    const handleExport = () => {
+        const today = new Date();
+        const dateString = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+        const filename = `dev-caddy-backup-${dateString}.json`;
+
+        const jsonString = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        toast.success('Datos exportados correctamente');
+    };
+
+    // Import handler - restores from JSON backup
+    const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const content = e.target?.result as string;
+                const parsedData = JSON.parse(content);
+
+                // Validate schema - must have commands object
+                if (!parsedData || typeof parsedData !== 'object' || !parsedData.commands) {
+                    toast.error('Archivo inválido: formato de datos incorrecto');
+                    return;
+                }
+
+                // Restore data
+                saveData(parsedData);
+                toast.success('Datos importados correctamente');
+            } catch (error) {
+                toast.error('Error al leer el archivo: JSON malformado');
+                console.error('Import error:', error);
+            }
+        };
+        reader.readAsText(file);
+
+        // Reset input so same file can be selected again
+        if (event.target) {
+            event.target.value = '';
+        }
+    };
 
     return (
         <div className={`transition-all duration-300 ${sidebarClasses} bg-gray-900 border-r border-gray-800 flex flex-col`}>
@@ -125,6 +185,42 @@ export function Sidebar({ categories, helpContent }: SidebarProps) {
             </ScrollArea>
 
             <div className="p-2 border-t border-gray-800 flex flex-col gap-2">
+                {/* Hidden file input for import */}
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".json"
+                    onChange={handleImport}
+                    className="hidden"
+                />
+
+                {/* Import/Export Buttons - Only in Edit Mode */}
+                {isEditMode && !isSidebarCollapsed && (
+                    <>
+                        <div className="flex gap-2">
+                            <Button
+                                onClick={handleExport}
+                                variant="outline"
+                                className="flex-1 gap-2 text-gray-300 bg-gray-800 border-gray-700 hover:bg-gray-700 hover:text-white"
+                                size="sm"
+                            >
+                                <Download className="h-4 w-4" />
+                                Exportar
+                            </Button>
+                            <Button
+                                onClick={() => fileInputRef.current?.click()}
+                                variant="outline"
+                                className="flex-1 gap-2 text-gray-300 bg-gray-800 border-gray-700 hover:bg-gray-700 hover:text-white"
+                                size="sm"
+                            >
+                                <Upload className="h-4 w-4" />
+                                Importar
+                            </Button>
+                        </div>
+                        <hr className="border-gray-700" />
+                    </>
+                )}
+
                 {/* Edit Mode Toggle */}
                 <div className={`flex items-center gap-3 px-2 py-2 rounded-lg bg-gray-800/50 border border-gray-700 ${isSidebarCollapsed ? 'justify-center' : 'justify-between'}`}>
                     {!isSidebarCollapsed && (
