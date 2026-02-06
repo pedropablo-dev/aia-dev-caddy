@@ -88,6 +88,7 @@ export function CategoryFormModal({
         if (initialData?.id && onDelete) {
             if (window.confirm("Borrar esta categoría eliminará todos sus comandos. ¿Estás seguro?")) {
                 onDelete(initialData.id)
+                onClose()
             }
         }
     }

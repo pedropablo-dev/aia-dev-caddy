@@ -61,6 +61,7 @@ interface SidebarProps {
     helpContent: string;
     onCreateCategory: () => void;
     onEditCategory: (category: Category) => void;
+    onDeleteCategory?: (id: string) => void;
     onReorderCategories?: (newOrder: Category[]) => void;
     onImport: (info: AppData) => Promise<void>; // Added for Import
 }
@@ -82,6 +83,7 @@ export function Sidebar({
     helpContent,
     onCreateCategory,
     onEditCategory,
+    onDeleteCategory,
     onReorderCategories,
     onImport
 }: SidebarProps) {
@@ -287,6 +289,7 @@ export function Sidebar({
                                     isCollapsed={isSidebarCollapsed}
                                     onSelect={setSelectedCategory}
                                     onEdit={onEditCategory}
+                                    onDelete={(id) => onDeleteCategory?.(id)}
                                 />
                             ))}
                         </SortableContext>

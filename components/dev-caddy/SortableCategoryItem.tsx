@@ -19,6 +19,7 @@ interface SortableCategoryItemProps {
     isCollapsed: boolean
     onSelect: (categoryId: string) => void
     onEdit: (category: Category) => void
+    onDelete: (id: string) => void
 }
 
 export function SortableCategoryItem({
@@ -28,6 +29,7 @@ export function SortableCategoryItem({
     isCollapsed,
     onSelect,
     onEdit,
+    onDelete,
 }: SortableCategoryItemProps) {
     const {
         attributes,
@@ -52,8 +54,8 @@ export function SortableCategoryItem({
             ref={setNodeRef}
             style={style}
             className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors group ${isSelected
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-300 hover:bg-gray-800"
+                ? "bg-blue-600 text-white"
+                : "text-gray-300 hover:bg-gray-800"
                 } ${isCollapsed ? "justify-center" : ""}`}
         >
             {/* Drag Handle - Only in Edit Mode and Not Collapsed */}
@@ -101,7 +103,11 @@ export function SortableCategoryItem({
                             Editar
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                            onClick={() => onEdit(category)}
+                            onClick={() => {
+                                if (window.confirm("¿Estás seguro de borrar esta categoría?")) {
+                                    onDelete(category.id)
+                                }
+                            }}
                             className="text-red-400 hover:bg-gray-800 cursor-pointer"
                         >
                             Eliminar

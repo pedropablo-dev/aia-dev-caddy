@@ -512,6 +512,7 @@ export default function BroworksLaunchpad() {
             helpContent={helpContent}
             onCreateCategory={handleCreateCategory}
             onEditCategory={handleEditCategory}
+            onDeleteCategory={handleDeleteCategory}
             onReorderCategories={handleReorderCategories}
             onImport={importData}
           />
