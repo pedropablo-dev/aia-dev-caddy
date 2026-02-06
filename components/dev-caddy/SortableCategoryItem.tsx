@@ -2,7 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { GripVertical, MoreVertical } from "lucide-react"
+import { GripVertical, MoreVertical, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -19,6 +19,7 @@ interface SortableCategoryItemProps {
     isCollapsed: boolean
     onSelect: (categoryId: string) => void
     onEdit: (category: Category) => void
+    onDuplicate: (category: Category) => void
     onDelete: (id: string) => void
 }
 
@@ -29,6 +30,7 @@ export function SortableCategoryItem({
     isCollapsed,
     onSelect,
     onEdit,
+    onDuplicate,
     onDelete,
 }: SortableCategoryItemProps) {
     const {
@@ -98,9 +100,16 @@ export function SortableCategoryItem({
                     >
                         <DropdownMenuItem
                             onClick={() => onEdit(category)}
-                            className="text-gray-300 hover:bg-gray-800 cursor-pointer"
+                            className="text-gray-300 hover:bg-gray-800 cursor-pointer flex items-center gap-2"
                         >
                             Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => onDuplicate(category)}
+                            className="text-gray-300 hover:bg-gray-800 cursor-pointer flex items-center gap-2"
+                        >
+                            <Copy className="h-4 w-4" />
+                            Duplicar
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => {

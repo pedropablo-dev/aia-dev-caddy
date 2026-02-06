@@ -1,94 +1,100 @@
 {
   "categories": [
     {
+      "id": "cmd-1770412922670-m0jq0gqgr",
+      "name": "Docker (Copia)",
+      "icon": "🐳",
+      "order": 0
+    },
+    {
       "id": "project-urls",
       "name": "Project URLs",
       "icon": "🔗",
-      "order": 0
+      "order": 1
     },
     {
       "id": "ai-prompts",
       "name": "AI Promptse",
       "icon": "✨",
-      "order": 1
+      "order": 2
     },
     {
       "id": "git-essentials",
       "name": "Categoría de Pruebas de Desarrollo Frontend con Nombres Extremadamente Largos 2026",
       "icon": "😺",
-      "order": 2
+      "order": 3
     },
     {
       "id": "ssh-connections",
       "name": "SSH Connections",
       "icon": "🐧",
-      "order": 3
+      "order": 4
     },
     {
       "id": "test-zod-1770295061923",
       "name": "Test Zod",
       "icon": "🚦",
-      "order": 4
+      "order": 5
     },
     {
       "id": "docker-commands",
       "name": "Docker",
       "icon": "🐳",
-      "order": 5
+      "order": 6
     },
     {
       "id": "cmd-1770410782097-si4ht6t0n",
       "name": "e",
       "icon": "e",
-      "order": 6
+      "order": 7
     },
     {
       "id": "cmd-1770410776749-d08f3cl55",
       "name": "e",
       "icon": "e",
-      "order": 7
+      "order": 8
     },
     {
       "id": "cmd-1770410767529-39mxoxel3",
       "name": "e",
       "icon": "e",
-      "order": 8
+      "order": 9
     },
     {
       "id": "cmd-1770410762733-1h52d83uq",
       "name": "e",
       "icon": "e",
-      "order": 9
+      "order": 10
     },
     {
       "id": "cmd-1770410758882-9reymm2ok",
       "name": "e",
       "icon": "e",
-      "order": 10
+      "order": 11
     },
     {
       "id": "cmd-1770410752344-c6s6dftu5",
       "name": "e",
       "icon": "e",
-      "order": 11
+      "order": 12
     },
     {
       "id": "cmd-1770410742112-d9k73x5rh",
       "name": "e",
       "icon": "e",
-      "order": 12
+      "order": 13
     },
     {
       "id": "cmd-1770410736795-zo2r7menw",
       "name": "e",
       "icon": "e",
-      "order": 13
+      "order": 14
     },
     {
       "id": "cmd-1770410732419-cyvs6g0m3",
       "name": "e",
       "icon": "e",
-      "order": 14
+      "order": 15
     }
   ],
   "commands": {
@@ -155,14 +161,6 @@
         "order": 0
       },
       {
-        "id": "docker-simple-3",
-        "label": "Eliminar Todos los Contenedores Detenidos",
-        "command": "docker container prune -f",
-        "type": "command",
-        "isFavorite": false,
-        "order": 1
-      },
-      {
         "id": "docker-variables-1",
         "label": "Ver Logs de un Contenedor",
         "command": "docker logs -f {container_name}",
@@ -174,21 +172,6 @@
             "placeholder": "Nombre o ID del contenedor"
           }
         ]
-      },
-      {
-        "id": "docker-simple-2",
-        "label": "Listar Todos los Contenedores",
-        "command": "docker ps -a",
-        "type": "command",
-        "order": 3
-      },
-      {
-        "id": "cmd-1770384658995-e4j3w5uoc",
-        "label": "Eliminar Todos los Contenedores Detenidos (Copia)",
-        "command": "docker container prune -f",
-        "type": "command",
-        "isFavorite": false,
-        "order": 4
       }
     ],
     "project-urls": [
@@ -408,6 +391,46 @@
     "cmd-1770410762733-1h52d83uq": [],
     "cmd-1770410767529-39mxoxel3": [],
     "cmd-1770410776749-d08f3cl55": [],
-    "cmd-1770410782097-si4ht6t0n": []
+    "cmd-1770410782097-si4ht6t0n": [],
+    "cmd-1770412922670-m0jq0gqgr": [
+      {
+        "id": "cmd-1770412968285",
+        "label": "sdfasdfasdfa asdfasdfasdf asdfasdfasd",
+        "command": " asdfasd asdfasdfasdfasd",
+        "type": "prompt",
+        "isFavorite": false,
+        "order": 0,
+        "variables": []
+      },
+      {
+        "id": "cmd-1770412948648-l6e64wi9p",
+        "label": "asdadasdas  asdfasdfa",
+        "command": "asdfasdfasdfasdfasdfasdfas",
+        "type": "command",
+        "isFavorite": false,
+        "order": 1
+      },
+      {
+        "id": "cmd-1770412922670-ot5dspr7f",
+        "label": "Listar Contenedores en Ejecución",
+        "command": "docker ps",
+        "type": "command",
+        "isFavorite": true,
+        "order": 2
+      },
+      {
+        "id": "cmd-1770412922670-nuv5qi30u",
+        "label": "Ver Logs de un Contenedor",
+        "command": "docker logs -f {container_name}",
+        "type": "command",
+        "order": 3,
+        "variables": [
+          {
+            "name": "container_name",
+            "placeholder": "Nombre o ID del contenedor"
+          }
+        ]
+      }
+    ]
   }
 }

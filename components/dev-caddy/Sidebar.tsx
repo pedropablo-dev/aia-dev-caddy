@@ -61,6 +61,7 @@ interface SidebarProps {
     helpContent: string;
     onCreateCategory: () => void;
     onEditCategory: (category: Category) => void;
+    onDuplicateCategory?: (category: Category) => void;
     onDeleteCategory?: (id: string) => void;
     onReorderCategories?: (newOrder: Category[]) => void;
     onImport: (info: AppData) => Promise<void>; // Added for Import
@@ -83,6 +84,7 @@ export function Sidebar({
     helpContent,
     onCreateCategory,
     onEditCategory,
+    onDuplicateCategory,
     onDeleteCategory,
     onReorderCategories,
     onImport
@@ -296,6 +298,7 @@ export function Sidebar({
                                     isCollapsed={isSidebarCollapsed}
                                     onSelect={setSelectedCategory}
                                     onEdit={onEditCategory}
+                                    onDuplicate={(cat) => onDuplicateCategory?.(cat)}
                                     onDelete={(id) => onDeleteCategory?.(id)}
                                 />
                             ))}

@@ -347,6 +347,44 @@ export default function BroworksLaunchpad() {
     setEditingCategory(null)
   }
 
+  const handleDuplicateCategory = (category: Category) => {
+    // Deep clone the data
+    const newData: AppData = JSON.parse(JSON.stringify(data))
+
+    // Generate new unique ID for the category
+    const newCategoryId = generateUniqueId()
+
+    // Create the duplicated category
+    const duplicatedCategory: Category = {
+      ...category,
+      id: newCategoryId,
+      name: `${category.name} (Copia)`,
+      order: 0, // LIFO: New categories at top
+    }
+
+    // Add to beginning of categories array
+    newData.categories.unshift(duplicatedCategory)
+
+    // Re-index categories
+    newData.categories.forEach((cat, idx) => {
+      cat.order = idx
+    })
+
+    // Clone all commands from the original category
+    const originalCommands = data.commands[category.id] || []
+    const clonedCommands: Command[] = originalCommands.map((cmd) => ({
+      ...cmd,
+      id: generateUniqueId(), // Generate unique ID for each command
+    }))
+
+    // Add cloned commands to new category
+    newData.commands[newCategoryId] = clonedCommands
+
+    // Save and notify
+    saveData(newData)
+    toast.success('Categoría duplicada correctamente')
+  }
+
   const handleDeleteCategory = (categoryId: string) => {
     const { setSelectedCategory } = useAppStore.getState()
     const newData: AppData = JSON.parse(JSON.stringify(data))
@@ -512,6 +550,7 @@ export default function BroworksLaunchpad() {
             helpContent={helpContent}
             onCreateCategory={handleCreateCategory}
             onEditCategory={handleEditCategory}
+            onDuplicateCategory={handleDuplicateCategory}
             onDeleteCategory={handleDeleteCategory}
             onReorderCategories={handleReorderCategories}
             onImport={importData}
