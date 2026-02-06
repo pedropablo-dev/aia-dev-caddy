@@ -25,7 +25,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { Switch } from "@/components/ui/switch"
 import type { Command } from "@/types"
 
 // Form schema for command creation/editing
@@ -257,26 +256,7 @@ export function CommandFormModal({
                         />
 
                         {/* Favorite Toggle */}
-                        <FormField
-                            control={form.control}
-                            name="isFavorite"
-                            render={({ field }) => (
-                                <FormItem className="flex items-center justify-between rounded-lg border border-gray-700 p-3 bg-gray-800/50">
-                                    <div className="space-y-0.5">
-                                        <FormLabel className="text-gray-200">Favorito</FormLabel>
-                                        <div className="text-sm text-gray-400">
-                                            Añadir a la categoría de favoritos
-                                        </div>
-                                    </div>
-                                    <FormControl>
-                                        <Switch
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        />
+
 
                         {/* Dynamic fields based on type */}
                         {commandType === "workflow" ? (

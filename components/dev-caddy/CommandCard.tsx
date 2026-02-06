@@ -290,15 +290,19 @@ export function CommandCard({
                                         const varPlaceholder = typeof variable === 'string' ? variable : variable.placeholder;
 
                                         return (
-                                            <Input
-                                                key={varName}
-                                                placeholder={varPlaceholder}
-                                                value={variableValues[`${cmd.id}_${varName}`] || ""}
-                                                onChange={(e) =>
-                                                    onVariableChange(`${cmd.id}_${varName}`, e.target.value)
-                                                }
-                                                className="bg-gray-800 border-gray-700 focus:border-blue-500 text-white"
-                                            />
+                                            <div key={varName} className="flex items-center">
+                                                <div className="bg-gray-800 text-blue-400 px-3 py-2 rounded-l-md border border-r-0 border-gray-700 font-mono text-sm">
+                                                    {`{${varName}}`}
+                                                </div>
+                                                <Input
+                                                    placeholder={varPlaceholder}
+                                                    value={variableValues[`${cmd.id}_${varName}`] || ""}
+                                                    onChange={(e) =>
+                                                        onVariableChange(`${cmd.id}_${varName}`, e.target.value)
+                                                    }
+                                                    className="bg-gray-900 border-gray-700 focus:border-blue-500 text-white rounded-l-none"
+                                                />
+                                            </div>
                                         );
                                     })}
                                     <Button

@@ -158,6 +158,20 @@
         "command": "https://staging.tu-app.com",
         "type": "command",
         "order": 2
+      },
+      {
+        "id": "cmd-1770386347344-beayzcojl",
+        "label": "PRUEBA DE COMANDO CON VARIABLE",
+        "command": "CON VARIABLE {variable}",
+        "type": "command",
+        "isFavorite": false,
+        "order": 3,
+        "variables": [
+          {
+            "name": "variable",
+            "placeholder": "Placeholder"
+          }
+        ]
       }
     ],
     "ai-prompts": [
@@ -259,6 +273,30 @@
         "type": "command",
         "isFavorite": false,
         "order": 2
+      },
+      {
+        "id": "cmd-1770385722470-a1hn2vtd6",
+        "label": "uytutui",
+        "command": "ggjgkj",
+        "type": "command",
+        "isFavorite": false,
+        "order": 3
+      },
+      {
+        "id": "cmd-1770385763878-130bva793",
+        "label": "dfgsdfgsdfg",
+        "command": "sdfgsdfg",
+        "type": "command",
+        "isFavorite": false,
+        "order": 4
+      },
+      {
+        "id": "cmd-1770385868529-d09mmwinz",
+        "label": "dfghdfgh",
+        "command": "dfhdfgh",
+        "type": "command",
+        "isFavorite": false,
+        "order": 5
       }
     ]
   }

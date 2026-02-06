@@ -530,8 +530,10 @@ export default function BroworksLaunchpad() {
             <DropdownMenuTrigger asChild>
               <Button
                 size="lg"
-                className="fixed bottom-8 right-8 h-14 w-14 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 z-40"
-                title="Crear nuevo"
+                className={`fixed bottom-8 right-8 h-14 w-14 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 z-40 ${selectedCategory === 'favorites' ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                title={selectedCategory === 'favorites' ? "Selecciona una categoría para crear" : "Crear nuevo"}
+                disabled={selectedCategory === 'favorites'}
               >
                 <Plus className="h-6 w-6" />
               </Button>
