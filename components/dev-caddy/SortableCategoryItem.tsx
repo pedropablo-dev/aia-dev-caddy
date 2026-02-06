@@ -2,7 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { GripVertical, MoreVertical, Copy } from "lucide-react"
+import { GripVertical, MoreVertical, Copy, Pencil, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -102,6 +102,7 @@ export function SortableCategoryItem({
                             onClick={() => onEdit(category)}
                             className="text-gray-300 hover:bg-gray-800 cursor-pointer flex items-center gap-2"
                         >
+                            <Pencil className="h-4 w-4" />
                             Editar
                         </DropdownMenuItem>
                         <DropdownMenuItem
@@ -117,8 +118,9 @@ export function SortableCategoryItem({
                                     onDelete(category.id)
                                 }
                             }}
-                            className="text-red-400 hover:bg-gray-800 cursor-pointer"
+                            className="text-red-400 hover:bg-gray-800 cursor-pointer flex items-center gap-2"
                         >
+                            <Trash2 className="h-4 w-4" />
                             Eliminar
                         </DropdownMenuItem>
                     </DropdownMenuContent>
