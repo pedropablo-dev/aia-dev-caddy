@@ -74,7 +74,7 @@ export function SortableCategoryItem({
                 className="flex items-center gap-3 flex-1 text-left min-w-0"
             >
                 <span className="text-lg flex-shrink-0">{category.icon}</span>
-                <span className={`font-medium whitespace-nowrap truncate ${contentClasses}`}>
+                <span className={`font-medium truncate block ${contentClasses}`}>
                     {category.name}
                 </span>
             </button>

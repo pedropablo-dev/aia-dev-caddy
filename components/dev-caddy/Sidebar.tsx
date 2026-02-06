@@ -199,7 +199,7 @@ export function Sidebar({
     };
 
     return (
-        <div className={`transition-all duration-300 ${sidebarClasses} bg-gray-900 border-r border-gray-800 flex flex-col`}>
+        <div className={`transition-all duration-300 ${sidebarClasses} bg-gray-900 border-r border-gray-800 flex flex-col h-full`}>
             <div className="p-4 border-b border-gray-800">
                 <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'justify-center' : ''}`}>
                     <Image
@@ -229,7 +229,8 @@ export function Sidebar({
                 )}
             </div>
 
-            <ScrollArea className="flex-1 p-2">
+            {/* Categories Header and Favorites - Outside ScrollArea */}
+            <div className="p-2">
                 {!isSidebarCollapsed && (
                     <div className="flex items-center justify-between mb-3 px-3">
                         <h3 className="text-sm font-bold text-gray-400">
@@ -249,8 +250,9 @@ export function Sidebar({
                         )}
                     </div>
                 )}
+
+                {/* Render Favorites (Fixed) - Outside ScrollArea */}
                 <div className="space-y-1">
-                    {/* Render Favorites (Fixed) */}
                     {filteredCategories.filter(c => c.id === 'favorites').map(category => (
                         <div
                             key={category.id}
@@ -270,7 +272,12 @@ export function Sidebar({
                             </button>
                         </div>
                     ))}
+                </div>
+            </div>
 
+            {/* ScrollArea only for dynamic categories */}
+            <ScrollArea className="flex-1 p-2">
+                <div className="space-y-1">
                     <DndContext
                         sensors={sensors}
                         collisionDetection={closestCenter}

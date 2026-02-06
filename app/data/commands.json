@@ -97,7 +97,7 @@
         "label": "Listar Contenedores en Ejecución",
         "command": "docker ps",
         "type": "command",
-        "isFavorite": true,
+        "isFavorite": false,
         "order": 0
       },
       {
@@ -113,6 +113,7 @@
         "label": "Ver Logs de un Contenedor",
         "command": "docker logs -f {container_name}",
         "type": "command",
+        "isFavorite": true,
         "order": 2,
         "variables": [
           {
@@ -176,26 +177,26 @@
     ],
     "ai-prompts": [
       {
+        "id": "prompt-2",
+        "label": "Explicar Fragmento de Código",
+        "command": "Actúa como un programador senior. Explica el siguiente fragmento de código de `{Language}` de forma clara y concisa. Céntrate en el porqué de su diseño y en las posibles mejoras.\n\n```\n{CodeSnippet}\n```kjlkasjfas\ndfa\nsdf\nasd\nf\nasd\nfa\nsdf\nasdf",
+        "type": "prompt",
+        "isFavorite": false,
+        "order": 0,
+        "variables": [
+          "{Language}",
+          "{CodeSnippet}"
+        ]
+      },
+      {
         "id": "prompt-1",
         "label": "Generar Código de Componente React",
         "command": "Crea un componente de React funcional utilizando TypeScript y Tailwind CSS llamado `{ComponentName}`.\n",
         "type": "prompt",
         "isFavorite": true,
-        "order": 0,
-        "variables": [
-          "{ComponentName}"
-        ]
-      },
-      {
-        "id": "prompt-2",
-        "label": "Explicar Fragmento de Código",
-        "command": "Actúa como un programador senior. Explica el siguiente fragmento de código de `{Language}` de forma clara y concisa. Céntrate en el porqué de su diseño y en las posibles mejoras.\n\n```\n{CodeSnippet}\n```kjlkasjfas\ndfa\nsdf\nasd\nf\nasd\nfa\nsdf\nasdf",
-        "type": "prompt",
-        "isFavorite": true,
         "order": 1,
         "variables": [
-          "{Language}",
-          "{CodeSnippet}"
+          "{ComponentName}"
         ]
       },
       {
