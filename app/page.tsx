@@ -352,6 +352,23 @@ export default function BroworksLaunchpad() {
     setEditingCategory(null)
   }
 
+  const handleReorderCategories = (newOrder: Category[]) => {
+    const newData: AppData = JSON.parse(JSON.stringify(data))
+
+    // Filter out favorites from the input newOrder just in case, though Sidebar sends full list
+    // We want to update the order of user categories.
+    const userCategories = newOrder.filter(c => c.id !== 'favorites')
+
+    // Update the categories list in newData
+    // We keep them in the order received, and update their 'order' property
+    newData.categories = userCategories.map((cat, index) => ({
+      ...cat,
+      order: index
+    }))
+
+    saveData(newData)
+  }
+
   const handleReorderCommands = (newOrder: Command[]) => {
     // 1. Determine local category context
     const categoryId = selectedCategory === 'favorites' ? 'all' : selectedCategory
@@ -478,6 +495,7 @@ export default function BroworksLaunchpad() {
             helpContent={helpContent}
             onCreateCategory={handleCreateCategory}
             onEditCategory={handleEditCategory}
+            onReorderCategories={handleReorderCategories}
           />
 
           {/* Central Panel */}

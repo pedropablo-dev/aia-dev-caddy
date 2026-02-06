@@ -41,12 +41,28 @@ import { useAppStore } from "@/store/appStore"
 import { useCommands } from "@/hooks/use-commands"
 import { toast } from "sonner"
 import type { Category } from "@/types"
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent,
+} from "@dnd-kit/core"
+import {
+    arrayMove,
+    SortableContext,
+    verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
+import { SortableCategoryItem } from "./SortableCategoryItem"
 
 interface SidebarProps {
     categories: Category[];
     helpContent: string;
     onCreateCategory: () => void;
     onEditCategory: (category: Category) => void;
+    onReorderCategories?: (newOrder: Category[]) => void;
 }
 
 const markdownComponents: Components = {
@@ -60,13 +76,52 @@ const markdownComponents: Components = {
     code: ({ ...props }) => <code className="bg-gray-800 text-purple-300 font-mono rounded-md px-1.5 py-0.5 text-sm" {...props} />
 }
 
-export function Sidebar({ categories, helpContent, onCreateCategory, onEditCategory }: SidebarProps) {
+export function Sidebar({ categories, helpContent, onCreateCategory, onEditCategory, onReorderCategories }: SidebarProps) {
     const { selectedCategory, setSelectedCategory, isEditMode, toggleEditMode } = useAppStore();
     const { isSidebarCollapsed, toggleSidebar } = useUIStore();
     const { data, saveData, importData, refreshCommands } = useCommands();
     const [categorySearch, setCategorySearch] = useState("");
     const [isHelpOpen, setIsHelpOpen] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+        useSensor(KeyboardSensor)
+    )
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event
+
+        if (active.id !== over?.id && onReorderCategories) {
+            // NOTE: We only reorder the non-favorites categories
+            // The logic implies 'categories' prop passed here includes favorites at index 0
+            // But SortableContext should only wrap the reorderable ones.
+
+            // However, to keep it simple, we will assume 'categories' prop contains everything,
+            // but we only pass the reorderable subset to SortableContext.
+
+            const oldIndex = categories.findIndex((cat) => cat.id === active.id)
+            const newIndex = categories.findIndex((cat) => cat.id === over?.id)
+
+            if (oldIndex !== -1 && newIndex !== -1) {
+                // Determine the new full order
+                // Note: 'categories' currently has Favorites at [0] usually.
+                // We should be careful not to move things before Favorites if it is present.
+
+                const newOrder = arrayMove(categories, oldIndex, newIndex)
+
+                // Remove Favorites/Others that shouldn't be persisted if logic requires, 
+                // but handleReorderCategories in page.tsx expects the full list or handles it.
+                // Let's pass the full new order and let page.tsx decide what to save.
+
+                // Actually, page.tsx logic (which we will write) will likely filter out favorites before saving.
+                // Or we send only the user categories.
+
+                // Let's stick to sending the modified array.
+                onReorderCategories(newOrder)
+            }
+        }
+    }
 
     const filteredCategories = categorySearch
         ? categories.filter((cat) =>
@@ -192,12 +247,13 @@ export function Sidebar({ categories, helpContent, onCreateCategory, onEditCateg
                     </div>
                 )}
                 <div className="space-y-1">
-                    {filteredCategories.map((category) => (
+                    {/* Render Favorites (Fixed) */}
+                    {filteredCategories.filter(c => c.id === 'favorites').map(category => (
                         <div
                             key={category.id}
                             className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors group ${selectedCategory === category.id
-                                    ? "bg-blue-600 text-white"
-                                    : "text-gray-300 hover:bg-gray-800"
+                                ? "bg-blue-600 text-white"
+                                : "text-gray-300 hover:bg-gray-800"
                                 } ${isSidebarCollapsed ? 'justify-center' : ''}`}
                         >
                             <button
@@ -209,38 +265,31 @@ export function Sidebar({ categories, helpContent, onCreateCategory, onEditCateg
                                     {category.name}
                                 </span>
                             </button>
-
-                            {/* Dropdown Menu (Edit Mode Only, Not Collapsed) */}
-                            {isEditMode && !isSidebarCollapsed && (
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <MoreVertical className="h-4 w-4" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="bg-gray-900 border-gray-700">
-                                        <DropdownMenuItem
-                                            onClick={() => onEditCategory(category)}
-                                            className="text-gray-300 hover:bg-gray-800 cursor-pointer"
-                                        >
-                                            Editar
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            onClick={() => onEditCategory(category)}
-                                            className="text-red-400 hover:bg-gray-800 cursor-pointer"
-                                        >
-                                            Eliminar
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            )}
                         </div>
                     ))}
+
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <SortableContext
+                            items={filteredCategories.filter(c => c.id !== 'favorites')}
+                            strategy={verticalListSortingStrategy}
+                        >
+                            {filteredCategories.filter(c => c.id !== 'favorites').map((category) => (
+                                <SortableCategoryItem
+                                    key={category.id}
+                                    category={category}
+                                    isSelected={selectedCategory === category.id}
+                                    isEditMode={isEditMode}
+                                    isCollapsed={isSidebarCollapsed}
+                                    onSelect={setSelectedCategory}
+                                    onEdit={onEditCategory}
+                                />
+                            ))}
+                        </SortableContext>
+                    </DndContext>
                 </div>
             </ScrollArea>
 

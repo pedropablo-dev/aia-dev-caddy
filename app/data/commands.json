@@ -1,9 +1,9 @@
 {
   "categories": [
     {
-      "id": "git-essentials",
-      "name": "Git Essentials",
-      "icon": "😺",
+      "id": "ai-prompts",
+      "name": "AI Prompts",
+      "icon": "✨",
       "order": 0
     },
     {
@@ -19,21 +19,21 @@
       "order": 2
     },
     {
-      "id": "ai-prompts",
-      "name": "AI Prompts",
-      "icon": "✨",
+      "id": "git-essentials",
+      "name": "Git Essentials",
+      "icon": "😺",
       "order": 3
-    },
-    {
-      "id": "ssh-connections",
-      "name": "SSH Connections",
-      "icon": "🐧",
-      "order": 4
     },
     {
       "id": "test-zod-1770295061923",
       "name": "Test Zod",
       "icon": "🚦",
+      "order": 4
+    },
+    {
+      "id": "ssh-connections",
+      "name": "SSH Connections",
+      "icon": "🐧",
       "order": 5
     }
   ],
@@ -52,7 +52,7 @@
         "label": "Ver Historial de Commits (Bonito)",
         "command": "git log --graph --oneline --decorate",
         "type": "command",
-        "isFavorite": true,
+        "isFavorite": false,
         "order": 1
       },
       {
@@ -60,7 +60,7 @@
         "label": "Secuencia de Guardado Completa",
         "command": "workflow",
         "type": "workflow",
-        "isFavorite": true,
+        "isFavorite": false,
         "order": 2,
         "steps": [
           "git status",
@@ -97,36 +97,44 @@
         "label": "Listar Contenedores en Ejecución",
         "command": "docker ps",
         "type": "command",
-        "isFavorite": false,
+        "isFavorite": true,
         "order": 0
-      },
-      {
-        "id": "docker-simple-2",
-        "label": "Listar Todos los Contenedores",
-        "command": "docker ps -a",
-        "type": "command",
-        "order": 1
       },
       {
         "id": "docker-simple-3",
         "label": "Eliminar Todos los Contenedores Detenidos",
         "command": "docker container prune -f",
         "type": "command",
-        "isFavorite": true,
-        "order": 2
+        "isFavorite": false,
+        "order": 1
       },
       {
         "id": "docker-variables-1",
         "label": "Ver Logs de un Contenedor",
         "command": "docker logs -f {container_name}",
         "type": "command",
-        "order": 3,
+        "order": 2,
         "variables": [
           {
             "name": "container_name",
             "placeholder": "Nombre o ID del contenedor"
           }
         ]
+      },
+      {
+        "id": "docker-simple-2",
+        "label": "Listar Todos los Contenedores",
+        "command": "docker ps -a",
+        "type": "command",
+        "order": 3
+      },
+      {
+        "id": "cmd-1770384658995-e4j3w5uoc",
+        "label": "Eliminar Todos los Contenedores Detenidos (Copia)",
+        "command": "docker container prune -f",
+        "type": "command",
+        "isFavorite": false,
+        "order": 4
       }
     ],
     "project-urls": [
@@ -154,45 +162,37 @@
     ],
     "ai-prompts": [
       {
-        "id": "prompt-2",
-        "label": "Explicar Fragmento de Código",
-        "command": "Actúa como un programador senior. Explica el siguiente fragmento de código de `{Language}` de forma clara y concisa. Céntrate en el porqué de su diseño y en las posibles mejoras.\n\n```\n{CodeSnippet}\n```",
-        "type": "prompt",
-        "isFavorite": true,
-        "order": 0,
-        "variables": [
-          "{Language}",
-          "{CodeSnippet}"
-        ]
-      },
-      {
         "id": "prompt-1",
         "label": "Generar Código de Componente React",
         "command": "Crea un componente de React funcional utilizando TypeScript y Tailwind CSS llamado `{ComponentName}`.\n\n**Requisitos:**\n- El componente debe aceptar una prop `title` (string) y una prop `items` (array de strings).\n- Debe renderizar un título `<h2>` con el valor de `title`.\n- Debe renderizar una lista no ordenada (`<ul>`) con los `items`.\n- El componente debe estar contenido en una tarjeta (`<div>`) con sombra y bordes redondeados.\n\n**Ejemplo de uso:**\n```jsx\n<ComponentName title=\"Mi Lista\" items={['Item 1', 'Item 2']} />\n```",
         "type": "prompt",
         "isFavorite": true,
-        "order": 1,
+        "order": 0,
         "variables": [
           "{ComponentName}"
+        ]
+      },
+      {
+        "id": "prompt-2",
+        "label": "Explicar Fragmento de Código",
+        "command": "Actúa como un programador senior. Explica el siguiente fragmento de código de `{Language}` de forma clara y concisa. Céntrate en el porqué de su diseño y en las posibles mejoras.\n\n```\n{CodeSnippet}\n```",
+        "type": "prompt",
+        "isFavorite": true,
+        "order": 1,
+        "variables": [
+          "{Language}",
+          "{CodeSnippet}"
         ]
       }
     ],
     "ssh-connections": [
       {
-        "id": "cmd-1770383567000-aiwe5gkbp",
-        "label": "erqwerqw",
-        "command": "qwerqer",
-        "type": "command",
-        "isFavorite": false,
-        "order": 0
-      },
-      {
         "id": "ssh-variables-1",
         "label": "Conectar a Servidor",
         "command": "ssh {user}@{host} -p {port}",
         "type": "command",
-        "isFavorite": true,
-        "order": 1,
+        "isFavorite": false,
+        "order": 0,
         "variables": [
           {
             "name": "user",
@@ -207,6 +207,14 @@
             "placeholder": "ej: 22"
           }
         ]
+      },
+      {
+        "id": "cmd-1770383567000-aiwe5gkbp",
+        "label": "erqwerqw",
+        "command": "qwerqer",
+        "type": "command",
+        "isFavorite": false,
+        "order": 1
       }
     ],
     "test-zod-1770295061923": [
