@@ -32,6 +32,11 @@ const EditorOverlay = dynamic(
   { ssr: false, loading: () => null }
 )
 
+const CategoryFormModal = dynamic(
+  () => import("@/components/dev-caddy/forms/CategoryFormModal").then(mod => ({ default: mod.CategoryFormModal })),
+  { ssr: false, loading: () => null }
+)
+
 export default function BroworksLaunchpad() {
   // --- Custom Hook for Data Logic ---
   const { data, isLoading, hasMounted, saveData, toggleFavorite } = useCommands()
@@ -49,6 +54,10 @@ export default function BroworksLaunchpad() {
   const [activeCommand, setActiveCommand] = useState<Command | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isEditorOpen, setIsEditorOpen] = useState(false)
+
+  // --- Category Modal State ---
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
 
   // --- Lógica de Ayuda ---
   useEffect(() => {
@@ -239,45 +248,108 @@ export default function BroworksLaunchpad() {
     const newData: AppData = JSON.parse(JSON.stringify(data))
 
     // Step 2: Determine target category
-    const targetCategoryId = selectedCategory === 'favorites'
-      ? Object.keys(newData.commands)[0]  // Default to first category
-      : selectedCategory
+    const categoryId = selectedCategory === 'favorites' ? 'all' : selectedCategory
 
-    if (!targetCategoryId || !newData.commands[targetCategoryId]) {
-      toast.error('Categoría no válida')
-      return
-    }
-
-    // Step 3: Determine if UPDATE or CREATE
-    const isUpdate = activeCommand !== null && activeCommand.id === updatedCommand.id
-
-    if (isUpdate) {
-      // CASE A: Update existing command
-      const existingCategoryId = findCommandCategoryId(updatedCommand.id, newData)
-
-      if (existingCategoryId) {
-        const idx = newData.commands[existingCategoryId].findIndex(c => c.id === updatedCommand.id)
+    // Step 3: Check if updating or creating
+    if (activeCommand) {
+      // Update existing command across all categories
+      for (const catId in newData.commands) {
+        const idx = newData.commands[catId].findIndex(cmd => cmd.id === activeCommand.id)
         if (idx !== -1) {
-          newData.commands[existingCategoryId][idx] = updatedCommand
+          // Update in place
+          newData.commands[catId][idx] = updatedCommand
+          saveData(newData)
+          toast.success('Comando actualizado correctamente')
+          setIsFormOpen(false)
+          setIsEditorOpen(false) // Added this line for editor overlay
+          setActiveCommand(null)
+          return
         }
       }
     } else {
-      // CASE B: Create new command - ENSURE ID EXISTS
+      // Create new command
       const newCommand: Command = {
         ...updatedCommand,
-        id: updatedCommand.id || generateUniqueId(),  // ✅ ENSURE ID EXISTS
-        order: newData.commands[targetCategoryId].length,  // ✅ Set order
+        id: updatedCommand.id || generateUniqueId(), // Ensure ID exists for new commands
+        order: newData.commands[categoryId]?.length || 0,
       }
-      newData.commands[targetCategoryId].push(newCommand)
+
+      if (!newData.commands[categoryId]) {
+        newData.commands[categoryId] = []
+      }
+
+      newData.commands[categoryId].push(newCommand)
+      saveData(newData)
+      toast.success('Comando creado correctamente')
+      setIsFormOpen(false)
+      setIsEditorOpen(false) // Added this line for editor overlay
+      setActiveCommand(null)
+    }
+  }
+
+  // --- Category CRUD Handlers ---
+  const handleCreateCategory = () => {
+    setEditingCategory(null)
+    setIsCategoryModalOpen(true)
+  }
+
+  const handleEditCategory = (category: Category) => {
+    setEditingCategory(category)
+    setIsCategoryModalOpen(true)
+  }
+
+  const handleSaveCategory = (categoryData: Partial<Category>) => {
+    const newData: AppData = JSON.parse(JSON.stringify(data))
+
+    if (categoryData.id) {
+      // Update existing category
+      const idx = newData.categories.findIndex(cat => cat.id === categoryData.id)
+      if (idx !== -1) {
+        newData.categories[idx] = {
+          ...newData.categories[idx],
+          name: categoryData.name!,
+          icon: categoryData.icon!,
+        }
+        saveData(newData)
+        toast.success('Categoría actualizada')
+      }
+    } else {
+      // Create new category
+      const newCategory: Category = {
+        id: generateUniqueId(),
+        name: categoryData.name!,
+        icon: categoryData.icon!,
+        order: newData.categories.length,
+      }
+      newData.categories.push(newCategory)
+      newData.commands[newCategory.id] = []
+      saveData(newData)
+      toast.success('Categoría creada')
     }
 
-    // Step 4: Save and cleanup
-    saveData(newData)
-    toast.success(isUpdate ? 'Comando actualizado' : 'Comando creado')
+    setIsCategoryModalOpen(false)
+    setEditingCategory(null)
+  }
 
-    setIsFormOpen(false)
-    setIsEditorOpen(false)
-    setActiveCommand(null)
+  const handleDeleteCategory = (categoryId: string) => {
+    const { setSelectedCategory } = useAppStore.getState()
+    const newData: AppData = JSON.parse(JSON.stringify(data))
+
+    // Remove category from list
+    newData.categories = newData.categories.filter(cat => cat.id !== categoryId)
+
+    // Delete all commands in this category
+    delete newData.commands[categoryId]
+
+    // If we're deleting the selected category, switch to favorites
+    if (selectedCategory === categoryId) {
+      setSelectedCategory('favorites')
+    }
+
+    saveData(newData)
+    toast.success('Categoría eliminada')
+    setIsCategoryModalOpen(false)
+    setEditingCategory(null)
   }
 
   // Form submit handler - transforms form data to Command
@@ -374,7 +446,12 @@ export default function BroworksLaunchpad() {
       <Toaster richColors />
       <div className="min-h-screen bg-gray-950 text-gray-100">
         <div className="max-w-7xl mx-auto flex h-screen">
-          <Sidebar categories={sortedCategories} helpContent={helpContent} />
+          <Sidebar
+            categories={sortedCategories}
+            helpContent={helpContent}
+            onCreateCategory={handleCreateCategory}
+            onEditCategory={handleEditCategory}
+          />
 
           {/* Central Panel */}
           <div className="flex-1 flex flex-col bg-gray-950">
@@ -457,6 +534,16 @@ export default function BroworksLaunchpad() {
               initialData={activeCommand || undefined}
               onSave={handleSave}
               categoryId={selectedCategory === 'favorites' ? Object.keys(data.commands)[0] : selectedCategory}
+            />
+            <CategoryFormModal
+              isOpen={isCategoryModalOpen}
+              onClose={() => {
+                setIsCategoryModalOpen(false)
+                setEditingCategory(null)
+              }}
+              onSave={handleSaveCategory}
+              onDelete={handleDeleteCategory}
+              initialData={editingCategory}
             />
           </>
         )}

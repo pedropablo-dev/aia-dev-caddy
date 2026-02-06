@@ -12,6 +12,8 @@ import {
     Unlock,
     Download,
     Upload,
+    Plus,
+    MoreVertical,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,6 +29,12 @@ import {
     DialogFooter,
     DialogClose,
 } from "@/components/ui/dialog"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import ReactMarkdown, { Components } from "react-markdown"
 import { useUIStore } from "@/store/uiStore"
 import { useAppStore } from "@/store/appStore"
@@ -37,6 +45,8 @@ import type { Category } from "@/types"
 interface SidebarProps {
     categories: Category[];
     helpContent: string;
+    onCreateCategory: () => void;
+    onEditCategory: (category: Category) => void;
 }
 
 const markdownComponents: Components = {
@@ -50,7 +60,7 @@ const markdownComponents: Components = {
     code: ({ ...props }) => <code className="bg-gray-800 text-purple-300 font-mono rounded-md px-1.5 py-0.5 text-sm" {...props} />
 }
 
-export function Sidebar({ categories, helpContent }: SidebarProps) {
+export function Sidebar({ categories, helpContent, onCreateCategory, onEditCategory }: SidebarProps) {
     const { selectedCategory, setSelectedCategory, isEditMode, toggleEditMode } = useAppStore();
     const { isSidebarCollapsed, toggleSidebar } = useUIStore();
     const { data, saveData, importData, refreshCommands } = useCommands();
@@ -163,25 +173,73 @@ export function Sidebar({ categories, helpContent }: SidebarProps) {
 
             <ScrollArea className="flex-1 p-2">
                 {!isSidebarCollapsed && (
-                    <h3 className="text-sm font-bold text-gray-400 mb-3 px-3">
-                        Categorías
-                    </h3>
+                    <div className="flex items-center justify-between mb-3 px-3">
+                        <h3 className="text-sm font-bold text-gray-400">
+                            Categorías
+                        </h3>
+                        {/* Add Category Button (Edit Mode Only) */}
+                        {isEditMode && (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 text-gray-400 hover:text-white hover:bg-gray-800"
+                                onClick={onCreateCategory}
+                                title="Nueva categoría"
+                            >
+                                <Plus className="h-4 w-4" />
+                            </Button>
+                        )}
+                    </div>
                 )}
                 <div className="space-y-1">
                     {filteredCategories.map((category) => (
-                        <button
+                        <div
                             key={category.id}
-                            onClick={() => setSelectedCategory(category.id)}
-                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${selectedCategory === category.id
-                                ? "bg-blue-600 text-white"
-                                : "text-gray-300 hover:bg-gray-800"
+                            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors group ${selectedCategory === category.id
+                                    ? "bg-blue-600 text-white"
+                                    : "text-gray-300 hover:bg-gray-800"
                                 } ${isSidebarCollapsed ? 'justify-center' : ''}`}
                         >
-                            <span className="text-lg">{category.icon}</span>
-                            <span className={`font-medium whitespace-nowrap ${contentClasses}`}>
-                                {category.name}
-                            </span>
-                        </button>
+                            <button
+                                onClick={() => setSelectedCategory(category.id)}
+                                className="flex items-center gap-3 flex-1 text-left"
+                            >
+                                <span className="text-lg">{category.icon}</span>
+                                <span className={`font-medium whitespace-nowrap ${contentClasses}`}>
+                                    {category.name}
+                                </span>
+                            </button>
+
+                            {/* Dropdown Menu (Edit Mode Only, Not Collapsed) */}
+                            {isEditMode && !isSidebarCollapsed && (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <MoreVertical className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="bg-gray-900 border-gray-700">
+                                        <DropdownMenuItem
+                                            onClick={() => onEditCategory(category)}
+                                            className="text-gray-300 hover:bg-gray-800 cursor-pointer"
+                                        >
+                                            Editar
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            onClick={() => onEditCategory(category)}
+                                            className="text-red-400 hover:bg-gray-800 cursor-pointer"
+                                        >
+                                            Eliminar
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            )}
+                        </div>
                     ))}
                 </div>
             </ScrollArea>
