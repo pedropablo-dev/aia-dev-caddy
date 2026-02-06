@@ -178,7 +178,7 @@
       {
         "id": "prompt-1",
         "label": "Generar Código de Componente React",
-        "command": "Crea un componente de React funcional utilizando TypeScript y Tailwind CSS llamado `{ComponentName}`.\n\n**Requisitos:**\n- El componente debe aceptar una prop `title` (string) y una prop `items` (array de strings).\n- Debe renderizar un título `<h2>` con el valor de `title`.\n- Debe renderizar una lista no ordenada (`<ul>`) con los `items`.\n- El componente debe estar contenido en una tarjeta (`<div>`) con sombra y bordes redondeados.\n\n**Ejemplo de uso:**\n```jsx\n<ComponentName title=\"Mi Lista\" items={['Item 1', 'Item 2']} />\n```",
+        "command": "Crea un componente de React funcional utilizando TypeScript y Tailwind CSS llamado `{ComponentName}`.\n",
         "type": "prompt",
         "isFavorite": true,
         "order": 0,
@@ -205,6 +205,36 @@
         "type": "command",
         "isFavorite": false,
         "order": 2
+      },
+      {
+        "id": "cmd-1770388335850",
+        "label": "Prueba de variables",
+        "command": "hola me llamo {nombre}",
+        "type": "prompt",
+        "isFavorite": false,
+        "order": 3,
+        "variables": [
+          "{nombre}"
+        ]
+      },
+      {
+        "id": "cmd-1770388382459",
+        "label": "Prueba 2",
+        "command": "hola me llamo {nombre}",
+        "type": "prompt",
+        "isFavorite": false,
+        "order": 4,
+        "variables": [
+          "{nombre}"
+        ]
+      },
+      {
+        "id": "cmd-1770388465569-ldhgo5bdu",
+        "label": "asdfasfasfd 2222",
+        "command": "dsafafas2222",
+        "type": "command",
+        "isFavorite": false,
+        "order": 5
       }
     ],
     "ssh-connections": [

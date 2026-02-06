@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useAppStore } from "@/store/appStore"
+import { PromptCard } from "./PromptCard"
 import type { Command } from "@/types"
 
 interface CommandCardProps {
@@ -193,40 +194,13 @@ export function CommandCard({
                 </CardHeader>
                 <CardContent className="space-y-4 pt-2">
                     {cmd.type === "prompt" ? (
-                        <>
-                            <Highlight
-                                theme={themes.vsDark}
-                                code={cmd.command}
-                                language="markdown"
-                            >
-                                {({ className, style, tokens, getLineProps, getTokenProps }) => (
-                                    <pre
-                                        className="p-4 rounded-md text-sm border border-gray-700 whitespace-pre-wrap break-words max-w-full line-clamp-3"
-                                        style={style}
-                                    >
-                                        {tokens.map((line, i) => (
-                                            <div key={i} {...getLineProps({ line })}>
-                                                {line.map((token, key) => (
-                                                    <span key={key} {...getTokenProps({ token })} />
-                                                ))}
-                                            </div>
-                                        ))}
-                                    </pre>
-                                )}
-                            </Highlight>
-                            <Button
-                                size="sm"
-                                onClick={() => onCopy(cmd.id, cmd.command)}
-                                className="bg-yellow-600 hover:bg-yellow-700 active:scale-95 transition-transform"
-                            >
-                                {isCopied ? (
-                                    <Check className="w-4 h-4" />
-                                ) : (
-                                    <Copy className="w-4 h-4" />
-                                )}
-                                <span className="ml-2">Copy Prompt</span>
-                            </Button>
-                        </>
+                        <PromptCard
+                            command={cmd}
+                            isCopied={isCopied}
+                            variableValues={variableValues}
+                            onCopy={onCopy}
+                            onVariableChange={onVariableChange}
+                        />
                     ) : cmd.type === "workflow" ? (
                         <div className="space-y-3">
                             <div className="text-sm text-gray-400">
