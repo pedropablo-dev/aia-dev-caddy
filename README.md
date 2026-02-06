@@ -1,139 +1,171 @@
-# 🧰 Dev-Caddy: Tu Arsenal de Comandos Personal
+# Dev-Caddy: Your Personal Command Arsenal
 
-**Dev-Caddy** es una paleta de comandos personal, ultrarrápida y centralizada. Ha sido diseñada para eliminar la fricción de buscar y recordar comandos de terminal, rutas, URLs y prompts complejos de uso frecuente.
+**Dev-Caddy** is an ultra-fast, centralized command palette designed to eliminate the friction of searching for and remembering terminal commands, paths, URLs, and complex AI prompts.
 
-_¿Cansado de buscar en tu historial, notas o wikis internas el mismo comando una y otra vez? Dev-Caddy es la solución._
+_Tired of searching through history, notes, or internal wikis for the same command over and over? Dev-Caddy is the solution._
 
 ---
 
-## ✨ Características Principales
+## ✨ Key Features
 
-- **Organización Intuitiva:** Agrupa tus comandos en **categorías** personalizables con iconos emoji
-- **Búsqueda Instantánea:** Filtro inteligente con `Ctrl+K` (Fuzzy Search) para encontrar items incluso con errores tipográficos
-- **Arrastrar y Soltar:** Reordena categorías y comandos libremente con una experiencia fluida (`@dnd-kit`)
-- **Navegación por Teclado:** Muévete con flechas `↑` `↓` y copia con `Enter`
-- **Sintaxis Resaltada:** Bloques de código con colores para mejor legibilidad
-- **⭐ Sistema de Favoritos:** Marca items con estrella para acceso rápido
-- **Panel de Administración:** Interfaz CRUD completa en `/admin`
-- **Editor de Prompts:** Editor rico con toolbar Markdown, variables dinámicas y modo Zen
+### **Unified Interface** 
+Everything happens on the main page - no context switching required:
+- **View Mode:** Browse and execute commands instantly
+- **Edit Mode:** Toggle to access creation and management tools
+- **Favorites:** Star commands for quick access
 
-### ✅ Nuevas Características v0.3.0
+### **Creation Modes**
+Two specialized creation experiences:
+- **📝 Command Modal:** Structured form for standard commands, workflows, and variables
+- **✨ Zen Mode Editor:** Full-screen markdown editor for AI prompts with toolbar and live preview
 
-| Característica | Descripción |
-|----------------|-------------|
-| **🖐️ Drag & Drop** | Reordenación táctil y fluida en Admin |
-| **🔍 Fuzzy Search** | Búsqueda tolerante a fallos (typos) |
-| **⌨️ Keyboard Nav** | Navegación completa sin ratón |
-| **🎨 Syntax Highlighting** | Código coloreado (vsDark theme) |
-| **✨ Visual Polish** | Skeletons oscuros y micro-interacciones |
+### **Data Security** 
+Never lose your data again:
+- **Export:** Download JSON backups with date-stamped filenames (`dev-caddy-backup-YYYY-MM-DD.json`)
+- **Import:** Restore from backup with instant UI refresh
+- **Persistence:** Edit Mode state remembered across sessions
 
-### Tipos de Items
+### **Productivity Features**
+- **🔍 Fuzzy Search:** Find commands even with typos (`Ctrl+K`)
+- **⌨️ Keyboard Navigation:** Arrow keys + Enter for mouse-free workflow
+- **📋 One-Click Copy:** Instant copy with visual feedback
+- **🔁 Duplicate:** Clone existing commands with one click
+- **🖐️ Drag & Drop:** Reorder categories and commands (in Admin panel)
+- **🎨 Syntax Highlighting:** Color-coded code blocks for better readability
 
-| Tipo | Icono | Descripción |
+### Command Types
+
+| Type | Icon | Description |
 |:-----|:-----:|:------------|
-| **Comando Simple** | ▶️ | Comando directo listo para copiar |
-| **Workflow** | 🚀 | Secuencia de comandos guiada paso a paso |
-| **Con Variables** | 📝 | Plantillas con placeholders dinámicos |
-| **Prompt de IA** | ✨ | Prompts multilínea con soporte Markdown |
+| **Simple Command** | ▶️ | Direct command ready to copy |
+| **Workflow** | 🚀 | Step-by-step guided sequence |
+| **With Variables** | 📝 | Templates with dynamic placeholders |
+| **AI Prompt** | ✨ | Multi-line prompts with Markdown support |
 
 ---
 
-## 🛠️ Stack Tecnológico
+## 🛠️ Tech Stack
 
-| Tecnología | Versión | Uso |
-|------------|---------|-----|
+| Technology | Version | Usage |
+|------------|---------|-------|
 | [Next.js](https://nextjs.org/) | 14.2.30 | Framework (App Router) |
-| [TypeScript](https://www.typescriptlang.org/) | 5.x | Lenguaje |
-| [Tailwind CSS](https://tailwindcss.com/) | 3.4.17 | Estilos |
+| [TypeScript](https://www.typescriptlang.org/) | 5.x | Language |
+| [Tailwind CSS](https://tailwindcss.com/) | 3.4.17 | Styling |
 | [dnd-kit](https://dndkit.com/) | Core | Drag & Drop |
-| [Fuse.js](https://fusejs.io/) | 7.0 | Búsqueda Fuzzy |
+| [Fuse.js](https://fusejs.io/) | 7.0 | Fuzzy Search |
 | [Prism React](https://github.com/FormidableLabs/prism-react-renderer) | Latest | Syntax Highlighting |
-| [Zustand](https://github.com/pmndrs/zustand) | 5.0.6 | Estado global |
-| [Sonner](https://sonner.emilkowal.ski/) | 1.7.1 | Notificaciones toast |
-| [Zod](https://zod.dev/) | 3.24.1 | Validación de API |
+| [Zustand](https://github.com/pmndrs/zustand) | 5.0.6 | Global State (with localStorage persistence) |
+| [Sonner](https://sonner.emilkowal.ski/) | 1.7.1 | Toast Notifications |
+| [Zod](https://zod.dev/) | 3.24.1 | API Validation |
 
 ---
 
-## 🏗️ Arquitectura v0.3.0
+## 🏗️ Architecture
 
 ```
 app/
-├── page.tsx              # Launchpad (Orquestador)
-├── admin/
-│   ├── page.tsx          # Panel Admin (Drag & Drop context)
-│   └── editor/page.tsx   # Editor de prompts
-├── ...
+├── page.tsx                     # Main interface (orchestrator)
+├── admin/page.tsx               # Legacy admin panel (category management)
+├── api/commands/route.ts        # REST API with Zod validation
+└── ...
 
 components/dev-caddy/
-├── SortableCommandItem.tsx # Item reordenable
-├── SortableCategoryItem.tsx # Categoría reordenable
-├── CommandCard.tsx       # Tarjeta con Syntax Highlighting
+├── Sidebar.tsx                  # Navigation + Import/Export
+├── CommandList.tsx              # Command display + search integration
+├── CommandCard.tsx              # Individual command with syntax highlighting
+├── forms/
+│   ├── CommandFormModal.tsx     # Dialog-based command editor
+│   └── EditorOverlay.tsx        # Full-screen prompt editor
 └── ...
+
+hooks/
+├── use-commands.ts              # Data fetching + CRUD operations
+└── ...
+
+store/
+├── appStore.ts                  # Zustand store (Edit Mode + Category selection)
+└── uiStore.ts                   # UI state (Sidebar collapse)
 ```
 
----
-
-## 📚 Documentación
-
-| Documento | Descripción |
-|-----------|-------------|
-| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Diagramas, componentes y dependencias |
-| [PROJECT_BIBLE.md](docs/PROJECT_BIBLE.md) | Guía completa para desarrolladores |
-| [ROADMAP.md](docs/ROADMAP.md) | Plan de modernización (Fases 1-5 ✅) |
-| [UX_IMPROVEMENT_PLAN.md](docs/UX_IMPROVEMENT_PLAN.md) | Plan de mejoras UX (Completado) |
+**Key Flow:**
+1. User interacts with `app/page.tsx` (main orchestrator)
+2. `useCommands` hook manages data fetching and state
+3. `CommandList` displays filtered/searched commands
+4. Edit Mode reveals FAB dropdown (Create Command/Prompt) and action buttons
+5. Changes persist to `app/data/commands.json` via API
 
 ---
 
-## 🚀 Cómo Empezar
+## 🚀 Getting Started
 
 ```bash
-# Clonar el repositorio
-git clone https://github.com/TU_USUARIO/dev-caddy.git
-cd dev-caddy
+# Clone repository
+git clone https://github.com/YOUR_USERNAME/broworks-dev-caddy.git
+cd broworks-dev-caddy
 
-# Instalar dependencias
+# Install dependencies
 npm install
 
-# Iniciar servidor de desarrollo
+# Start development server
 npm run dev
 ```
 
 **URLs:**
-- App principal: http://localhost:3002
-- Panel admin: http://localhost:3002/admin
+- Main app: http://localhost:3002
+- Admin panel: http://localhost:3002/admin _(legacy, for category management)_
 
 ---
 
-## 📋 Scripts Disponibles
+## 📋 Available Scripts
 
-| Comando | Descripción |
+| Command | Description |
 |---------|-------------|
-| `npm run dev` | Servidor de desarrollo (puerto 3002) |
-| `npm run build` | Build de producción |
-| `npm run start` | Iniciar build de producción |
-| `npm run lint` | Ejecutar ESLint |
+| `npm run dev` | Development server (port 3002) |
+| `npm run build` | Production build |
+| `npm run start` | Start production build |
+| `npm run lint` | Run ESLint |
 
 ---
 
-## 🔮 Estado del Proyecto
+## 📚 Documentation
 
-**Versión actual:** 0.3.0 (UX Excellence)
+| Document | Description |
+|----------|-------------|
+| [CURRENT_STATE.md](docs/CURRENT_STATE.md) | Architecture and technical state |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Component diagrams and dependencies |
+| [PROJECT_BIBLE.md](docs/PROJECT_BIBLE.md) | Complete developer guide |
+| [ROADMAP.md](docs/ROADMAP.md) | Modernization plan (Phases 1-6) |
 
-| Área | Estado |
+---
+
+## 🔮 Project Status
+
+**Current Version:** 0.4.0 (Unified + Data Security)
+
+| Area | Status |
 |------|--------|
-| Funcionalidad core | ✅ Completa |
-| UX / UI Polish | ✅ Completa |
-| Drag & Drop | ✅ Implementado |
-| Búsqueda Fuzzy | ✅ Implementada |
-| Validación API (Zod) | ✅ Implementada |
-| Backup/Restore | ✅ Implementado |
-| Tests | ❌ Pendiente |
-| Despliegue serverless | ❌ Requiere DB |
-
-Ver [ROADMAP.md](docs/ROADMAP.md) para el plan hacia v1.0.0.
+| Core functionality | ✅ Complete |
+| Unified interface | ✅ Complete |
+| Import/Export backup | ✅ Complete |
+| Edit Mode persistence | ✅ Complete |
+| Duplicate feature | ✅ Complete |
+| Fuzzy Search | ✅ Complete |
+| Drag & Drop | ✅ Complete (Admin only) |
+| Syntax Highlighting | ✅ Complete |
+| API Validation (Zod) | ✅ Complete |
+| Tests | ❌ Pending |
+| Serverless deployment | ❌ Requires database |
 
 ---
 
-## 📄 Licencia
+## 🏛️ Legacy Access
+
+The `/admin` route is still available for **Category Management** (creating, editing, and drag-dropping categories). It will be integrated into the main interface in a future phase.
+
+**Why it's separate:** The unification phase prioritized command management. Category management via the dedicated admin panel provides a more robust drag-and-drop experience for now.
+
+---
+
+## 📄 License
 
 MIT

@@ -53,7 +53,7 @@ const markdownComponents: Components = {
 export function Sidebar({ categories, helpContent }: SidebarProps) {
     const { selectedCategory, setSelectedCategory, isEditMode, toggleEditMode } = useAppStore();
     const { isSidebarCollapsed, toggleSidebar } = useUIStore();
-    const { data, saveData, importData } = useCommands();
+    const { data, saveData, importData, refreshCommands } = useCommands();
     const [categorySearch, setCategorySearch] = useState("");
     const [isHelpOpen, setIsHelpOpen] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -89,12 +89,12 @@ export function Sidebar({ categories, helpContent }: SidebarProps) {
     };
 
     // Import handler - restores from JSON backup
-    const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
             try {
                 const content = e.target?.result as string;
                 const parsedData = JSON.parse(content);
@@ -105,8 +105,11 @@ export function Sidebar({ categories, helpContent }: SidebarProps) {
                     return;
                 }
 
-                // Restore data using importData (updates UI immediately)
-                importData(parsedData);
+                // Restore data using importData (updates file and state)
+                await importData(parsedData);
+
+                // Force UI refresh by re-fetching from API
+                await refreshCommands();
             } catch (error) {
                 toast.error('Error al leer el archivo: JSON malformado');
                 console.error('Import error:', error);

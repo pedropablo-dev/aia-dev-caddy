@@ -128,5 +128,6 @@ export function useCommands() {
         saveData,
         toggleFavorite,
         importData,
+        refreshCommands: fetchData,  // Expose for manual refresh (e.g., after import)
     }
 }
