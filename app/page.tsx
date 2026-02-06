@@ -1,28 +1,48 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
+import dynamic from "next/dynamic"
 import Fuse from "fuse.js"
 import { Toaster } from "@/components/ui/sonner"
-import type { Command, Category } from "@/types"
+import { toast } from "sonner"
+import type { Command, Category, AppData } from "@/types"
 import { Sidebar } from "@/components/dev-caddy/Sidebar"
 import { Header } from "@/components/dev-caddy/Header"
 import { CommandList } from "@/components/dev-caddy/CommandList"
 import { DashboardSkeleton } from "@/components/dev-caddy/skeletons"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
 import { useAppStore } from "@/store/appStore"
 import { useCommands } from "@/hooks/use-commands"
 
+// Lazy load admin components
+const CommandFormModal = dynamic(
+  () => import("@/components/dev-caddy/forms/CommandFormModal").then(mod => ({ default: mod.CommandFormModal })),
+  { ssr: false, loading: () => null }
+)
+
+const EditorOverlay = dynamic(
+  () => import("@/components/dev-caddy/editor/EditorOverlay").then(mod => ({ default: mod.EditorOverlay })),
+  { ssr: false, loading: () => null }
+)
+
 export default function BroworksLaunchpad() {
   // --- Custom Hook for Data Logic ---
-  const { data, isLoading, hasMounted, toggleFavorite } = useCommands()
+  const { data, isLoading, hasMounted, saveData, toggleFavorite } = useCommands()
 
   // --- UI State ---
-  const { selectedCategory } = useAppStore()
+  const { selectedCategory, isEditMode } = useAppStore()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [workflowStep, setWorkflowStep] = useState<Record<string, number>>({})
   const [helpContent, setHelpContent] = useState("")
+
+  // --- Edit Mode State ---
+  const [activeCommand, setActiveCommand] = useState<Command | null>(null)
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [isEditorOpen, setIsEditorOpen] = useState(false)
 
   // --- Lógica de Ayuda ---
   useEffect(() => {
@@ -119,6 +139,128 @@ export default function BroworksLaunchpad() {
     setVariableValues((prev) => ({ ...prev, [key]: value }))
   }
 
+  // --- Helper Functions ---
+  const generateUniqueId = () => {
+    return `cmd-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`
+  }
+
+  const findCommandCategoryId = (commandId: string, data: AppData): string | null => {
+    for (const categoryId in data.commands) {
+      if (data.commands[categoryId].some(cmd => cmd.id === commandId)) {
+        return categoryId
+      }
+    }
+    return null
+  }
+
+  // --- CRUD Handlers for Edit Mode ---
+  const handleCreate = () => {
+    setActiveCommand(null)
+    setIsFormOpen(true)
+  }
+
+  const handleEdit = (command: Command) => {
+    setActiveCommand(command)
+    if (command.type === 'prompt') {
+      setIsEditorOpen(true)
+    } else {
+      setIsFormOpen(true)
+    }
+  }
+
+  const handleDelete = (commandId: string) => {
+    if (!window.confirm('¿Estás seguro de que quieres eliminar este comando?')) {
+      return
+    }
+
+    // Deep clone to avoid mutation
+    const newData: AppData = JSON.parse(JSON.stringify(data))
+
+    for (const categoryId in newData.commands) {
+      const idx = newData.commands[categoryId].findIndex(cmd => cmd.id === commandId)
+      if (idx !== -1) {
+        newData.commands[categoryId].splice(idx, 1)
+        saveData(newData)
+        toast.success('Comando eliminado correctamente')
+        return
+      }
+    }
+  }
+
+  const handleSave = (updatedCommand: Command) => {
+    // Step 1: Deep clone to ensure immutability
+    const newData: AppData = JSON.parse(JSON.stringify(data))
+
+    // Step 2: Determine target category
+    const targetCategoryId = selectedCategory === 'favorites'
+      ? Object.keys(newData.commands)[0]  // Default to first category
+      : selectedCategory
+
+    if (!targetCategoryId || !newData.commands[targetCategoryId]) {
+      toast.error('Categoría no válida')
+      return
+    }
+
+    // Step 3: Determine if UPDATE or CREATE
+    const isUpdate = activeCommand !== null && activeCommand.id === updatedCommand.id
+
+    if (isUpdate) {
+      // CASE A: Update existing command
+      const existingCategoryId = findCommandCategoryId(updatedCommand.id, newData)
+
+      if (existingCategoryId) {
+        const idx = newData.commands[existingCategoryId].findIndex(c => c.id === updatedCommand.id)
+        if (idx !== -1) {
+          newData.commands[existingCategoryId][idx] = updatedCommand
+        }
+      }
+    } else {
+      // CASE B: Create new command - ENSURE ID EXISTS
+      const newCommand: Command = {
+        ...updatedCommand,
+        id: updatedCommand.id || generateUniqueId(),  // ✅ ENSURE ID EXISTS
+        order: newData.commands[targetCategoryId].length,  // ✅ Set order
+      }
+      newData.commands[targetCategoryId].push(newCommand)
+    }
+
+    // Step 4: Save and cleanup
+    saveData(newData)
+    toast.success(isUpdate ? 'Comando actualizado' : 'Comando creado')
+
+    setIsFormOpen(false)
+    setIsEditorOpen(false)
+    setActiveCommand(null)
+  }
+
+  // Form submit handler - transforms form data to Command
+  const onFormSubmit = (formData: any) => {
+    // Convert form type to command type
+    let commandType: "command" | "workflow" | "prompt" = "command"
+    if (formData.type === "workflow") {
+      commandType = "workflow"
+    }
+
+    // Build command object
+    const commandData: Command = {
+      id: activeCommand?.id || "", // Will be generated in handleSave if empty
+      label: formData.label,
+      command: formData.command,
+      type: commandType,
+      isFavorite: formData.isFavorite,
+      order: activeCommand?.order || 0,
+    }
+
+    // Add type-specific fields
+    if (formData.type === "workflow" && formData.steps) {
+      commandData.steps = formData.steps
+    } else if (formData.type === "variables" && formData.variables) {
+      commandData.variables = formData.variables
+    }
+
+    handleSave(commandData)
+  }
+
   // --- Keyboard Navigation ---
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -205,9 +347,48 @@ export default function BroworksLaunchpad() {
               onWorkflowStep={handleWorkflowStep}
               onToggleFavorite={toggleFavorite}
               onVariableChange={handleVariableChange}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           </div>
         </div>
+
+        {/* Edit Mode: Floating Action Button */}
+        {isEditMode && (
+          <Button
+            onClick={handleCreate}
+            size="lg"
+            className="fixed bottom-8 right-8 h-14 w-14 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 z-40"
+            title="Crear nuevo comando"
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
+        )}
+
+        {/* Edit Mode: Admin Components (Lazy Loaded) */}
+        {isEditMode && (
+          <>
+            <CommandFormModal
+              isOpen={isFormOpen}
+              onOpenChange={(open) => {
+                setIsFormOpen(open)
+                if (!open) setActiveCommand(null)
+              }}
+              onSubmit={onFormSubmit}
+              initialData={activeCommand}
+            />
+            <EditorOverlay
+              isOpen={isEditorOpen}
+              onClose={() => {
+                setIsEditorOpen(false)
+                setActiveCommand(null)
+              }}
+              initialData={activeCommand || undefined}
+              onSave={handleSave}
+              categoryId={selectedCategory === 'favorites' ? Object.keys(data.commands)[0] : selectedCategory}
+            />
+          </>
+        )}
       </div>
     </>
   )

@@ -18,6 +18,8 @@ interface CommandListProps {
     onWorkflowStep: (commandId: string, steps: string[]) => void;
     onToggleFavorite: (commandId: string) => void;
     onVariableChange: (key: string, value: string) => void;
+    onEdit?: (command: Command) => void;
+    onDelete?: (commandId: string) => void;
 }
 
 export function CommandList({
@@ -32,6 +34,8 @@ export function CommandList({
     onWorkflowStep,
     onToggleFavorite,
     onVariableChange,
+    onEdit,
+    onDelete,
 }: CommandListProps) {
     const selectedRef = useRef<HTMLDivElement>(null)
 
@@ -66,6 +70,8 @@ export function CommandList({
                             onWorkflowStep={onWorkflowStep}
                             onToggleFavorite={onToggleFavorite}
                             onVariableChange={onVariableChange}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
                         />
                     </div>
                 ))}

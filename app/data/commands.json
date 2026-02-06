@@ -20,10 +20,49 @@
         "label": "Item de Prueba 1",
         "command": "comando simple",
         "type": "command",
-        "isFavorite": true,
+        "isFavorite": false,
         "order": 0
+      },
+      {
+        "id": "cmd-1770374448642-kkpxpwkcv",
+        "label": "asdfasdf",
+        "command": "asdfasdf",
+        "type": "command",
+        "isFavorite": false,
+        "order": 1
+      },
+      {
+        "id": "cmd-1770374469927-jtnacx7da",
+        "label": "asdfasf",
+        "command": "asdfa",
+        "type": "command",
+        "isFavorite": false,
+        "order": 2,
+        "variables": [
+          {
+            "name": "asdf",
+            "placeholder": "asdf"
+          }
+        ]
+      },
+      {
+        "id": "cmd-1770374512480-l9shdvstw",
+        "label": "fsfasdfa",
+        "command": "asdfasdf",
+        "type": "command",
+        "isFavorite": false,
+        "order": 3
       }
     ],
-    "nueva-categoría-de-prueba-1770368102106": []
+    "nueva-categoría-de-prueba-1770368102106": [
+      {
+        "id": "cmd-1770374529056-zu0keaf5u",
+        "label": "asdfasdf",
+        "command": "asdfasdf",
+        "type": "command",
+        "isFavorite": false,
+        "order": 0
+      }
+    ]
   }
 }
