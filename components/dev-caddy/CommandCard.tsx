@@ -7,12 +7,15 @@ import {
     Terminal,
     Sparkles,
     Star,
+    Pencil,
+    Trash2,
 } from "lucide-react"
 import { Highlight, themes } from "prism-react-renderer"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useAppStore } from "@/store/appStore"
 import type { Command } from "@/types"
 
 interface CommandCardProps {
@@ -25,6 +28,8 @@ interface CommandCardProps {
     onWorkflowStep: (commandId: string, steps: string[]) => void;
     onToggleFavorite: (commandId: string) => void;
     onVariableChange: (key: string, value: string) => void;
+    onEdit?: (command: Command) => void;
+    onDelete?: (commandId: string) => void;
 }
 
 export function CommandCard({
@@ -37,7 +42,10 @@ export function CommandCard({
     onWorkflowStep,
     onToggleFavorite,
     onVariableChange,
+    onEdit,
+    onDelete,
 }: CommandCardProps) {
+    const { isEditMode } = useAppStore();
     return (
         <Card className={`bg-gray-900 border-gray-800 transition-all duration-200 ${isActive ? 'ring-2 ring-blue-500 shadow-lg shadow-blue-500/20' : ''
             }`}>
@@ -65,7 +73,41 @@ export function CommandCard({
                         {cmd.label}
                     </CardTitle>
                 </div>
-                <div>
+                <div className="flex items-center gap-2">
+                    {/* Edit Mode Actions */}
+                    {isEditMode && (
+                        <div className="flex items-center gap-1 animate-in fade-in zoom-in duration-200">
+                            {onEdit && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onEdit(cmd);
+                                    }}
+                                    title="Editar"
+                                >
+                                    <Pencil className="h-4 w-4" />
+                                </Button>
+                            )}
+                            {onDelete && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-gray-400 hover:text-red-400 hover:bg-red-500/10"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onDelete(cmd.id);
+                                    }}
+                                    title="Eliminar"
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            )}
+                        </div>
+                    )}
+                    {/* View Mode Actions */}
                     {cmd.type === "prompt" && (
                         <Badge variant="secondary" className="bg-yellow-900 text-yellow-200 hover:bg-yellow-900/80">
                             Prompt
