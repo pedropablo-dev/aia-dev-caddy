@@ -208,7 +208,7 @@ export function Sidebar({
                         className="flex-shrink-0"
                     />
                     <h1 className={`text-xl font-bold bg-gradient-to-r from-yellow-500 to-orange-300 bg-clip-text text-transparent whitespace-nowrap ${contentClasses}`}>
-                        broWorks Dev-Caddy
+                        AIA Dev-Caddy
                     </h1>
                 </div>
 
