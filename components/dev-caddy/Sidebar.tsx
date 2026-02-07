@@ -12,6 +12,7 @@ import {
     Upload,
     Plus,
     MoreVertical,
+    X,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -225,8 +226,16 @@ export function Sidebar({
                             placeholder="Buscar categorías..."
                             value={categorySearch}
                             onChange={(e) => setCategorySearch(e.target.value)}
-                            className="pl-10 bg-gray-800 border-gray-700 focus:border-blue-500"
+                            className="pl-10 pr-8 bg-gray-800 border-gray-700 focus:border-blue-500"
                         />
+                        {categorySearch && (
+                            <button
+                                onClick={() => setCategorySearch('')}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                            >
+                                <PanelLeftClose className="h-4 w-4 rotate-45" /> {/* Reusing PanelLeftClose as X for consistency if X icon not imported, or better import X */}
+                            </button>
+                        )}
                     </div>
                 )}
             </div>

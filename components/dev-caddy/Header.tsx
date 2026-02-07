@@ -1,6 +1,6 @@
 "use client"
 
-import { Search } from "lucide-react"
+import { Search, X } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
 interface HeaderProps {
@@ -28,8 +28,16 @@ export function Header({
                         placeholder="Buscar items o presionar Ctrl+K..."
                         value={searchQuery}
                         onChange={(e) => onSearchChange(e.target.value)}
-                        className="pl-12 h-12 bg-gray-900 border-gray-700 focus:border-blue-500 text-lg w-full"
+                        className="pl-12 pr-10 h-12 bg-gray-900 border-gray-700 focus:border-blue-500 text-lg w-full"
                     />
+                    {searchQuery && (
+                        <button
+                            onClick={() => onSearchChange('')}
+                            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+                    )}
                 </div>
 
                 {/* Favorites Sort Selector */}

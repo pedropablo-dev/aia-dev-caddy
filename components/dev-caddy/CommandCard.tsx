@@ -88,8 +88,8 @@ export function CommandCard({
                 }`}>
                 <CardHeader className="flex flex-row items-center justify-between pb-3">
                     <div className="flex items-center gap-3">
-                        {/* Drag Handle - Only in Edit Mode */}
-                        {isEditMode && (
+                        {/* Drag Handle - Only in Edit Mode AND NOT in Favorites */}
+                        {isEditMode && viewMode !== 'favorites' && (
                             <div
                                 {...attributes}
                                 {...listeners}
