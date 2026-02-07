@@ -9,6 +9,17 @@ export function useCommands() {
     const [isLoading, setIsLoading] = useState(true)
     const [hasMounted, setHasMounted] = useState(false)
 
+    // --- Auto-Backup Logic ---
+    const saveAutoBackup = useCallback((data: AppData) => {
+        try {
+            localStorage.setItem('dev-caddy-backup-auto', JSON.stringify(data))
+            console.log('🔒 Auto-backup saved to localStorage')
+        } catch (error) {
+            console.error('Failed to save auto-backup:', error)
+            // No mostramos toast para no interrumpir al usuario
+        }
+    }, [])
+
     // --- Data Fetching Logic ---
     const fetchData = useCallback(async () => {
         if (!isLoading) setIsLoading(true)
@@ -77,14 +88,18 @@ export function useCommands() {
                 return
             }
 
+            // ✅ Guardado exitoso en API/disco
             if (shouldUpdate) {
                 setData(newData)
             }
+
+            // 🔒 Auto-backup a localStorage
+            saveAutoBackup(newData)
         } catch (error) {
             console.error("Error saving data:", error)
             toast.error("Error de conexión al guardar los datos.")
         }
-    }, [])
+    }, [saveAutoBackup])
 
     // --- Toggle Favorite Logic ---
     const toggleFavorite = useCallback(
