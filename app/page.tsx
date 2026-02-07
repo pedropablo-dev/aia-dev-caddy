@@ -150,7 +150,7 @@ export default function BroworksLaunchpad() {
     let commandsToShow: Command[]
 
     if (selectedCategory === 'favorites') {
-      commandsToShow = allCommands
+      commandsToShow = [...allCommands] // CRITICAL: Create copy before sorting
         .filter((cmd) => cmd.isFavorite)
         .sort((a, b) => {
           if (favoritesSort === 'usage') {
@@ -175,7 +175,7 @@ export default function BroworksLaunchpad() {
     }
 
     return commandsToShow
-  }, [selectedCategory, data.commands, searchQuery, fuse, allCommands])
+  }, [selectedCategory, data.commands, searchQuery, fuse, allCommands, favoritesSort]) // Added favoritesSort dependency explicitly
 
   // --- Reset selectedIndex when search or category changes ---
   useEffect(() => {
@@ -622,6 +622,9 @@ export default function BroworksLaunchpad() {
             <Header
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
+              viewMode={selectedCategory === 'favorites' ? 'favorites' : 'default'}
+              favoritesSort={favoritesSort}
+              onSortChange={handleSortChange}
             />
             <CommandList
               commands={filteredCommands}
@@ -644,8 +647,6 @@ export default function BroworksLaunchpad() {
               resetUsage={resetUsage}
               onNavigateCategory={setSelectedCategory}
               viewMode={selectedCategory === 'favorites' ? 'favorites' : 'default'}
-              favoritesSort={favoritesSort}
-              onSortChange={handleSortChange}
             />
           </div>
         </div>

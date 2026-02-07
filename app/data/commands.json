@@ -14,72 +14,15 @@
     }
   ],
   "commands": {
-    "all": [
-      {
-        "id": "cmd-1770385331397-c0sggtw5k",
-        "label": "sgdfgsdf",
-        "command": "sdfgsdg",
-        "type": "command",
-        "isFavorite": false,
-        "order": 0
-      },
-      {
-        "id": "cmd-1770385359565-ztrrjy2td",
-        "label": "donde crea aesto?",
-        "command": "asfafa",
-        "type": "command",
-        "isFavorite": false,
-        "order": 1
-      },
-      {
-        "id": "cmd-1770385407103-vv50ikdof",
-        "label": "fasdfasdf",
-        "command": "asdfasdf",
-        "type": "command",
-        "isFavorite": false,
-        "order": 2
-      },
-      {
-        "id": "cmd-1770385722470-a1hn2vtd6",
-        "label": "uytutui",
-        "command": "ggjgkj",
-        "type": "command",
-        "isFavorite": false,
-        "order": 3
-      },
-      {
-        "id": "cmd-1770385763878-130bva793",
-        "label": "dfgsdfgsdfg",
-        "command": "sdfgsdfg",
-        "type": "command",
-        "isFavorite": false,
-        "order": 4
-      },
-      {
-        "id": "cmd-1770385868529-d09mmwinz",
-        "label": "dfghdfgh",
-        "command": "dfhdfgh",
-        "type": "command",
-        "isFavorite": false,
-        "order": 5
-      }
-    ],
+    "all": [],
     "cmd-1770457126972-lq6r9ebx1": [
-      {
-        "id": "cmd-1770472317520-9ceshhuf1",
-        "label": "Comando de prueba 4o",
-        "command": "comando de prueba",
-        "type": "command",
-        "isFavorite": false,
-        "order": 0
-      },
       {
         "id": "cmd-1770467920132-1eheylxzf",
         "label": "Comando de prueba 3o",
         "command": "comando con variables {variable1} y {variable2}",
         "type": "command",
         "isFavorite": true,
-        "order": 1,
+        "order": 0,
         "variables": [
           {
             "name": "variable1",
@@ -98,17 +41,17 @@
         "command": "# PROCEDIMIENTO OBLIGATORIO PARA LAS INTERACCIONES DE ESTA SESIÓN\n\n## Contexto:\nEsta es una sesión de desarrollo de una herramienta de software creada con \"vibe coding\".\nPara este desarrollo usamos la plataforma de desarrollo \"Google Antigravity\".\n\n## Antes de comenzar debes realizar estos pasos:\n1. Analiza el código proporcionado a través del repositorio adjunto.\n2. Actualiza tu conocimiento sobre la herramienta \"Google Antigravity\" con información  actualizada a día de hoy para poder asistir al usuario de una manera optima y eficiente.\n\n## Protocolo de Actuación e Interacción con el usuario:\nA partir de este momento instauramos un **Protocolo de Actuación** OBLIGATORIO para esta sesión de desarrollo que será el siguiente:\n\n1. Entendimiento de lo que quiere hacer el usuario:\n- Interactúas con el usuario para entender lo que quiere y poder brindarle un buen servicio, para esto le harás las preguntas que consideres necesarias y resolverás absolutamente todas las dudas que plantee el usuario\n\n2. Generación de **Prompts** para Antigravity:\n- Una vez entiendas lo que quiere el usuario y hayas resuelto TODAS sus dudas, **PEDIRÁS PERMISO** al usuario para generar el **prompt** para que el agente de Antigravity realice las acciones necesarias en el código para conseguir lo que el usuario pide o plantea. **IMPORTANTE: NUNCA generes un prompt sin el permiso explícito del usuario**.\n- A la hora de crear el prompt para antigravity debes aconsejar al usuario cual es el modelo de IA que debe usar para cada caso, los modelos disponibles son (a no ser que el usuario te indique alguno en concreto):\n\nGemini 3 Pro (High)\nGemini 3 Pro (Low)\nGemini 3 Flash\n\nClaude Sonnet 4.5\nClaude Sonnet 4.5 (Thinking)\nClaude Opus 4.5 (Thinking)\n\nGPT-OSS 120B (Medium)\n\n3. Acción del Usuario Tras Proporcionarle el Prompt:\n- Una vez le has entregado el **prompt** al usuario, éste será el encargado de lanzarle el **prompt** al agente de Antigravity para que trabaje en el código\n- Cuando el usuario te comunique que el agente de Antigravity ha terminado, te proporcionará la respuesta y del agente y los detalles de la implementación. Debes revisar estos detalles para comprobar que el agente ha hecho un buen trabajo.\n\n4. Comprobación y Validación de los Cambios e Implementaciones Realizadas:\n- Una vez revisados los detalles de la implementación realizada por el agente de Antigravity, procederás a indicar al usuario los pasos necesarios para comprobar y validar de los cambios e implementaciones realizadas por el agente funcionan correctamente.\n\n5. Guardado de Progreso con Git:\n- Una vez comprobado que todo funciona correctamente y que el agente de Antigravity ha hecho bien su trabajo, procederás a darle al usuario los pasos para guardar el progreso con git.\n- Después de guardar los cambios vuelve a ejecutar el paso \"1. Entendimiento de lo que quiere hacer el usuario\" para proceder con la siguiente implementación.\n\nIMPORTANTE RECUERDA:\n-**NUNCA** generes un prompt sin el permiso explícito del usuario.\n\n¿Me he explicado bien? ¿está todo claro? ¿alguna pregunta?",
         "type": "prompt",
         "isFavorite": true,
-        "order": 2,
+        "order": 1,
         "variables": [],
         "copyCount": 6
       },
       {
-        "id": "cmd-1770469195749-ils7fac27",
-        "label": "Comando de prueba",
+        "id": "cmd-1770472317520-9ceshhuf1",
+        "label": "Comando de prueba 4o",
         "command": "comando de prueba",
         "type": "command",
         "isFavorite": false,
-        "order": 3
+        "order": 2
       },
       {
         "id": "cmd-1770467791944-k1b7e1m25",
@@ -126,12 +69,21 @@
     ],
     "cmd-1770472339215-zay57o2ld": [
       {
+        "id": "cmd-1770473093458-azgttxvgq",
+        "label": "B Comando de prueba 6o",
+        "command": "comando de prueba",
+        "type": "command",
+        "isFavorite": true,
+        "order": 0,
+        "copyCount": 0
+      },
+      {
         "id": "cmd-1770472364471-m5x64fuqe",
         "label": "A Comando de prueba 5o",
         "command": "comando de prueba",
         "type": "command",
         "isFavorite": true,
-        "order": 0
+        "order": 1
       }
     ]
   }
