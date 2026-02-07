@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2026-02-07 "The Polish Update"
+
+### Added
+- **Auto-Backup System**: Passive backup to localStorage after every save operation
+  - Storage key: `dev-caddy-backup-auto`
+  - Console log: "🔒 Auto-backup saved to localStorage"
+- **Keyboard Shortcuts**: Power user productivity enhancements
+  - `Ctrl+Enter` / `Cmd+Enter`: Submit any modal form instantly
+  - `Esc`: Close modals without saving (native Shadcn Dialog behavior)
+- **Enhanced Delete Confirmations**: Replaced all `window.confirm()` with Shadcn AlertDialog
+  - Affected: Command deletion, Category deletion (Sidebar, Forms, page.tsx)
+- **Toast Improvements**:
+  - Repositioned to bottom-center (doesn't obstruct FAB)
+  - Added success feedback for favorite toggle actions
+
+### Removed
+- **Obsolete Form Components**: Deleted unused Sheet variants
+  - `components/dev-caddy/forms/CommandFormSheet.tsx`
+  - `components/dev-caddy/forms/CategoryFormSheet.tsx`
+- **Orphaned Directory**: Deleted `context/` folder with unused `ToastContext.tsx`
+- **Garbage Data**: Cleaned 9 test categories named "e" from `commands.json`
+
+### Fixed
+- **ReferenceError in Modals**: Moved `useEffect` for keyboard shortcuts after `handleSubmit` definition
+- **Duplicate Comment**: Removed duplicate "Custom Hook for Data Logic" comment in page.tsx
+
+### Documentation
+- Updated `README.md` with new Key Features
+- Updated `docs/ARCHITECTURE.md` with two-layer Data Persistence and UX Patterns
+- Updated `docs/PROJECT_BIBLE.md` with Shortcuts section and corrected limitations
+- Updated `docs/ROADMAP_TO_PERFECTION.md` with completion status for implemented items
+
 ## [1.2.0] - 2026-02-06
 ### Added
 - **Category Duplication**: Duplicate categories with all nested commands via context menu

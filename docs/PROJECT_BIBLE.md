@@ -1,4 +1,4 @@
-# Dev-Caddy Project Bible v1.2.0
+# Dev-Caddy Project Bible v1.2.1
 
 > The comprehensive guide for developers working on Dev-Caddy.
 
@@ -212,8 +212,23 @@ const {
 - **Drag & Drop**: Reorder categories and commands
 - **Create**: Floating Action Button (bottom-right)
 - **Edit**: Click pencil icon or context menu
-- **Delete**: Click trash icon or context menu
+- **Delete**: Click trash icon or context menu (AlertDialog confirmation)
 - **Duplicate**: Click files icon or context menu "Duplicar"
+
+### Auto-Backup System
+- **Passive Protection**: Auto-saves to localStorage on every write
+- **Storage Key**: `dev-caddy-backup-auto`
+- **Recovery**: Access via DevTools > Application > Local Storage
+- Complements manual JSON export
+
+### Keyboard Shortcuts
+| Shortcut | Context | Action |
+|----------|---------|--------|
+| `Ctrl+K` | Global | Focus search input |
+| `Ctrl+Enter` / `Cmd+Enter` | Modals | Submit form instantly |
+| `Esc` | Modals | Close without saving |
+| `↑` / `↓` | Search | Navigate results |
+| `Enter` | Selected | Copy command to clipboard |
 
 ---
 
@@ -243,6 +258,5 @@ npm start       # Start production server
 ## Known Limitations
 
 1. **Single-user:** No authentication
-2. **Local only:** File-based storage
-3. **No undo:** Deletions are permanent (use backups!)
-4. **No auto-backup:** Manual export required
+2. **Local only:** File-based storage (not cloud-synced)
+3. **No undo:** Deletions are permanent, but auto-backup provides recovery option

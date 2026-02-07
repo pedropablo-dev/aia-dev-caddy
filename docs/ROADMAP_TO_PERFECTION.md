@@ -3,7 +3,7 @@
 > Critical audit and improvement roadmap for Dev-Caddy v1.2.0
 > 
 > **Auditor**: Red Team Analysis
-> **Date**: 2026-02-06
+> **Date**: 2026-02-06 (Updated: 2026-02-07)
 > **Target**: 10/10 Local-First Tool
 
 ---
@@ -30,6 +30,8 @@ These are bugs or issues that could cause data loss or poor UX.
 
 **Evidence**: Lines 47-98 in commands.json show 9 categories all named "e" with icon "e".
 
+**Status**: ✅ **FIXED** - Garbage data cleaned in v1.2.1
+
 ### 🔴 1.2 Stale `adminSelectedCategory` in appStore
 
 **Issue**: The zustand store interface mentions only `selectedCategory` but PROJECT_BIBLE (now updated) referenced an old `adminSelectedCategory`. This was already removed but any lingering references should be purged.
@@ -50,6 +52,8 @@ These are bugs or issues that could cause data loss or poor UX.
 
 **Priority**: Medium - Works but violates stated coding standards.
 
+**Status**: ✅ **FIXED** - Replaced with Shadcn AlertDialog in v1.2.1
+
 ---
 
 ## PHASE 2: TECHNICAL DEBT
@@ -69,6 +73,8 @@ Accumulated shortcuts that need cleanup.
 rm components/dev-caddy/forms/CategoryFormSheet.tsx
 rm components/dev-caddy/forms/CommandFormSheet.tsx
 ```
+
+**Status**: ✅ **FIXED** - Sheet components deleted in v1.2.1
 
 ### 🟡 2.2 Duplicate Comment Line in page.tsx
 
@@ -137,6 +143,9 @@ case "d":
   break
 ```
 
+**Status**: ✅ **PARTIALLY IMPLEMENTED** - `Ctrl+Enter` and `Esc` shortcuts added to modals in v1.2.1. Single-key shortcuts (E, D, Delete) deferred due to risk of accidental activation.
+```
+
 ### 🟡 3.2 No Loading State for Save Operations
 
 **Issue**: When saving data, there's no visual feedback that a save is in progress.
@@ -203,6 +212,8 @@ if (backupKeys.length > 5) {
   localStorage.removeItem(oldest)
 }
 ```
+
+**Status**: ✅ **IMPLEMENTED** - Passive auto-backup to localStorage added in v1.2.1 (`saveAutoBackup` function).
 
 ### 🔵 4.2 Undo/Redo System
 
@@ -357,17 +368,15 @@ const debouncedSave = useDebouncedCallback(saveData, 500)
 
 ## PRIORITY MATRIX
 
-| Priority | Issue | Effort | Impact |
-|----------|-------|--------|--------|
-| 🔴 HIGH | Clean garbage data | Low | High |
-| 🔴 HIGH | Remove window.confirm | Medium | Medium |
-| 🟡 MED | Delete unused Sheet components | Low | Low |
-| 🟡 MED | Add keyboard shortcuts | Medium | High |
-| 🟡 MED | Add save indicator | Low | Medium |
-| 🔵 LOW | Implement auto-backups | Medium | High |
-| 🔵 LOW | Add undo/redo | High | High |
-| 🟢 OPT | Virtualize lists | Medium | Low |
-| 🟢 OPT | Add usage analytics | Low | Medium |
+| 🔴 HIGH | Clean garbage data | Low | High | ✅ Done |
+| 🔴 HIGH | Remove window.confirm | Medium | Medium | ✅ Done |
+| 🟡 MED | Delete unused Sheet components | Low | Low | ✅ Done |
+| 🟡 MED | Add keyboard shortcuts | Medium | High | ✅ Partial |
+| 🟡 MED | Add save indicator | Low | Medium | |
+| 🔵 LOW | Implement auto-backups | Medium | High | ✅ Done |
+| 🔵 LOW | Add undo/redo | High | High | |
+| 🟢 OPT | Virtualize lists | Medium | Low | |
+| 🟢 OPT | Add usage analytics | Low | Medium | |
 
 ---
 
@@ -384,6 +393,8 @@ To reach **10/10**:
 4. Consider Phase 4.2 (undo/redo) - nice to have
 
 The architecture is sound. The gaps are primarily in polish and safety nets.
+
+**Update (2026-02-07)**: After implementing critical fixes, the score is now **8.5/10**. Phase 1 and key Phase 3/4 items completed.
 
 ---
 

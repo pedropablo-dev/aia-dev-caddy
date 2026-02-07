@@ -1,4 +1,4 @@
-# Dev-Caddy Architecture v1.2.0
+# Dev-Caddy Architecture v1.2.1
 
 ## Overview
 Dev-Caddy is a **Single Page Application (SPA)** for developers to manage CLI commands, AI prompts, and workflows. Built with **Next.js 14** (App Router) with **file-based JSON persistence**.
@@ -22,9 +22,17 @@ The entire application lives in `/app/page.tsx` (~660 lines):
 - **Modals**: Lazy-loaded forms for Commands/Categories (via `next/dynamic`)
 
 ### Data Persistence
-Data is stored in `app/data/commands.json` via REST API:
+Two-layer data protection system:
+
+**Layer 1 (Primary):** File-based JSON via REST API
 - **GET /api/commands**: Read all data
 - **POST /api/commands**: Write data (Zod-validated)
+- Storage: `app/data/commands.json`
+
+**Layer 2 (Secondary):** Passive Auto-Backup
+- Automatic localStorage backup after every successful save
+- Key: `dev-caddy-backup-auto`
+- Protection against disk failures or file corruption
 
 ```typescript
 // Data Schema
@@ -81,6 +89,26 @@ broworks-dev-caddy/
 ├── lib/schemas.ts        # Zod validation
 └── docs/                 # Documentation
 ```
+
+## UX/UI Patterns
+
+### Confirmations
+- **Destructive Actions**: Use Shadcn `AlertDialog` (never `window.confirm`)
+- **Pattern**: Open dialog → User confirms → Execute action → Toast feedback
+
+### Notifications
+- **Library**: Sonner (`components/ui/sonner.tsx`)
+- **Position**: Bottom-center (doesn't obstruct FAB)
+- **Styling**: `richColors` enabled for success/error variants
+
+### Keyboard Shortcuts
+| Shortcut | Context | Action |
+|----------|---------|--------|
+| `Ctrl+K` | Global | Focus search |
+| `Ctrl+Enter` / `Cmd+Enter` | Modals | Submit form |
+| `Esc` | Modals | Close without saving |
+| `↑` / `↓` | Search results | Navigate |
+| `Enter` | Selected command | Copy to clipboard |
 
 ## Security
 - **Input Validation**: All POST data validated with Zod schemas

@@ -15,9 +15,18 @@ Dev-Caddy is a high-performance, **local-first** dashboard designed to organize,
 -   **📂 Advanced Organization**:
     -   **LIFO Ordering**: Newest items appear at the top for immediate access.
     -   **Drag & Drop**: Fully reorderable categories and commands via Edit Mode.
--   **🔒 100% Local Privacy**: Your data never leaves your machine (LocalStorage).
--   **🛡️ Data Safety**: Built-in JSON Import/Export for easy backups.
--   **🎨 Premium UX**: sleek Dark Mode interface with custom aesthetics and fluid animations.
+-   **🔒 100% Local Privacy**: Your data never leaves your machine.
+-   **🛡️ Data Safety**:
+    -   **Auto-Backup**: Passive backup to localStorage on every save.
+    -   **Manual Export**: Download JSON backups for external storage.
+-   **⌨️ Power User Shortcuts**:
+    -   `Ctrl+K`: Focus search
+    -   `Ctrl+Enter` / `Cmd+Enter`: Submit any form instantly
+    -   `Esc`: Close any modal without saving
+-   **🎨 Premium UX**:
+    -   Sleek Dark Mode interface with custom aesthetics.
+    -   AlertDialog confirmations for destructive actions (no browser alerts).
+    -   Bottom-center toast notifications that don't obstruct UI.
 
 ## 🛠️ Tech Stack
 
