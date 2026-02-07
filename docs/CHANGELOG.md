@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2026-02-07
+### Added
+- **Favorites Dashboard**: Dedicated view with sorting (Usage, Category, Alpha) and analytics.
+- **Smart Duplication**: Duplicated Commands and Categories now appear immediately after the original item.
+- **Clear Search**: Added 'X' buttons to clear search inputs in Header and Sidebar.
+
+### Changed
+- **UI Cleanup**: Removed legacy Help/User Guide button and modal.
+- **UX**: Drag & drop handles are now hidden in Favorites view to prevent confusion.
+- **Performance**: Optimized sorting logic for Favorites view.
+
 ## [1.2.1] - 2026-02-07 "The Polish Update"
 
 ### Added

@@ -16,9 +16,15 @@ Dev-Caddy is a high-performance, **local-first** dashboard designed to organize,
     -   **LIFO Ordering**: Newest items appear at the top for immediate access.
     -   **Drag & Drop**: Fully reorderable categories and commands via Edit Mode.
 -   **🔒 100% Local Privacy**: Your data never leaves your machine.
--   **🛡️ Data Safety**:
     -   **Auto-Backup**: Passive backup to localStorage on every save.
     -   **Manual Export**: Download JSON backups for external storage.
+-   **⭐ Favorites Dashboard**:
+    -   Dedicated view for your most used items.
+    -   **Smart Sorting**: Sort by Usage, Name, or Category instantly.
+    -   **Usage Analytics**: Track how often you use each command.
+-   **✨ Smart Duplication**:
+    -   Duplicated items appear immediately after the original.
+    -   Automatic re-indexing keeps everything organized.
 -   **⌨️ Power User Shortcuts**:
     -   `Ctrl+K`: Focus search
     -   `Ctrl+Enter` / `Cmd+Enter`: Submit any form instantly
@@ -68,7 +74,8 @@ Dev-Caddy is a high-performance, **local-first** dashboard designed to organize,
 -   `context/`: React Contexts (Toast system).
 -   `hooks/`: Custom hooks for data handling (`use-commands`).
 -   `store/`: Global UI state stores.
--   `public/`: Static assets and the `help.md` User Guide.
+-   `store/`: Global UI state stores.
+-   `public/`: Static assets.
 
 ## 🤝 Contributing
 

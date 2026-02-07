@@ -61,8 +61,7 @@ broworks-dev-caddy/
 │   ├── appStore.ts           # App state (selectedCategory, isEditMode)
 │   └── uiStore.ts            # UI state (isSidebarCollapsed)
 │
-└── public/
-    └── help.md               # User Guide markdown
+└── public/               # Static assets
 ```
 
 ---
@@ -198,6 +197,8 @@ const {
 ### Favorites System
 - Click ⭐ to toggle favorite status
 - Virtual "Favorites" category shows all starred items
+- **Smart Sorting**: Sort by Usage (🔥), Category (📂), or Alpha (🔤)
+- **Usage Analytics**: Visual flame icon with usage count
 
 ### Search
 - `Ctrl+K` focuses search input
@@ -213,7 +214,7 @@ const {
 - **Create**: Floating Action Button (bottom-right)
 - **Edit**: Click pencil icon or context menu
 - **Delete**: Click trash icon or context menu (AlertDialog confirmation)
-- **Duplicate**: Click files icon or context menu "Duplicar"
+- **Duplicate**: Smart duplication inserts copy immediately after original
 
 ### Auto-Backup System
 - **Passive Protection**: Auto-saves to localStorage on every write
