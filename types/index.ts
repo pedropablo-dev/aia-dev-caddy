@@ -22,6 +22,7 @@ export interface Command {
     type: "command" | "workflow" | "prompt";
     isFavorite?: boolean;
     order?: number;
+    categoryName?: string; // Category origin (injected for Favorites/Search)
     // Variables can be either structured objects or simple strings (for prompts)
     variables?: Variable[] | string[];
     steps?: string[];

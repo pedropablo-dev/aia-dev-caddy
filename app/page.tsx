@@ -104,8 +104,14 @@ export default function BroworksLaunchpad() {
 
   // --- All Commands (flattened for fuzzy search) ---
   const allCommands = useMemo(() => {
-    return Object.values(data.commands).flat()
-  }, [data.commands])
+    return Object.entries(data.commands).flatMap(([categoryId, commands]) => {
+      const category = data.categories.find((cat) => cat.id === categoryId);
+      return commands.map((cmd) => ({
+        ...cmd,
+        categoryName: category?.name || 'Unknown',
+      }));
+    });
+  }, [data.commands, data.categories])
 
   // --- Fuse.js Instance (memoized) ---
   const fuse = useMemo(() => {

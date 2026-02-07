@@ -107,6 +107,12 @@ export function CommandCard({
                                 <Terminal className="w-4 h-4 text-blue-400" />
                             )}
                             {cmd.label}
+                            {/* Category origin badge (for Favorites/Search) */}
+                            {cmd.categoryName && (
+                                <Badge variant="outline" className="ml-2 text-xs border-gray-600 text-gray-400">
+                                    {cmd.categoryName}
+                                </Badge>
+                            )}
                         </CardTitle>
                     </div>
                     <div className="flex items-center gap-2">
