@@ -153,6 +153,22 @@ export function CommandFormModal({
         setVariables([{ name: "", placeholder: "" }])
     }
 
+    // Keyboard shortcut: Ctrl+Enter to submit
+    useEffect(() => {
+        if (!isOpen) return
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Ctrl+Enter (Windows/Linux) or Cmd+Enter (Mac)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault()
+                form.handleSubmit(handleSubmit)()
+            }
+        }
+
+        document.addEventListener('keydown', handleKeyDown)
+        return () => document.removeEventListener('keydown', handleKeyDown)
+    }, [isOpen, form, handleSubmit])
+
     // Workflow step handlers
     const addStep = () => setWorkflowSteps([...workflowSteps, ""])
     const removeStep = (index: number) =>

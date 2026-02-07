@@ -95,6 +95,22 @@ export function CategoryFormModal({
         onClose()
     }
 
+    // Keyboard shortcut: Ctrl+Enter to submit
+    useEffect(() => {
+        if (!isOpen) return
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Ctrl+Enter (Windows/Linux) or Cmd+Enter (Mac)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault()
+                form.handleSubmit(handleSubmit)()
+            }
+        }
+
+        document.addEventListener('keydown', handleKeyDown)
+        return () => document.removeEventListener('keydown', handleKeyDown)
+    }, [isOpen, form, handleSubmit])
+
     const handleDelete = () => {
         if (initialData?.id && onDelete) {
             setDeleteDialogOpen(true)
