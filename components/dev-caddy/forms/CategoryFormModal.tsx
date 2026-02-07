@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -23,6 +23,16 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import type { Category } from "@/types"
 
 // Form schema for category creation/editing
@@ -49,6 +59,7 @@ export function CategoryFormModal({
     initialData,
 }: CategoryFormModalProps) {
     const isEditMode = !!initialData
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
     const form = useForm<CategoryFormValues>({
         resolver: zodResolver(categoryFormSchema),
@@ -86,10 +97,15 @@ export function CategoryFormModal({
 
     const handleDelete = () => {
         if (initialData?.id && onDelete) {
-            if (window.confirm("Borrar esta categoría eliminará todos sus comandos. ¿Estás seguro?")) {
-                onDelete(initialData.id)
-                onClose()
-            }
+            setDeleteDialogOpen(true)
+        }
+    }
+
+    const confirmDelete = () => {
+        if (initialData?.id && onDelete) {
+            onDelete(initialData.id)
+            onClose()
+            setDeleteDialogOpen(false)
         }
     }
 
@@ -180,6 +196,29 @@ export function CategoryFormModal({
                     </form>
                 </Form>
             </DialogContent>
+
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent className="bg-gray-900 border-gray-800 text-white">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-gray-400">
+                            Borrar esta categoría eliminará todos sus comandos. Esta acción no se puede deshacer.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className="bg-gray-800 hover:bg-gray-700 text-white border-gray-700">
+                            Cancelar
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={confirmDelete}
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                        >
+                            Eliminar
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </Dialog>
     )
 }

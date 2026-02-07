@@ -1,5 +1,7 @@
 "use client"
 
+import { useState } from "react"
+
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { GripVertical, MoreVertical, Copy, Pencil, Trash2 } from "lucide-react"
@@ -10,6 +12,16 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import type { Category } from "@/types"
 
 interface SortableCategoryItemProps {
@@ -33,6 +45,8 @@ export function SortableCategoryItem({
     onDuplicate,
     onDelete,
 }: SortableCategoryItemProps) {
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+
     const {
         attributes,
         listeners,
@@ -113,11 +127,7 @@ export function SortableCategoryItem({
                             Duplicar
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                            onClick={() => {
-                                if (window.confirm("¿Estás seguro de borrar esta categoría?")) {
-                                    onDelete(category.id)
-                                }
-                            }}
+                            onClick={() => setDeleteDialogOpen(true)}
                             className="text-red-400 hover:bg-gray-800 cursor-pointer flex items-center gap-2"
                         >
                             <Trash2 className="h-4 w-4" />
@@ -126,6 +136,32 @@ export function SortableCategoryItem({
                     </DropdownMenuContent>
                 </DropdownMenu>
             )}
+
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent className="bg-gray-900 border-gray-800 text-white">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-gray-400">
+                            Esta acción no se puede deshacer.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className="bg-gray-800 hover:bg-gray-700 text-white border-gray-700">
+                            Cancelar
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={() => {
+                                onDelete(category.id)
+                                setDeleteDialogOpen(false)
+                            }}
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                        >
+                            Eliminar
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }

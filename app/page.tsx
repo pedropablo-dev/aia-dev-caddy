@@ -5,6 +5,16 @@ import dynamic from "next/dynamic"
 import Fuse from "fuse.js"
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import type { Command, Category, AppData } from "@/types"
 import { Sidebar } from "@/components/dev-caddy/Sidebar"
 import { Header } from "@/components/dev-caddy/Header"
@@ -59,6 +69,10 @@ export default function BroworksLaunchpad() {
   // --- Category Modal State ---
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+
+  // --- Delete Dialog State ---
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [commandToDelete, setCommandToDelete] = useState<string | null>(null)
 
   // --- Lógica de Ayuda ---
   useEffect(() => {
@@ -198,22 +212,30 @@ export default function BroworksLaunchpad() {
   }
 
   const handleDelete = (commandId: string) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar este comando?')) {
-      return
-    }
+    setCommandToDelete(commandId)
+    setDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = () => {
+    if (!commandToDelete) return
 
     // Deep clone to avoid mutation
     const newData: AppData = JSON.parse(JSON.stringify(data))
 
     for (const categoryId in newData.commands) {
-      const idx = newData.commands[categoryId].findIndex(cmd => cmd.id === commandId)
+      const idx = newData.commands[categoryId].findIndex(cmd => cmd.id === commandToDelete)
       if (idx !== -1) {
         newData.commands[categoryId].splice(idx, 1)
         saveData(newData)
         toast.success('Comando eliminado correctamente')
+        setDeleteDialogOpen(false)
+        setCommandToDelete(null)
         return
       }
     }
+
+    setDeleteDialogOpen(false)
+    setCommandToDelete(null)
   }
 
   const handleDuplicate = (command: Command) => {
@@ -655,6 +677,29 @@ export default function BroworksLaunchpad() {
           </>
         )}
       </div>
+
+      {/* Delete Command Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="bg-gray-900 border-gray-800 text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400">
+              Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-gray-800 hover:bg-gray-700 text-white border-gray-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }
