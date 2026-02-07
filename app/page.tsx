@@ -406,6 +406,10 @@ export default function BroworksLaunchpad() {
     // Deep clone the data
     const newData: AppData = JSON.parse(JSON.stringify(data))
 
+    // Find index of original category
+    const originalIndex = newData.categories.findIndex(c => c.id === category.id)
+    if (originalIndex === -1) return
+
     // Generate new unique ID for the category
     const newCategoryId = generateUniqueId()
 
@@ -414,11 +418,11 @@ export default function BroworksLaunchpad() {
       ...category,
       id: newCategoryId,
       name: `${category.name} (Copia)`,
-      order: 0, // LIFO: New categories at top
+      order: originalIndex + 1,
     }
 
-    // Add to beginning of categories array
-    newData.categories.unshift(duplicatedCategory)
+    // Insert after original category
+    newData.categories.splice(originalIndex + 1, 0, duplicatedCategory)
 
     // Re-index categories
     newData.categories.forEach((cat, idx) => {
