@@ -1,6 +1,12 @@
 {
   "categories": [
     {
+      "id": "cmd-1770465367510-jxg8pm4rx",
+      "name": "Categoría de Prueba",
+      "icon": "👌",
+      "order": 0
+    },
+    {
       "id": "cmd-1770457126972-lq6r9ebx1",
       "name": "Antigravity",
       "icon": "🚀",
@@ -68,6 +74,7 @@
         "order": 0,
         "variables": []
       }
-    ]
+    ],
+    "cmd-1770465367510-jxg8pm4rx": []
   }
 }

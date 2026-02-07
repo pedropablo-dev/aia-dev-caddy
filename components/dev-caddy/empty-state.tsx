@@ -20,13 +20,13 @@ export function EmptyState({ searchQuery, onClearSearch }: EmptyStateProps) {
             </div>
 
             <h3 className="text-xl font-bold text-gray-300 mb-2">
-                {searchQuery ? "No commands found" : "No commands yet"}
+                {searchQuery ? "Ningún resultado" : "No hay nada en esta categoría"}
             </h3>
 
             <p className="text-gray-500 mb-6 max-w-md">
                 {searchQuery
-                    ? `No results for "${searchQuery}". Try searching for something else or clear your search.`
-                    : "Get started by adding your first command in the admin panel."
+                    ? `No encuentro nada para "${searchQuery}". Prueba con otra cosa o borra la búsqueda actual.`
+                    : "Empieza añadiendo un comando o un prompt pulsando en el botón azul con un +"
                 }
             </p>
 
@@ -36,7 +36,7 @@ export function EmptyState({ searchQuery, onClearSearch }: EmptyStateProps) {
                     variant="outline"
                     className="bg-gray-800 border-gray-700 hover:bg-gray-700"
                 >
-                    Clear Search
+                    Limpiar búsqueda
                 </Button>
             )}
         </div>
