@@ -3,16 +3,15 @@
 import Image from "next/image"
 import { useState, useRef } from "react"
 import {
-    HelpCircle,
-    PanelLeftClose,
-    Search,
-    Lock,
-    Unlock,
-    Download,
-    Upload,
     Plus,
     MoreVertical,
     X,
+    Search,
+    PanelLeftClose,
+    Lock,
+    Unlock,
+    Download,
+    Upload
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,13 +19,6 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-    DialogFooter,
-    DialogClose,
 } from "@/components/ui/dialog"
 import {
     DropdownMenu,
@@ -34,7 +26,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import ReactMarkdown, { Components } from "react-markdown"
 import { useUIStore } from "@/store/uiStore"
 import { useAppStore } from "@/store/appStore"
 import { useCommands } from "@/hooks/use-commands"
@@ -59,7 +50,6 @@ import { SortableCategoryItem } from "./SortableCategoryItem"
 interface SidebarProps {
     categories: Category[];
     data: AppData; // Added for Export
-    helpContent: string;
     onCreateCategory: () => void;
     onEditCategory: (category: Category) => void;
     onDuplicateCategory?: (category: Category) => void;
@@ -68,21 +58,11 @@ interface SidebarProps {
     onImport: (info: AppData) => Promise<void>; // Added for Import
 }
 
-const markdownComponents: Components = {
-    h1: ({ ...props }) => <h1 className="text-2xl font-bold text-white mb-4" {...props} />,
-    h3: ({ ...props }) => <h3 className="text-lg font-semibold text-blue-400 mt-6 mb-2" {...props} />,
-    hr: ({ ...props }) => <hr className="my-4 border-gray-700" {...props} />,
-    ul: ({ ...props }) => <ul className="list-disc list-inside space-y-2 pl-4" {...props} />,
-    li: ({ ...props }) => <li className="text-gray-300" {...props} />,
-    p: ({ ...props }) => <p className="text-gray-300 mb-4" {...props} />,
-    strong: ({ ...props }) => <strong className="font-semibold text-gray-200" {...props} />,
-    code: ({ ...props }) => <code className="bg-gray-800 text-purple-300 font-mono rounded-md px-1.5 py-0.5 text-sm" {...props} />
-}
+
 
 export function Sidebar({
     categories,
     data,
-    helpContent,
     onCreateCategory,
     onEditCategory,
     onDuplicateCategory,
@@ -94,7 +74,6 @@ export function Sidebar({
     const { isSidebarCollapsed, toggleSidebar } = useUIStore();
     // useCommands removed to fix state isolation
     const [categorySearch, setCategorySearch] = useState("");
-    const [isHelpOpen, setIsHelpOpen] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const sensors = useSensors(
@@ -233,7 +212,7 @@ export function Sidebar({
                                 onClick={() => setCategorySearch('')}
                                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
                             >
-                                <PanelLeftClose className="h-4 w-4 rotate-45" /> {/* Reusing PanelLeftClose as X for consistency if X icon not imported, or better import X */}
+                                <X className="h-4 w-4" />
                             </button>
                         )}
                     </div>
@@ -372,44 +351,6 @@ export function Sidebar({
                         className="data-[state=checked]:bg-green-600"
                     />
                 </div>
-
-                <Dialog open={isHelpOpen} onOpenChange={setIsHelpOpen}>
-                    <DialogTrigger asChild>
-                        <Button
-                            variant="ghost"
-                            className={`gap-2 text-gray-400 hover:bg-gray-800/50 hover:text-gray-200 px-2 ${isSidebarCollapsed ? 'justify-center' : 'justify-start'}`}
-                        >
-                            <HelpCircle className="h-5 w-5 flex-shrink-0" />
-                            <span className={`font-bold text-sm ${contentClasses}`}>
-                                Ayuda
-                            </span>
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl h-[80vh] flex flex-col">
-                        <DialogHeader>
-                            <DialogTitle className="flex items-center gap-2">
-                                <HelpCircle /> Guía de uso
-                            </DialogTitle>
-                        </DialogHeader>
-                        <ScrollArea className="flex-1 pr-4">
-                            <div className="prose prose-invert max-w-none w-full">
-                                <ReactMarkdown components={markdownComponents}>
-                                    {helpContent}
-                                </ReactMarkdown>
-                            </div>
-                        </ScrollArea>
-                        <DialogFooter>
-                            <DialogClose asChild>
-                                <Button
-                                    type="button"
-                                    className="bg-gray-700 text-white hover:bg-gray-600"
-                                >
-                                    Entendido
-                                </Button>
-                            </DialogClose>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
 
                 <Button
                     variant="ghost"

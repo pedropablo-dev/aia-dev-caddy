@@ -60,7 +60,6 @@ export default function BroworksLaunchpad() {
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [workflowStep, setWorkflowStep] = useState<Record<string, number>>({})
   const [favoritesSort, setFavoritesSort] = useState<'usage' | 'category' | 'alpha'>('category')
-  const [helpContent, setHelpContent] = useState("")
 
   // --- Initialize Sort Preference from LocalStorage ---
   useEffect(() => {
@@ -89,21 +88,7 @@ export default function BroworksLaunchpad() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [commandToDelete, setCommandToDelete] = useState<string | null>(null)
 
-  // --- Lógica de Ayuda ---
-  useEffect(() => {
-    const loadHelpContent = async () => {
-      try {
-        const response = await fetch("/help.md")
-        if (response.ok) {
-          const text = await response.text()
-          setHelpContent(text)
-        }
-      } catch (err) {
-        console.error("Error loading help content:", err)
-      }
-    }
-    loadHelpContent()
-  }, [])
+
 
   // --- Categorías y Comandos Filtrados ---
   const sortedCategories = useMemo(() => {
@@ -608,7 +593,6 @@ export default function BroworksLaunchpad() {
           <Sidebar
             categories={sortedCategories}
             data={data}
-            helpContent={helpContent}
             onCreateCategory={handleCreateCategory}
             onEditCategory={handleEditCategory}
             onDuplicateCategory={handleDuplicateCategory}

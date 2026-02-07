@@ -4,12 +4,6 @@
       "id": "cmd-1770457126972-lq6r9ebx1",
       "name": "Antigravity",
       "icon": "🚀",
-      "order": 0
-    },
-    {
-      "id": "cmd-1770472339215-zay57o2ld",
-      "name": "Categoría de Prueba",
-      "icon": "✨",
       "order": 1
     }
   ],
@@ -28,7 +22,7 @@
       },
       {
         "id": "cmd-1770467920132-1eheylxzf",
-        "label": "Comando de prueba 3o",
+        "label": "Comando con Variables de Prueba",
         "command": "comando con variables {variable1} y {variable2}",
         "type": "command",
         "isFavorite": true,
@@ -42,20 +36,19 @@
             "name": "variable2",
             "placeholder": "Aquí tu variable2"
           }
-        ],
-        "copyCount": 8
+        ]
       },
       {
         "id": "cmd-1770472317520-9ceshhuf1",
-        "label": "Comando de prueba 4o",
+        "label": "Comando Simple de Prueba",
         "command": "comando de prueba",
         "type": "command",
-        "isFavorite": false,
+        "isFavorite": true,
         "order": 2
       },
       {
         "id": "cmd-1770467791944-k1b7e1m25",
-        "label": "Comando de prueba 2",
+        "label": "Comando Workflow de Prueba",
         "command": "comando de prueba",
         "type": "workflow",
         "isFavorite": true,
@@ -63,28 +56,7 @@
         "steps": [
           "comando de prueba 1",
           "comando de prueba 2"
-        ],
-        "copyCount": 1
-      }
-    ],
-    "cmd-1770472339215-zay57o2ld": [
-      {
-        "id": "cmd-1770472364471-m5x64fuqe",
-        "label": "A Comando de prueba 5o",
-        "command": "comando de prueba",
-        "type": "command",
-        "isFavorite": true,
-        "order": 0,
-        "copyCount": 4
-      },
-      {
-        "id": "cmd-1770473093458-azgttxvgq",
-        "label": "B Comando de prueba 6o",
-        "command": "comando de prueba",
-        "type": "command",
-        "isFavorite": true,
-        "order": 1,
-        "copyCount": 0
+        ]
       }
     ]
   }
