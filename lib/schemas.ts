@@ -29,6 +29,7 @@ export const CommandSchema = z.object({
     .union([z.array(VariableObjectSchema), z.array(z.string())])
     .optional(),
   steps: z.array(z.string()).optional(),
+  copyCount: z.number().int().nonnegative().optional(),
 }) satisfies z.ZodType<Command>;
 
 /**

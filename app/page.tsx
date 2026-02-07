@@ -53,13 +53,28 @@ export default function BroworksLaunchpad() {
   const { data, isLoading, hasMounted, saveData, toggleFavorite, importData, incrementUsage, resetUsage } = useCommands()
 
   // --- UI State ---
-  const { selectedCategory, isEditMode } = useAppStore()
+  const { selectedCategory, isEditMode, setSelectedCategory } = useAppStore()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [workflowStep, setWorkflowStep] = useState<Record<string, number>>({})
+  const [favoritesSort, setFavoritesSort] = useState<'usage' | 'category' | 'alpha'>('category')
   const [helpContent, setHelpContent] = useState("")
+
+  // --- Initialize Sort Preference from LocalStorage ---
+  useEffect(() => {
+    const savedSort = localStorage.getItem('dev-caddy-sort') as 'usage' | 'category' | 'alpha' | null
+    if (savedSort && ['usage', 'category', 'alpha'].includes(savedSort)) {
+      setFavoritesSort(savedSort)
+    }
+  }, [])
+
+  // --- Persist Sort Preference ---
+  const handleSortChange = (sort: 'usage' | 'category' | 'alpha') => {
+    setFavoritesSort(sort)
+    localStorage.setItem('dev-caddy-sort', sort)
+  }
 
   // --- Edit Mode State ---
   const [activeCommand, setActiveCommand] = useState<Command | null>(null)
@@ -108,6 +123,7 @@ export default function BroworksLaunchpad() {
       const category = data.categories.find((cat) => cat.id === categoryId);
       return commands.map((cmd) => ({
         ...cmd,
+        categoryId, // Inject category ID for navigation
         categoryName: category?.name || 'Unknown',
       }));
     });
@@ -136,7 +152,24 @@ export default function BroworksLaunchpad() {
     if (selectedCategory === 'favorites') {
       commandsToShow = allCommands
         .filter((cmd) => cmd.isFavorite)
-        .sort((a, b) => (a.label > b.label) ? 1 : -1)
+        .sort((a, b) => {
+          if (favoritesSort === 'usage') {
+            // Primary: copyCount descending (most used first)
+            const countDiff = (b.copyCount || 0) - (a.copyCount || 0);
+            if (countDiff !== 0) return countDiff;
+            // Secondary: order ascending
+            return (a.order ?? 0) - (b.order ?? 0);
+          } else if (favoritesSort === 'alpha') {
+            return a.label.localeCompare(b.label);
+          } else {
+            // Category sort (default)
+            // Primary: Category Name
+            const catCompare = (a.categoryName || '').localeCompare(b.categoryName || '');
+            if (catCompare !== 0) return catCompare;
+            // Secondary: Order within category
+            return (a.order ?? 0) - (b.order ?? 0);
+          }
+        })
     } else {
       commandsToShow = [...(data.commands[selectedCategory] || [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     }
@@ -602,11 +635,17 @@ export default function BroworksLaunchpad() {
               onWorkflowStep={handleWorkflowStep}
               onToggleFavorite={toggleFavorite}
               onVariableChange={handleVariableChange}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onDuplicate={handleDuplicate}
-              onReorder={handleReorderCommands}
+              onEdit={isEditMode ? handleEdit : undefined}
+              onDelete={isEditMode ? handleDelete : undefined}
+              onDuplicate={isEditMode ? handleDuplicate : undefined}
+              onReorder={isEditMode ? handleReorderCommands : undefined}
               onSelect={setSelectedIndex}
+              incrementUsage={incrementUsage}
+              resetUsage={resetUsage}
+              onNavigateCategory={setSelectedCategory}
+              viewMode={selectedCategory === 'favorites' ? 'favorites' : 'default'}
+              favoritesSort={favoritesSort}
+              onSortChange={handleSortChange}
             />
           </div>
         </div>

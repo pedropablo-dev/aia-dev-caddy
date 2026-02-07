@@ -4,6 +4,12 @@
       "id": "cmd-1770457126972-lq6r9ebx1",
       "name": "Antigravity",
       "icon": "🚀",
+      "order": 0
+    },
+    {
+      "id": "cmd-1770472339215-zay57o2ld",
+      "name": "Categoría de Prueba",
+      "icon": "✨",
       "order": 1
     }
   ],
@@ -60,8 +66,8 @@
     ],
     "cmd-1770457126972-lq6r9ebx1": [
       {
-        "id": "cmd-1770469195749-ils7fac27",
-        "label": "Comando de prueba",
+        "id": "cmd-1770472317520-9ceshhuf1",
+        "label": "Comando de prueba 4o",
         "command": "comando de prueba",
         "type": "command",
         "isFavorite": false,
@@ -69,7 +75,7 @@
       },
       {
         "id": "cmd-1770467920132-1eheylxzf",
-        "label": "Comando de prueba 3",
+        "label": "Comando de prueba 3o",
         "command": "comando con variables {variable1} y {variable2}",
         "type": "command",
         "isFavorite": true,
@@ -83,7 +89,8 @@
             "name": "variable2",
             "placeholder": "Aquí tu variable2"
           }
-        ]
+        ],
+        "copyCount": 3
       },
       {
         "id": "cmd-1770459789176",
@@ -92,7 +99,16 @@
         "type": "prompt",
         "isFavorite": true,
         "order": 2,
-        "variables": []
+        "variables": [],
+        "copyCount": 6
+      },
+      {
+        "id": "cmd-1770469195749-ils7fac27",
+        "label": "Comando de prueba",
+        "command": "comando de prueba",
+        "type": "command",
+        "isFavorite": false,
+        "order": 3
       },
       {
         "id": "cmd-1770467791944-k1b7e1m25",
@@ -100,11 +116,22 @@
         "command": "comando de prueba",
         "type": "workflow",
         "isFavorite": true,
-        "order": 3,
+        "order": 4,
         "steps": [
           "comando de prueba 1",
           "comando de prueba 2"
-        ]
+        ],
+        "copyCount": 1
+      }
+    ],
+    "cmd-1770472339215-zay57o2ld": [
+      {
+        "id": "cmd-1770472364471-m5x64fuqe",
+        "label": "A Comando de prueba 5o",
+        "command": "comando de prueba",
+        "type": "command",
+        "isFavorite": true,
+        "order": 0
       }
     ]
   }

@@ -11,6 +11,8 @@ import {
     Trash2,
     Files,
     GripVertical,
+    Flame,
+    RotateCcw,
 } from "lucide-react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
@@ -36,6 +38,11 @@ interface CommandCardProps {
     onEdit?: (command: Command) => void;
     onDelete?: (commandId: string) => void;
     onDuplicate?: (command: Command) => void;
+    // Analytics props
+    incrementUsage: (commandId: string) => void;
+    resetUsage: (commandId: string) => void;
+    onNavigateCategory: (categoryId: string) => void;
+    viewMode: "default" | "favorites";
 }
 
 export function CommandCard({
@@ -51,6 +58,10 @@ export function CommandCard({
     onEdit,
     onDelete,
     onDuplicate,
+    incrementUsage,
+    resetUsage,
+    onNavigateCategory,
+    viewMode,
 }: CommandCardProps) {
     const { isEditMode } = useAppStore();
 
@@ -107,17 +118,50 @@ export function CommandCard({
                                 <Terminal className="w-4 h-4 text-blue-400" />
                             )}
                             {cmd.label}
-                            {/* Category origin badge (for Favorites/Search) */}
+                            {/* Category origin badge (clickeable for navigation) */}
                             {cmd.categoryName && (
-                                <Badge variant="outline" className="ml-2 text-xs border-gray-600 text-gray-400">
+                                <Badge
+                                    variant="outline"
+                                    className={`ml-2 text-xs border-gray-600 text-gray-400 ${viewMode === 'favorites' ? 'cursor-pointer hover:bg-gray-700 hover:underline' : ''
+                                        }`}
+                                    onClick={(e) => {
+                                        if (viewMode === 'favorites' && cmd.categoryId) {
+                                            e.stopPropagation();
+                                            onNavigateCategory(cmd.categoryId);
+                                        }
+                                    }}
+                                >
                                     {cmd.categoryName}
                                 </Badge>
                             )}
                         </CardTitle>
                     </div>
                     <div className="flex items-center gap-2">
-                        {/* Edit Mode Actions */}
-                        {isEditMode && (
+                        {/* Analytics UI (Favorites Mode) */}
+                        {viewMode === 'favorites' && (
+                            <div className="flex items-center gap-2 mr-2">
+                                {/* Usage Counter */}
+                                <div className="flex items-center gap-1 text-orange-400">
+                                    <Flame className="h-4 w-4" />
+                                    <span className="text-sm font-mono">{cmd.copyCount || 0}</span>
+                                </div>
+                                {/* Reset Button */}
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6 text-gray-500 hover:text-gray-300"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        resetUsage(cmd.id);
+                                    }}
+                                    title="Resetear contador"
+                                >
+                                    <RotateCcw className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        )}
+                        {/* Edit Mode Actions (Hidden in Favorites) */}
+                        {isEditMode && viewMode !== 'favorites' && (
                             <div className="flex items-center gap-1 animate-in fade-in zoom-in duration-200">
                                 {onEdit && (
                                     <Button
@@ -173,7 +217,10 @@ export function CommandCard({
                             (!cmd.variables || cmd.variables.length === 0) && (
                                 <Button
                                     size="sm"
-                                    onClick={() => onCopy(cmd.id, cmd.command)}
+                                    onClick={() => {
+                                        onCopy(cmd.id, cmd.command);
+                                        incrementUsage(cmd.id);
+                                    }}
                                     className="bg-blue-600 hover:bg-blue-700 active:scale-95 transition-transform"
                                 >
                                     {isCopied ? (
@@ -204,7 +251,10 @@ export function CommandCard({
                             command={cmd}
                             isCopied={isCopied}
                             variableValues={variableValues}
-                            onCopy={onCopy}
+                            onCopy={(id, content) => {
+                                onCopy(id, content);
+                                incrementUsage(id);
+                            }}
                             onVariableChange={onVariableChange}
                         />
                     ) : cmd.type === "workflow" ? (
@@ -233,7 +283,10 @@ export function CommandCard({
                                 )}
                             </Highlight>
                             <Button
-                                onClick={() => onWorkflowStep(cmd.id, cmd.steps || [])}
+                                onClick={() => {
+                                    onWorkflowStep(cmd.id, cmd.steps || []);
+                                    incrementUsage(cmd.id);
+                                }}
                                 className="bg-purple-600 hover:bg-purple-700 active:scale-95 transition-transform"
                             >
                                 <Copy className="w-4 h-4 mr-2" />
@@ -287,7 +340,10 @@ export function CommandCard({
                                     })}
                                     <Button
                                         size="sm"
-                                        onClick={() => onCopy(cmd.id, cmd.command, cmd.variables)}
+                                        onClick={() => {
+                                            onCopy(cmd.id, cmd.command, cmd.variables);
+                                            incrementUsage(cmd.id);
+                                        }}
                                         className="bg-green-600 hover:bg-green-700 active:scale-95 transition-transform w-fit"
                                     >
                                         {isCopied ? (

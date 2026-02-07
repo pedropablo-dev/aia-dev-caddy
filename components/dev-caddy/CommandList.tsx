@@ -37,7 +37,14 @@ interface CommandListProps {
     onDuplicate?: (command: Command) => void;
     onDuplicate?: (command: Command) => void;
     onReorder?: (newOrder: Command[]) => void;
-    onSelect: (index: number) => void; // New prop for selection
+    onSelect: (index: number) => void;
+    // Analytics props
+    incrementUsage: (commandId: string) => void;
+    resetUsage: (commandId: string) => void;
+    onNavigateCategory: (categoryId: string) => void;
+    viewMode: "default" | "favorites";
+    favoritesSort?: 'usage' | 'category' | 'alpha';
+    onSortChange?: (sort: 'usage' | 'category' | 'alpha') => void;
 }
 
 export function CommandList({
@@ -56,7 +63,13 @@ export function CommandList({
     onDelete,
     onDuplicate,
     onReorder,
-    onSelect, // New prop
+    onSelect,
+    incrementUsage,
+    resetUsage,
+    onNavigateCategory,
+    viewMode,
+    favoritesSort,
+    onSortChange,
 }: CommandListProps) {
     const selectedRef = useRef<HTMLDivElement>(null)
 
@@ -104,6 +117,20 @@ export function CommandList({
                     strategy={verticalListSortingStrategy}
                 >
                     <div className="p-6 space-y-4">
+                        {/* Favorites Sort Selector */}
+                        {viewMode === 'favorites' && onSortChange && (
+                            <div className="flex justify-end mb-4">
+                                <select
+                                    value={favoritesSort}
+                                    onChange={(e) => onSortChange(e.target.value as any)}
+                                    className="bg-gray-900 border border-gray-700 text-gray-300 text-sm rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none cursor-pointer"
+                                >
+                                    <option value="category">📂 Por Categoría</option>
+                                    <option value="usage">🔥 Más Usados</option>
+                                    <option value="alpha">🔤 Alfabético</option>
+                                </select>
+                            </div>
+                        )}
                         {commands.map((cmd, index) => (
                             <div
                                 key={cmd.id}
@@ -124,6 +151,10 @@ export function CommandList({
                                     onEdit={onEdit}
                                     onDelete={onDelete}
                                     onDuplicate={onDuplicate}
+                                    incrementUsage={incrementUsage}
+                                    resetUsage={resetUsage}
+                                    onNavigateCategory={onNavigateCategory}
+                                    viewMode={viewMode}
                                 />
                             </div>
                         ))}
