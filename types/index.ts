@@ -23,6 +23,7 @@ export interface Command {
     isFavorite?: boolean;
     order?: number;
     categoryName?: string; // Category origin (injected for Favorites/Search)
+    copyCount?: number; // Usage analytics (incremented on copy)
     // Variables can be either structured objects or simple strings (for prompts)
     variables?: Variable[] | string[];
     steps?: string[];

@@ -50,7 +50,7 @@ const CategoryFormModal = dynamic(
 export default function BroworksLaunchpad() {
   // --- Custom Hook for Data Logic ---
   // --- Custom Hook for Data Logic ---
-  const { data, isLoading, hasMounted, saveData, toggleFavorite, importData } = useCommands()
+  const { data, isLoading, hasMounted, saveData, toggleFavorite, importData, incrementUsage, resetUsage } = useCommands()
 
   // --- UI State ---
   const { selectedCategory, isEditMode } = useAppStore()

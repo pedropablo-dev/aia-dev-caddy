@@ -130,6 +130,37 @@ export function useCommands() {
         }
     }, [saveData])
 
+    // --- Usage Analytics Logic ---
+    const incrementUsage = useCallback(
+        (commandId: string) => {
+            const newData = JSON.parse(JSON.stringify(data)) as AppData // Deep clone
+            for (const categoryId in newData.commands) {
+                const cmd = newData.commands[categoryId].find((c) => c.id === commandId)
+                if (cmd) {
+                    cmd.copyCount = (cmd.copyCount || 0) + 1
+                    break
+                }
+            }
+            saveData(newData)
+        },
+        [data, saveData]
+    )
+
+    const resetUsage = useCallback(
+        (commandId: string) => {
+            const newData = JSON.parse(JSON.stringify(data)) as AppData // Deep clone
+            for (const categoryId in newData.commands) {
+                const cmd = newData.commands[categoryId].find((c) => c.id === commandId)
+                if (cmd) {
+                    cmd.copyCount = 0
+                    break
+                }
+            }
+            saveData(newData)
+        },
+        [data, saveData]
+    )
+
     // --- Initial Load ---
     useEffect(() => {
         setHasMounted(true)
@@ -145,6 +176,8 @@ export function useCommands() {
         saveData,
         toggleFavorite,
         importData,
+        incrementUsage,
+        resetUsage,
         refreshCommands: fetchData,  // Expose for manual refresh (e.g., after import)
     }
 }
