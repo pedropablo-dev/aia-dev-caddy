@@ -655,18 +655,18 @@ export default function BroworksLaunchpad() {
               className="bg-gray-900 border-gray-800 text-white"
             >
               <DropdownMenuItem
-                onClick={handleCreate}
-                className="hover:bg-gray-800 cursor-pointer flex items-center gap-2"
-              >
-                <Terminal className="h-4 w-4" />
-                Nuevo Comando
-              </DropdownMenuItem>
-              <DropdownMenuItem
                 onClick={handleCreatePrompt}
                 className="hover:bg-gray-800 cursor-pointer flex items-center gap-2"
               >
                 <Sparkles className="h-4 w-4" />
                 Nuevo Prompt
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={handleCreate}
+                className="hover:bg-gray-800 cursor-pointer flex items-center gap-2"
+              >
+                <Terminal className="h-4 w-4" />
+                Nuevo Comando
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
