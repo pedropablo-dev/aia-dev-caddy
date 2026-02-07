@@ -94,6 +94,8 @@ export function useCommands() {
                 const cmd = newData.commands[categoryId].find((c) => c.id === commandId)
                 if (cmd) {
                     cmd.isFavorite = !cmd.isFavorite
+                    // Feedback visual
+                    toast.success(cmd.isFavorite ? "Añadido a favoritos" : "Quitado de favoritos")
                     break
                 }
             }

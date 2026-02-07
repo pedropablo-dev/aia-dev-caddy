@@ -555,7 +555,7 @@ export default function BroworksLaunchpad() {
   if (isLoading || !hasMounted) {
     return (
       <>
-        <Toaster richColors />
+        <Toaster richColors position="bottom-center" />
         <DashboardSkeleton />
       </>
     )
@@ -563,7 +563,7 @@ export default function BroworksLaunchpad() {
 
   return (
     <>
-      <Toaster richColors />
+      <Toaster richColors position="bottom-center" />
       <div className="min-h-screen bg-gray-950 text-gray-100">
         <div className="max-w-7xl mx-auto flex h-screen">
           <Sidebar
