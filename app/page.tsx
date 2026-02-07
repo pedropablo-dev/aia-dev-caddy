@@ -274,16 +274,25 @@ export default function BroworksLaunchpad() {
       return
     }
 
+    // Find index of original command
+    const originalIndex = newData.commands[categoryId].findIndex(c => c.id === command.id)
+    if (originalIndex === -1) return
+
     // Create duplicate with new ID and modified label
     const duplicatedCommand: Command = {
       ...command,
       id: generateUniqueId(),  // Generate new unique ID
       label: `${command.label} (Copia)`,  // Append (Copia) to label
-      order: newData.commands[categoryId].length,  // Set order to end of list
+      // order will be updated in re-indexing
     }
 
-    // Add to same category
-    newData.commands[categoryId].push(duplicatedCommand)
+    // Insert after original command
+    newData.commands[categoryId].splice(originalIndex + 1, 0, duplicatedCommand)
+
+    // Re-index all commands in this category
+    newData.commands[categoryId].forEach((cmd, idx) => {
+      cmd.order = idx
+    })
 
     // Save and notify
     saveData(newData)
