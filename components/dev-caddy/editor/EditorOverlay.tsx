@@ -507,7 +507,7 @@ export function EditorOverlay({
                                 Cancelar
                             </AlertDialogCancel>
                             <AlertDialogAction onClick={confirmDiscard} className="bg-red-600 hover:bg-red-700 text-white border-red-700">
-                                Salir sin guardar
+                                Salir Sin Guardar
                             </AlertDialogAction>
                         </div>
                         <AlertDialogAction onClick={saveAndClose} className="bg-blue-600 hover:bg-blue-700 text-white">
