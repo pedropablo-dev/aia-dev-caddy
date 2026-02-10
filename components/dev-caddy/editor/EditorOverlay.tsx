@@ -260,67 +260,31 @@ export function EditorOverlay({
         }
 
         setIsSaving(true)
+
         try {
-            // Fetch current data
-            const res = await fetch("/api/commands")
-            const currentData = await res.json()
-            const commandsForCategory = [...(currentData.commands[categoryId] || [])]
-
-            let savedCommand: Command
-
-            if (initialData && initialData.id) {
-                // Edit mode
-                const cmdIndex = commandsForCategory.findIndex(c => c.id === initialData.id)
-                if (cmdIndex !== -1) {
-                    savedCommand = {
-                        ...commandsForCategory[cmdIndex],
-                        label,
-                        command: text,
-                        variables,
-                    }
-                    commandsForCategory[cmdIndex] = savedCommand
-                } else {
-                    throw new Error("Command not found")
-                }
-            } else {
-                // Create mode
-                savedCommand = {
-                    id: `cmd-${Date.now()}`,
-                    label,
-                    command: text,
-                    type: "prompt",
-                    order: commandsForCategory.length,
-                    isFavorite: false,
-                    variables,
-                }
-                commandsForCategory.push(savedCommand)
+            // 1. Build command object
+            // Use initialData.id if editing, otherwise empty string for new command
+            const commandToSave: Command = {
+                id: initialData?.id || "",
+                label,
+                command: text,
+                type: initialData?.type || "prompt",
+                order: initialData?.order ?? 0,
+                isFavorite: initialData?.isFavorite ?? false,
+                variables,
             }
 
-            const newData = {
-                ...currentData,
-                commands: {
-                    ...currentData.commands,
-                    [categoryId]: commandsForCategory,
-                },
-            }
+            // 2. Delegate directly to onSave prop
+            // await ensures we wait for parent to finish key operations
+            await onSave(commandToSave, { close: shouldClose })
 
-            await fetch("/api/commands", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newData),
-            })
-
-            toast.success("¡Prompt guardado correctamente!")
-            // Call onSave with options. If shouldClose is true, parent closes.
-            // If false, parent updates activeCommand, which triggers useEffect above and resets isDirty.
-            onSave(savedCommand, { close: shouldClose })
-
+            // 3. Handle closing
             if (shouldClose) {
                 onClose()
             }
         } catch (error) {
-            console.error("Failed to save prompt:", error)
-            toast.error("Error al guardar el prompt.")
+            console.error("Error in handleSave:", error)
+            // Parent handles the error UI
         } finally {
             setIsSaving(false)
         }

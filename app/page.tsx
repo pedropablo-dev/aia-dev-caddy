@@ -299,62 +299,76 @@ export default function BroworksLaunchpad() {
     toast.success('Comando duplicado correctamente')
   }
 
-  const handleSave = (updatedCommand: Command, options?: { close?: boolean }) => {
-    // Default close to true if not specified
-    const shouldClose = options?.close !== false
+  const handleSave = async (updatedCommand: Command, options?: { close?: boolean }) => {
+    try {
+      // Default close to true if not specified
+      const shouldClose = options?.close !== false
 
-    // Step 1: Deep clone to ensure immutability
-    const newData: AppData = JSON.parse(JSON.stringify(data))
+      // Step 1: Deep clone to ensure immutability
+      const newData: AppData = JSON.parse(JSON.stringify(data))
 
-    // Step 2: Determine target category
-    const categoryId = selectedCategory === 'favorites' ? 'all' : selectedCategory
-
-    // Step 3: Check if updating or creating
-    // If ID is present and NOT empty string, try to update
-    if (activeCommand && activeCommand.id) {
-      // Update existing command across all categories
-      for (const catId in newData.commands) {
-        const idx = newData.commands[catId].findIndex(cmd => cmd.id === activeCommand.id)
-        if (idx !== -1) {
-          // Update in place
-          newData.commands[catId][idx] = updatedCommand
-          saveData(newData)
-          toast.success('Comando actualizado correctamente')
-
-          if (shouldClose) {
-            setIsFormOpen(false)
-            setIsEditorOpen(false)
-            setActiveCommand(null)
-          } else {
-            // If not closing, we should update the activeCommand to reflect the saved state
-            // so subsequent saves are treated as updates, not creates (though here we are already in update block)
-            setActiveCommand(updatedCommand)
-          }
-          return
+      // Step 2: Determine target category
+      // If we are in 'favorites', we probably want to save to the first available category or a default?
+      // Existing logic used 'all' which seems wrong, but let's prevent regression by using 'general' if 'favorites' or 'all'
+      // actually, let's use the current selectedCategory if valid, else find where it belongs or default.
+      let categoryId = selectedCategory
+      if (categoryId === 'favorites') {
+        // If editing, find original category.
+        if (updatedCommand.id) {
+          const foundCat = findCommandCategoryId(updatedCommand.id, data)
+          if (foundCat) categoryId = foundCat
+        }
+        // If creating new in favorites, we might have an issue. Default to 'general' or first category?
+        // Let's assume 'general' exists or use the first one.
+        if (categoryId === 'favorites') {
+          categoryId = data.categories.length > 0 ? data.categories[0].id : 'general'
         }
       }
-    } else {
-      // Create new command
-      const newCommand: Command = {
-        ...updatedCommand,
-        id: updatedCommand.id || generateUniqueId(), // Ensure ID exists for new commands
-        order: 0, // NEW: New items always at top
+
+      let finalCommand = { ...updatedCommand }
+
+      // Step 3: Check if updating or creating
+      // We prioritize the ID coming from the command itself.
+      if (finalCommand.id) {
+        // Update existing command across all categories
+        let found = false
+        for (const catId in newData.commands) {
+          const idx = newData.commands[catId].findIndex(cmd => cmd.id === finalCommand.id)
+          if (idx !== -1) {
+            // Update in place
+            newData.commands[catId][idx] = finalCommand
+            found = true
+            break
+          }
+        }
+
+        if (!found) {
+          // Edge case: ID exists but not found in data? Treat as new in current category.
+          if (!newData.commands[categoryId]) {
+            newData.commands[categoryId] = []
+          }
+          newData.commands[categoryId].unshift(finalCommand)
+        }
+      } else {
+        // Create new command
+        finalCommand.id = generateUniqueId()
+        finalCommand.order = 0 // New items always at top
+
+        if (!newData.commands[categoryId]) {
+          newData.commands[categoryId] = []
+        }
+
+        // UX: Add to beginning of array (LIFO)
+        newData.commands[categoryId].unshift(finalCommand)
+
+        // Re-index subsequent items to keep order clean
+        newData.commands[categoryId].forEach((cmd, idx) => {
+          cmd.order = idx;
+        });
       }
 
-      if (!newData.commands[categoryId]) {
-        newData.commands[categoryId] = []
-      }
-
-      // UX: Add to beginning of array (LIFO)
-      newData.commands[categoryId].unshift(newCommand)
-
-      // Re-index subsequent items to keep order clean
-      newData.commands[categoryId].forEach((cmd, idx) => {
-        cmd.order = idx;
-      });
-
-      saveData(newData)
-      toast.success('Comando creado correctamente')
+      await saveData(newData)
+      toast.success(updatedCommand.id ? 'Comando actualizado correctamente' : 'Comando creado correctamente')
 
       if (shouldClose) {
         setIsFormOpen(false)
@@ -363,8 +377,13 @@ export default function BroworksLaunchpad() {
       } else {
         // IMPORTANT: If we are not closing, we must switch to "Edit Mode" for this new command
         // otherwise a subsequent save would try to create it again.
-        setActiveCommand(newCommand)
+        // We pass the finalCommand which HAS the new ID.
+        setActiveCommand(finalCommand)
       }
+    } catch (error) {
+      console.error("Error saving command:", error)
+      toast.error("Error al guardar el comando")
+      throw error // Propagate error so child component can handle state
     }
   }
 
