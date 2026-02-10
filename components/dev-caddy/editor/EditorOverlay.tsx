@@ -9,6 +9,7 @@ import { toast } from "sonner"
 import {
     AlertDialog,
     AlertDialogAction,
+    AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
     AlertDialogFooter,
@@ -27,7 +28,7 @@ interface EditorOverlayProps {
     isOpen: boolean
     onClose: () => void
     initialData?: Command
-    onSave: (updatedCommand: Command) => void
+    onSave: (updatedCommand: Command, options?: { close?: boolean }) => void
     categoryId: string
 }
 
@@ -49,6 +50,8 @@ export function EditorOverlay({
     const [newVariable, setNewVariable] = useState("")
     const [isVariablesPanelOpen, setIsVariablesPanelOpen] = useState(false)
     const [isZenMode, setIsZenMode] = useState(false)
+    const [isDirty, setIsDirty] = useState(false)
+    const [discardDialogOpen, setDiscardDialogOpen] = useState(false)
 
     const [searchTerm, setSearchTerm] = useState("")
     const [searchMatches, setSearchMatches] = useState<number[]>([])
@@ -73,8 +76,39 @@ export function EditorOverlay({
             setSearchTerm("")
             setSearchMatches([])
             setCurrentMatchIndex(-1)
+            setIsDirty(false)
         }
     }, [isOpen, initialData])
+
+    // Track dirty state
+    useEffect(() => {
+        if (!isOpen) return
+
+        const initialLabel = initialData?.label || ""
+        const initialText = initialData?.command || ""
+        const initialVars = (initialData?.variables as string[]) || []
+
+        const isLabelDirty = label !== initialLabel
+        const isTextDirty = text !== initialText
+        const isVarsDirty = JSON.stringify(variables) !== JSON.stringify(initialVars)
+
+        setIsDirty(isLabelDirty || isTextDirty || isVarsDirty)
+    }, [label, text, variables, initialData, isOpen])
+
+    // Keyboard shortcut for Save (Ctrl+S)
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault()
+                if (isOpen) {
+                    handleSave()
+                }
+            }
+        }
+        window.addEventListener('keydown', handleKeyDown)
+        return () => window.removeEventListener('keydown', handleKeyDown)
+    }, [isOpen, label, text, variables]) // Dependencies needed for handleSave closure access (or use ref)
+
 
     // Search logic
     useEffect(() => {
@@ -219,7 +253,7 @@ export function EditorOverlay({
         }, 0)
     }
 
-    const handleSave = async () => {
+    const handleSave = async (shouldClose = false) => {
         if (!label) {
             setIsAlertOpen(true)
             return
@@ -277,14 +311,39 @@ export function EditorOverlay({
             })
 
             toast.success("¡Prompt guardado correctamente!")
-            onSave(savedCommand)
-            onClose()
+            // Call onSave with options. If shouldClose is true, parent closes.
+            // If false, parent updates activeCommand, which triggers useEffect above and resets isDirty.
+            onSave(savedCommand, { close: shouldClose })
+
+            if (shouldClose) {
+                onClose()
+            }
         } catch (error) {
             console.error("Failed to save prompt:", error)
             toast.error("Error al guardar el prompt.")
         } finally {
             setIsSaving(false)
         }
+    }
+
+    const handleCloseRequest = () => {
+        if (isDirty) {
+            setDiscardDialogOpen(true)
+        } else {
+            onClose()
+        }
+    }
+
+    const confirmDiscard = () => {
+        setDiscardDialogOpen(false)
+        onClose()
+        // Reset dirty state slightly delayed or just rely on unmount
+        setIsDirty(false)
+    }
+
+    const saveAndClose = () => {
+        setDiscardDialogOpen(false)
+        handleSave(true)
     }
 
     const handleCopyToClipboard = () => {
@@ -342,13 +401,16 @@ export function EditorOverlay({
                             {initialData ? 'Editando Prompt' : 'Nuevo Prompt'}
                         </h1>
                         <div className="flex items-center gap-2 flex-wrap w-full md:w-auto justify-start">
-                            <Button variant="outline" className="gap-2 bg-gray-700 hover:opacity-90 text-white" onClick={onClose}>
+                            <Button variant="outline" className="gap-2 bg-gray-700 hover:opacity-90 text-white" onClick={handleCloseRequest}>
                                 <X size={18} />
-                                Cancelar
+                                Cerrar
                             </Button>
-                            <Button className="bg-blue-600 hover:bg-blue-700 gap-2" onClick={handleSave} disabled={isSaving}>
+                            <Button className="bg-blue-600 hover:bg-blue-700 gap-2 relative" onClick={() => handleSave(false)} disabled={isSaving}>
                                 <Save size={18} />
                                 {isSaving ? 'Guardando...' : 'Guardar'}
+                                {isDirty && (
+                                    <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 border-2 border-gray-900"></span>
+                                )}
                             </Button>
                             <Button variant="outline" size="icon" className="h-9 w-9 bg-gray-700 hover:opacity-90" onClick={handleCopyToClipboard} title="Copiar Prompt">
                                 <Copy size={18} />
@@ -462,6 +524,30 @@ export function EditorOverlay({
                             className="bg-blue-600 text-white hover:bg-blue-700"
                         >
                             Entendido
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog open={discardDialogOpen} onOpenChange={setDiscardDialogOpen}>
+                <AlertDialogContent className="bg-gray-900 border-gray-700 text-white">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>¿Deseas salir sin guardar?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-gray-300">
+                            Tienes cambios sin guardar. Si sales ahora, perderás todos los cambios realizados.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="sm:justify-between">
+                        <div className="flex gap-2">
+                            <AlertDialogCancel onClick={() => setDiscardDialogOpen(false)} className="bg-gray-800 hover:bg-gray-700 text-white border-gray-600">
+                                Cancelar
+                            </AlertDialogCancel>
+                            <AlertDialogAction onClick={confirmDiscard} className="bg-red-600 hover:bg-red-700 text-white border-red-700">
+                                Salir sin guardar
+                            </AlertDialogAction>
+                        </div>
+                        <AlertDialogAction onClick={saveAndClose} className="bg-blue-600 hover:bg-blue-700 text-white">
+                            Guardar y Salir
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

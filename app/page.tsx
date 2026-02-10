@@ -299,7 +299,10 @@ export default function BroworksLaunchpad() {
     toast.success('Comando duplicado correctamente')
   }
 
-  const handleSave = (updatedCommand: Command) => {
+  const handleSave = (updatedCommand: Command, options?: { close?: boolean }) => {
+    // Default close to true if not specified
+    const shouldClose = options?.close !== false
+
     // Step 1: Deep clone to ensure immutability
     const newData: AppData = JSON.parse(JSON.stringify(data))
 
@@ -317,9 +320,16 @@ export default function BroworksLaunchpad() {
           newData.commands[catId][idx] = updatedCommand
           saveData(newData)
           toast.success('Comando actualizado correctamente')
-          setIsFormOpen(false)
-          setIsEditorOpen(false) // Added this line for editor overlay
-          setActiveCommand(null)
+
+          if (shouldClose) {
+            setIsFormOpen(false)
+            setIsEditorOpen(false)
+            setActiveCommand(null)
+          } else {
+            // If not closing, we should update the activeCommand to reflect the saved state
+            // so subsequent saves are treated as updates, not creates (though here we are already in update block)
+            setActiveCommand(updatedCommand)
+          }
           return
         }
       }
@@ -345,9 +355,16 @@ export default function BroworksLaunchpad() {
 
       saveData(newData)
       toast.success('Comando creado correctamente')
-      setIsFormOpen(false)
-      setIsEditorOpen(false) // Added this line for editor overlay
-      setActiveCommand(null)
+
+      if (shouldClose) {
+        setIsFormOpen(false)
+        setIsEditorOpen(false)
+        setActiveCommand(null)
+      } else {
+        // IMPORTANT: If we are not closing, we must switch to "Edit Mode" for this new command
+        // otherwise a subsequent save would try to create it again.
+        setActiveCommand(newCommand)
+      }
     }
   }
 
