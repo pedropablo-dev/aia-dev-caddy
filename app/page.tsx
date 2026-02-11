@@ -49,8 +49,20 @@ const CategoryFormModal = dynamic(
 
 export default function BroworksLaunchpad() {
   // --- Custom Hook for Data Logic ---
-  // --- Custom Hook for Data Logic ---
-  const { data, isLoading, hasMounted, saveData, toggleFavorite, importData, incrementUsage, resetUsage } = useCommands()
+  const {
+    data,
+    isLoading,
+    hasMounted,
+    saveData,
+    toggleFavorite,
+    importData,
+    incrementUsage,
+    resetUsage,
+    undo,
+    redo,
+    canUndo,
+    canRedo
+  } = useCommands()
 
   // --- UI State ---
   const { selectedCategory, isEditMode, setSelectedCategory } = useAppStore()
@@ -573,21 +585,53 @@ export default function BroworksLaunchpad() {
     handleSave(commandData)
   }
 
-  // --- Keyboard Navigation ---
+  // --- Keyboard Navigation & Shortcut Logic ---
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ctrl+K: Focus search
+      // --- INPUT PROTECTION ---
+      // If focus is on an input, textarea, or contentEditable element, 
+      // do NOT trigger app-level shortcuts (let native undo/redo handle text).
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable
+      ) {
+        return;
+      }
+
+      // --- COMMAND SEARCH (Ctrl+K) ---
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault()
         document.getElementById("command-search")?.focus()
         return
       }
 
-      // Don't interfere with typing in inputs
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      // --- UNDO/REDO SHORTCUTS ---
+      // Undo: Ctrl+Z
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') {
+        if (canUndo) {
+          e.preventDefault()
+          undo()
+          // toast.info("Deshacer") // Optional visual feedback
+        }
         return
       }
 
+      // Redo: Ctrl+Y OR Ctrl+Shift+Z
+      if (
+        ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') ||
+        ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'z')
+      ) {
+        if (canRedo) {
+          e.preventDefault()
+          redo()
+          // toast.info("Rehacer")
+        }
+        return
+      }
+
+      // --- ARROW NAVIGATION ---
       const maxIndex = filteredCommands.length - 1
 
       switch (e.key) {
@@ -623,7 +667,7 @@ export default function BroworksLaunchpad() {
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [filteredCommands, selectedIndex, variableValues])
+  }, [filteredCommands, selectedIndex, variableValues, undo, redo, canUndo, canRedo])
 
   if (isLoading || !hasMounted) {
     return (
@@ -648,6 +692,11 @@ export default function BroworksLaunchpad() {
             onDeleteCategory={handleDeleteCategory}
             onReorderCategories={handleReorderCategories}
             onImport={importData}
+            // Passing Undo/Redo props to Sidebar
+            undo={undo}
+            redo={redo}
+            canUndo={canUndo}
+            canRedo={canRedo}
           />
 
           {/* Central Panel */}

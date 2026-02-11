@@ -11,7 +11,9 @@ import {
     Lock,
     Unlock,
     Download,
-    Upload
+    Upload,
+    RotateCcw,
+    RotateCw,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -56,6 +58,11 @@ interface SidebarProps {
     onDeleteCategory?: (id: string) => void;
     onReorderCategories?: (newOrder: Category[]) => void;
     onImport: (info: AppData) => Promise<void>; // Added for Import
+    // Undo/Redo props
+    undo: () => void;
+    redo: () => void;
+    canUndo: boolean;
+    canRedo: boolean;
 }
 
 
@@ -68,7 +75,11 @@ export function Sidebar({
     onDuplicateCategory,
     onDeleteCategory,
     onReorderCategories,
-    onImport
+    onImport,
+    undo,
+    redo,
+    canUndo,
+    canRedo
 }: SidebarProps) {
     const { selectedCategory, setSelectedCategory, isEditMode, toggleEditMode } = useAppStore();
     const { isSidebarCollapsed, toggleSidebar } = useUIStore();
@@ -304,6 +315,32 @@ export function Sidebar({
                     onChange={handleImport}
                     className="hidden"
                 />
+
+                {/* Undo / Redo Buttons */}
+                <div className="flex gap-2">
+                    <Button
+                        onClick={undo}
+                        disabled={!canUndo}
+                        variant="ghost"
+                        className={`flex-1 gap-2 border border-gray-800 bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed`}
+                        size="sm"
+                        title="Deshacer (Ctrl+Z)"
+                    >
+                        <RotateCcw className="h-4 w-4" />
+                        {!isSidebarCollapsed && <span>Deshacer</span>}
+                    </Button>
+                    <Button
+                        onClick={redo}
+                        disabled={!canRedo}
+                        variant="ghost"
+                        className={`flex-1 gap-2 border border-gray-800 bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed`}
+                        size="sm"
+                        title="Rehacer (Ctrl+Y)"
+                    >
+                        <RotateCw className="h-4 w-4" />
+                        {!isSidebarCollapsed && <span>Rehacer</span>}
+                    </Button>
+                </div>
 
                 {/* Import/Export Buttons - Only in Edit Mode */}
                 {isEditMode && !isSidebarCollapsed && (

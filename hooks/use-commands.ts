@@ -1,24 +1,83 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { toast } from "sonner"
 import type { AppData } from "@/types"
+import { useHistory } from "./use-history"
 
 export function useCommands() {
-    const [data, setData] = useState<AppData>({ categories: [], commands: {} })
-    const [isLoading, setIsLoading] = useState(true)
-    const [hasMounted, setHasMounted] = useState(false)
+    // 1. Integración de useHistory
+    const {
+        state: data,
+        set: updateHistory,
+        undo,
+        redo,
+        canUndo,
+        canRedo,
+        clear
+    } = useHistory<AppData>({ categories: [], commands: {} })
 
-    // --- Auto-Backup Logic ---
+    const [isLoading, setIsLoading] = useState(true)
+    const [isInitialized, setIsInitialized] = useState(false)
+    const [hasMounted, setHasMounted] = useState(false)
+    const ignoreNextSave = useRef(false)
+
+    // --- Auto-Backup Logic (Local) ---
     const saveAutoBackup = useCallback((data: AppData) => {
         try {
             localStorage.setItem('dev-caddy-backup-auto', JSON.stringify(data))
-            console.log('🔒 Auto-backup saved to localStorage')
+            // console.log('🔒 Auto-backup saved to localStorage') // Verbose
         } catch (error) {
             console.error('Failed to save auto-backup:', error)
-            // No mostramos toast para no interrumpir al usuario
         }
     }, [])
+
+    // --- API Save Logic (Internal) ---
+    const persistToApi = useCallback(async (dataToSave: AppData) => {
+        try {
+            const response = await fetch("/api/commands", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dataToSave),
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json()
+                const errorMessage = errorData.message || "Error al guardar los datos"
+                if (errorData.errors) {
+                    console.error("Validation errors:", errorData.errors)
+                    toast.error(`${errorMessage}. Revisa los datos.`)
+                } else {
+                    toast.error(errorMessage)
+                }
+            } else {
+                // Silent success to avoid toast spam on debounce
+            }
+        } catch (error) {
+            console.error("Error saving data:", error)
+            toast.error("Error de conexión al guardar los datos.")
+        }
+    }, [])
+
+    // --- Debounced Save Effect ---
+    useEffect(() => {
+        if (!hasMounted || !isInitialized) return
+
+        if (ignoreNextSave.current) {
+            ignoreNextSave.current = false
+            return
+        }
+
+        // 1. Backup local inmediato (Safety net)
+        saveAutoBackup(data)
+
+        // 2. Persistencia en servidor con Debounce
+        const timer = setTimeout(() => {
+            persistToApi(data)
+        }, 1000)
+
+        return () => clearTimeout(timer)
+    }, [data, hasMounted, isInitialized, persistToApi, saveAutoBackup])
 
     // --- Data Fetching Logic ---
     const fetchData = useCallback(async () => {
@@ -50,56 +109,29 @@ export function useCommands() {
                 })
             }
 
-            setData(jsonData)
-
-            // Auto-save if we added order properties
-            if (needsSave) {
-                await saveData(jsonData, false)
+            // Si no hay cambios estructurales, evitar que el efecto guarde de nuevo
+            if (!needsSave) {
+                ignoreNextSave.current = true
             }
+
+            // Inicializamos el historial (borra el stack anterior)
+            clear(jsonData)
+            setIsInitialized(true)
+
         } catch (error) {
             console.error("Error loading commands:", error)
             toast.error("Error cargando comandos")
+            setIsInitialized(false)
         } finally {
             setIsLoading(false)
         }
-    }, [isLoading])
+    }, [isLoading, clear])
 
-    // --- Data Saving Logic ---
-    const saveData = useCallback(async (newData: AppData, shouldUpdate = true) => {
-        try {
-            const response = await fetch("/api/commands", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newData),
-            })
-
-            // 🔒 Check if validation failed (400) or server error (500)
-            if (!response.ok) {
-                const errorData = await response.json()
-                const errorMessage = errorData.message || "Error al guardar los datos"
-
-                // Show validation errors if available
-                if (errorData.errors) {
-                    console.error("Validation errors:", errorData.errors)
-                    toast.error(`${errorMessage}. Revisa los datos.`)
-                } else {
-                    toast.error(errorMessage)
-                }
-                return
-            }
-
-            // ✅ Guardado exitoso en API/disco
-            if (shouldUpdate) {
-                setData(newData)
-            }
-
-            // 🔒 Auto-backup a localStorage
-            saveAutoBackup(newData)
-        } catch (error) {
-            console.error("Error saving data:", error)
-            toast.error("Error de conexión al guardar los datos.")
-        }
-    }, [saveAutoBackup])
+    // --- Data Saving Logic (Adapter) ---
+    // Mantiene compatibilidad con la firma anterior pero delega en useHistory
+    const saveData = useCallback(async (newData: AppData) => {
+        updateHistory(newData)
+    }, [updateHistory])
 
     // --- Toggle Favorite Logic ---
     const toggleFavorite = useCallback(
@@ -109,7 +141,6 @@ export function useCommands() {
                 const cmd = newData.commands[categoryId].find((c) => c.id === commandId)
                 if (cmd) {
                     cmd.isFavorite = !cmd.isFavorite
-                    // Feedback visual
                     toast.success(cmd.isFavorite ? "Añadido a favoritos" : "Quitado de favoritos")
                     break
                 }
@@ -122,7 +153,8 @@ export function useCommands() {
     // --- Import Data Logic ---
     const importData = useCallback(async (newData: AppData) => {
         try {
-            await saveData(newData, true)
+            // Al importar, queremos que se guarde, así que usamos saveData normal
+            await saveData(newData)
             toast.success("Backup restaurado correctamente")
         } catch (error) {
             console.error("Error importing data:", error)
@@ -178,6 +210,11 @@ export function useCommands() {
         importData,
         incrementUsage,
         resetUsage,
-        refreshCommands: fetchData,  // Expose for manual refresh (e.g., after import)
+        refreshCommands: fetchData,
+        // New History API
+        undo,
+        redo,
+        canUndo,
+        canRedo
     }
 }

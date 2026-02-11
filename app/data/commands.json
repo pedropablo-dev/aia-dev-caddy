@@ -28,7 +28,7 @@
         "command": "# PROCEDIMIENTO OBLIGATORIO PARA LAS INTERACCIONES DE ESTA SESIÓN\n\n## Contexto:\nEsta es una sesión de desarrollo de una herramienta de software creada con \"vibe coding\".\nPara este desarrollo usamos la plataforma de desarrollo \"Google Antigravity\".\n\n## Antes de comenzar debes realizar estos pasos:\n1. Analiza el código proporcionado a través del repositorio adjunto.\n2. Actualiza tu conocimiento sobre la herramienta \"Google Antigravity\" con información  actualizada a día de hoy para poder asistir al usuario de una manera optima y eficiente.\n\n## Protocolo de Actuación e Interacción con el usuario:\nA partir de este momento instauramos un **Protocolo de Actuación** OBLIGATORIO para esta sesión de desarrollo que será el siguiente:\n\n1. Entendimiento de lo que quiere hacer el usuario:\n- Interactúas con el usuario para entender lo que quiere y poder brindarle un buen servicio, para esto le harás las preguntas que consideres necesarias y resolverás absolutamente todas las dudas que plantee el usuario\n\n2. Generación de **Prompts** para Antigravity:\n- Una vez entiendas lo que quiere el usuario y hayas resuelto TODAS sus dudas, **PEDIRÁS PERMISO** al usuario para generar el **prompt** para que el agente de Antigravity realice las acciones necesarias en el código para conseguir lo que el usuario pide o plantea. **IMPORTANTE: NUNCA generes un prompt sin el permiso explícito del usuario**.\n- A la hora de crear el prompt para antigravity debes aconsejar al usuario cual es el modelo de IA que debe usar para cada caso, los modelos disponibles son (a no ser que el usuario te indique alguno en concreto):\n\nGemini 3 Pro (High)\nGemini 3 Pro (Low)\nGemini 3 Flash\n\nClaude Sonnet 4.5\nClaude Sonnet 4.5 (Thinking)\nClaude Opus 4.5 (Thinking)\n\nGPT-OSS 120B (Medium)\n\n3. Acción del Usuario Tras Proporcionarle el Prompt:\n- Una vez le has entregado el **prompt** al usuario, éste será el encargado de lanzarle el **prompt** al agente de Antigravity para que trabaje en el código\n- Cuando el usuario te comunique que el agente de Antigravity ha terminado, te proporcionará la respuesta y del agente y los detalles de la implementación. Debes revisar estos detalles para comprobar que el agente ha hecho un buen trabajo.\n\n4. Comprobación y Validación de los Cambios e Implementaciones Realizadas:\n- Una vez revisados los detalles de la implementación realizada por el agente de Antigravity, procederás a indicar al usuario los pasos necesarios para comprobar y validar de los cambios e implementaciones realizadas por el agente funcionan correctamente.\n\n5. Guardado de Progreso con Git:\n- Una vez comprobado que todo funciona correctamente y que el agente de Antigravity ha hecho bien su trabajo, procederás a darle al usuario los pasos para guardar el progreso con git.\n- Después de guardar los cambios vuelve a ejecutar el paso \"1. Entendimiento de lo que quiere hacer el usuario\" para proceder con la siguiente implementación.\n\nIMPORTANTE RECUERDA:\n-**NUNCA** generes un prompt sin el permiso explícito del usuario.\n\n¿Me he explicado bien? ¿está todo claro? ¿alguna pregunta?",
         "type": "prompt",
         "isFavorite": false,
-        "order": 0,
+        "order": 1,
         "variables": [],
         "copyCount": 4
       },
@@ -38,8 +38,8 @@
         "command": "El agente ha terminado y ha dicho esto:",
         "type": "command",
         "isFavorite": false,
-        "order": 1,
-        "copyCount": 2
+        "order": 2,
+        "copyCount": 3
       },
       {
         "id": "cmd-1770803458040-8va2mpo7u",
@@ -47,7 +47,8 @@
         "command": "¿Me he explicado bien? ¿Me has entendido? ¿Es difícil de implementar? ¿Hay riesgo de que se rompa alguna funcionalidad de la herramienta?",
         "type": "command",
         "isFavorite": false,
-        "order": 2
+        "order": 3,
+        "copyCount": 1
       },
       {
         "id": "cmd-1770732198414",
@@ -55,7 +56,7 @@
         "command": "Activa la skill `aia-importer` que está en .agent/skills/aia-importer/SKILL.md y actúa como MOTOR DE EJECUCIÓN.\n\n**CONTEXTO:**\nHe depositado un nuevo guion en la carpeta `input_scripts/`.\nTu trabajo es procesarlo automáticamente sin importar cómo se llame el archivo.\n\n**TAREA DINÁMICA:**\n1.  **Escanea** la carpeta `input_scripts/` y detecta el archivo `.md` que hay dentro (será el único archivo).\n2.  **Usa ese archivo como INPUT** para la skill `aia-importer`.\n3.  **Genera el OUTPUT** en la carpeta `output_projects/` manteniendo el **mismo nombre base** del archivo original pero cambiando la extensión a `.json`.\n    * *Ejemplo: Si el input es `video_youtube_05.md`, el output debe ser `video_youtube_05.json`.*\n\n**RESTRICCIONES DE SEGURIDAD (CRÍTICO):**\n1.  **SOLO LECTURA:** `templates/` y `input_scripts/`.\n2.  **SOLO ESCRITURA:** `output_projects/`.\n3.  **PROHIBIDO:** No toques, edites ni modifiques NINGÚN archivo de código fuente (`src/`, `js/`, `html`).\n\n**PASOS DE EJECUCIÓN:**\n1.  Identifica el nombre del archivo `.md` en `input_scripts/`.\n2.  Aplica la lógica de transformación definida en `.agent/skills/aia-importer/SKILL.md`.\n3.  Usa `templates/plantilla_maestra.json` para clonar las configs.\n4.  Genera y guarda el JSON final.\n\nAvísame cuando el archivo .json esté listo indicándome su nombre.",
         "type": "prompt",
         "isFavorite": false,
-        "order": 3,
+        "order": 4,
         "variables": []
       },
       {
@@ -64,7 +65,7 @@
         "command": ".\\venv\\Scripts\\Activate.ps1",
         "type": "command",
         "isFavorite": false,
-        "order": 4,
+        "order": 5,
         "copyCount": 1
       }
     ],
@@ -119,18 +120,9 @@
     ],
     "cmd-1770715349473-rtoycxcug": [
       {
-        "id": "cmd-1770716064447-ahiyfli6j",
-        "label": "Mejoras Para AIA Studio",
-        "command": "# MEJORAS PENDIENTES\n\n- Mejorar los selectores de \"Tipos de Plano\" y \"Movimientos de Cámara\" para que los nombres largos se corten y no rompan la estructura de la tarjeta o se salgan de la casilla.\n\n---\n",
-        "type": "prompt",
-        "isFavorite": false,
-        "order": 0,
-        "variables": []
-      },
-      {
-        "id": "cmd-1770798741545-cptfzocpm",
-        "label": "Mejoras Para Dev-Caddy",
-        "command": "# MEJORAS PENDIENTES\n\n- los comandos largos hacen que crezcan las tarjetas hasta tapar la barra lateral derecha de las categorías\n",
+        "id": "cmd-1770804124445-ix97cm65j",
+        "label": "Mejoras Para Herramientas",
+        "command": "AIA Studio:\n- Skill de actualización de documentación\n- Skill de auditoría completa del código\n\nAIA Dev-Caddy:\n- Skill de actualización de documentación\n- Skill de auditoría completa del código",
         "type": "prompt",
         "isFavorite": false,
         "order": 1,
