@@ -23,12 +23,44 @@
     "all": [],
     "cmd-1770457126972-lq6r9ebx1": [
       {
+        "id": "cmd-1770808316385-obpd1ued8",
+        "label": "Crear Skill de Auditoría de Código",
+        "command": "# SKILL PARA  AUDITORÍA EN DEV-CADDY\n\nActúa como un Lead QA Engineer y Arquitecto de Software Senior.\n\n**OBJETIVO:**\nCrear la skill `.agent/skills/deep-audit/SKILL.md`.\nEsta skill convertirá al agente en un auditor implacable que examina el código en busca de perfección técnica.\n\n**TU TAREA:**\nGenera la estructura de directorios y el archivo `SKILL.md` con las siguientes especificaciones avanzadas:\n\n---\n# Contenido para .agent/skills/deep-audit/SKILL.md\n\n1.  **Metadatos (YAML):**\n    - `name`: deep-audit\n    - `description`: Performs a 360-degree technical audit of the codebase (Security, Performance, Integrity, Typing, A11y) and generates a detailed report.\n\n2.  **Sección: REGLAS DE EJECUCIÓN:**\n    - **Solo Lectura:** NO toques el código fuente. Tu único output es el informe.\n    - **Output:** Genera o sobrescribe siempre el archivo `docs/AUDIT_REPORT.md`.\n    - **Estilo:** Sé crítico, directo y técnico. Clasifica los hallazgos por severidad: [CRÍTICO], [ALTO], [MEDIO], [BAJO].\n\n3.  **Sección: DIMENSIONES DE LA AUDITORÍA (Checklist 10/10):**\n    \n    * **A. Integridad y Lógica:**\n        - Busca bugs lógicos, condiciones de carrera (race conditions) y manejo de errores deficiente (try/catch vacíos).\n    \n    * **B. Seguridad:**\n        - Inyección de dependencias, exposición de datos sensibles, validación de inputs (Zod), seguridad en API routes.\n    \n    * **C. Rendimiento (React/Next.js):**\n        - Detecta re-renderizados innecesarios, mal uso de `useEffect`, falta de `useMemo/useCallback` en operaciones costosas.\n        - Identifica componentes de cliente (`use client`) que podrían ser de servidor.\n    \n    * **D. TypeScript & Calidad:**\n        - Busca el uso de `any`.\n        - Detecta funciones con alta complejidad ciclomática (demasiados if/else anidados).\n        - Código muerto o duplicado (DRY violations).\n    \n    * **E. UX & Accesibilidad:**\n        - Falta de feedback visual (loading states, toasts).\n        - Problemas de accesibilidad semántica (aria-labels faltantes).\n\n4.  **Sección: FORMATO DEL REPORTE (Markdown):**\n    - El archivo `docs/AUDIT_REPORT.md` debe tener:\n        - **Resumen Ejecutivo:** Estado general de salud del proyecto (0-100%).\n        - **Tabla de Hallazgos Críticos:** Prioridad inmediata.\n        - **Análisis Detallado por Categoría:** Explicación del problema + Snippet de código culpable + Solución recomendada.\n        - **Plan de Refactorización:** Sugerencias de orden de arreglo.\n\n---\n\n**ACCIÓN FINAL:**\nCrea el directorio `.agent/skills/deep-audit/` y el archivo `SKILL.md` con estas instrucciones ahora mismo.",
+        "type": "prompt",
+        "isFavorite": false,
+        "order": 0,
+        "variables": []
+      },
+      {
+        "id": "cmd-1770806436889-jh0tjxp6u",
+        "label": "Crear Skill de Actualización de Documentación",
+        "command": "La primera skill, quiero que el agente cree una skill que haga lo siguiente:\n\n- Audite todo el código para tener conocimiento de la realidad actual de este.\n\n- Revisar todos los archivos .md de la documentación contenidos en la carpeta docs y el readme.md del proyecto.\n\n- Comparar la realidad del código con absolutamente todos los archivos de la documentación que te he dicho y actualizarlos para que reflejen la verdad del código\n\n- Eliminar rastro de archivos de documentación obsoleta si los hubiera\n\n- Todo esto debe hacerlo sin tocar ni cambiar ni una sola línea de código, solamente debe modificar, actualizar o eliminar archivos .md de documentación.\n\nCrea el prompt para que el mismo agente cree esta skill.\n\n# PROMPT PARA LA SKILL EN AIA DEV-CADDY\n\nActúa como un Experto en DevOps y Documentación Técnica (Technical Writer).\n\n**OBJETIVO:**\nQuiero crear una **Nueva Skill de Antigravity** llamada `documentation-sync` en mi proyecto.\nEsta skill dotará al agente de la capacidad de auditar el código y actualizar la documentación automáticamente.\n\n**TU TAREA:**\nGenera la estructura de carpetas y el archivo de configuración necesario.\nCrea el archivo `.agent/skills/documentation-sync/SKILL.md` con el siguiente contenido optimizado:\n\n---\n# Contenido para .agent/skills/documentation-sync/SKILL.md\n\nDefine el `SKILL.md` con estas secciones:\n\n1.  **Metadatos (YAML Frontmatter):**\n    - `name`: documentation-sync\n    - `description`: Use this skill to audit the codebase and synchronize all documentation files (docs/*.md and README.md) to reflect the absolute truth of the code.\n\n2.  **Sección: PROTOCOLO DE ACTUACIÓN (Rules):**\n    - **Regla de Oro (Inmutabilidad del Código):** ESTÁ ESTRICTAMENTE PROHIBIDO modificar, crear o eliminar archivos de código (`.ts`, `.tsx`, `.json`, `.css`, etc.). Tu permiso de escritura se limita EXCLUSIVAMENTE a archivos `.md`.\n    - **Alcance:** Tu área de operación es la carpeta `docs/` y el archivo `README.md` en la raíz.\n\n3.  **Sección: PROCEDIMIENTO PASO A PASO:**\n    - **Paso 1 (Auditoría):** Lee recursivamente la estructura del proyecto y los archivos clave (`package.json`, `app/page.tsx`, `store/*`, `hooks/*`, `types/*`) para entender la arquitectura real, las dependencias y el estado actual.\n    - **Paso 2 (Lectura de Docs):** Lee el contenido actual de `docs/PROJECT_BIBLE.md`, `docs/ARCHITECTURE.md` y `README.md`.\n    - **Paso 3 (Análisis de Delta):** Detecta discrepancias (ej: nuevas funcionalidades como Undo/Redo que no están en los docs, cambios en la estructura de carpetas, nuevas librerías).\n    - **Paso 4 (Ejecución):**\n        - Actualiza los archivos `.md` existentes con la información veraz.\n        - Si detectas archivos `.md` que describen sistemas que ya no existen, ELIMÍNALOS.\n        - Si hay sistemas nuevos importantes sin documentar, añade las secciones correspondientes en los archivos existentes.\n\n4.  **Sección: ESTILO:**\n    - Mantén un tono técnico, objetivo y conciso.\n    - Usa tablas para estructuras de datos.\n    - Usa diagramas Mermaid si ayuda a explicar flujos complejos.\n\n---\n\n**ACCIÓN FINAL:**\nPor favor, crea el directorio y escribe el archivo `SKILL.md` ahora mismo.",
+        "type": "prompt",
+        "isFavorite": false,
+        "order": 1,
+        "variables": []
+      },
+      {
+        "id": "cmd-1770805476321-r9g6cqksm",
+        "label": "Buscar Info Actualizada",
+        "command": "Busca información actualizada a día de hoy sobre como funciona {funcionalidad}",
+        "type": "command",
+        "isFavorite": false,
+        "order": 2,
+        "variables": [
+          {
+            "name": "funcionalidad",
+            "placeholder": "Pon aquí lo que quieres que busque el agente"
+          }
+        ]
+      },
+      {
         "id": "cmd-1770459789176",
         "label": "Protocolo de Inicio y Actuación Para Vibe Coding",
         "command": "# PROCEDIMIENTO OBLIGATORIO PARA LAS INTERACCIONES DE ESTA SESIÓN\n\n## Contexto:\nEsta es una sesión de desarrollo de una herramienta de software creada con \"vibe coding\".\nPara este desarrollo usamos la plataforma de desarrollo \"Google Antigravity\".\n\n## Antes de comenzar debes realizar estos pasos:\n1. Analiza el código proporcionado a través del repositorio adjunto.\n2. Actualiza tu conocimiento sobre la herramienta \"Google Antigravity\" con información  actualizada a día de hoy para poder asistir al usuario de una manera optima y eficiente.\n\n## Protocolo de Actuación e Interacción con el usuario:\nA partir de este momento instauramos un **Protocolo de Actuación** OBLIGATORIO para esta sesión de desarrollo que será el siguiente:\n\n1. Entendimiento de lo que quiere hacer el usuario:\n- Interactúas con el usuario para entender lo que quiere y poder brindarle un buen servicio, para esto le harás las preguntas que consideres necesarias y resolverás absolutamente todas las dudas que plantee el usuario\n\n2. Generación de **Prompts** para Antigravity:\n- Una vez entiendas lo que quiere el usuario y hayas resuelto TODAS sus dudas, **PEDIRÁS PERMISO** al usuario para generar el **prompt** para que el agente de Antigravity realice las acciones necesarias en el código para conseguir lo que el usuario pide o plantea. **IMPORTANTE: NUNCA generes un prompt sin el permiso explícito del usuario**.\n- A la hora de crear el prompt para antigravity debes aconsejar al usuario cual es el modelo de IA que debe usar para cada caso, los modelos disponibles son (a no ser que el usuario te indique alguno en concreto):\n\nGemini 3 Pro (High)\nGemini 3 Pro (Low)\nGemini 3 Flash\n\nClaude Sonnet 4.5\nClaude Sonnet 4.5 (Thinking)\nClaude Opus 4.5 (Thinking)\n\nGPT-OSS 120B (Medium)\n\n3. Acción del Usuario Tras Proporcionarle el Prompt:\n- Una vez le has entregado el **prompt** al usuario, éste será el encargado de lanzarle el **prompt** al agente de Antigravity para que trabaje en el código\n- Cuando el usuario te comunique que el agente de Antigravity ha terminado, te proporcionará la respuesta y del agente y los detalles de la implementación. Debes revisar estos detalles para comprobar que el agente ha hecho un buen trabajo.\n\n4. Comprobación y Validación de los Cambios e Implementaciones Realizadas:\n- Una vez revisados los detalles de la implementación realizada por el agente de Antigravity, procederás a indicar al usuario los pasos necesarios para comprobar y validar de los cambios e implementaciones realizadas por el agente funcionan correctamente.\n\n5. Guardado de Progreso con Git:\n- Una vez comprobado que todo funciona correctamente y que el agente de Antigravity ha hecho bien su trabajo, procederás a darle al usuario los pasos para guardar el progreso con git.\n- Después de guardar los cambios vuelve a ejecutar el paso \"1. Entendimiento de lo que quiere hacer el usuario\" para proceder con la siguiente implementación.\n\nIMPORTANTE RECUERDA:\n-**NUNCA** generes un prompt sin el permiso explícito del usuario.\n\n¿Me he explicado bien? ¿está todo claro? ¿alguna pregunta?",
         "type": "prompt",
         "isFavorite": false,
-        "order": 1,
+        "order": 3,
         "variables": [],
         "copyCount": 4
       },
@@ -38,7 +70,7 @@
         "command": "El agente ha terminado y ha dicho esto:",
         "type": "command",
         "isFavorite": false,
-        "order": 2,
+        "order": 4,
         "copyCount": 3
       },
       {
@@ -47,7 +79,7 @@
         "command": "¿Me he explicado bien? ¿Me has entendido? ¿Es difícil de implementar? ¿Hay riesgo de que se rompa alguna funcionalidad de la herramienta?",
         "type": "command",
         "isFavorite": false,
-        "order": 3,
+        "order": 5,
         "copyCount": 1
       },
       {
@@ -56,7 +88,7 @@
         "command": "Activa la skill `aia-importer` que está en .agent/skills/aia-importer/SKILL.md y actúa como MOTOR DE EJECUCIÓN.\n\n**CONTEXTO:**\nHe depositado un nuevo guion en la carpeta `input_scripts/`.\nTu trabajo es procesarlo automáticamente sin importar cómo se llame el archivo.\n\n**TAREA DINÁMICA:**\n1.  **Escanea** la carpeta `input_scripts/` y detecta el archivo `.md` que hay dentro (será el único archivo).\n2.  **Usa ese archivo como INPUT** para la skill `aia-importer`.\n3.  **Genera el OUTPUT** en la carpeta `output_projects/` manteniendo el **mismo nombre base** del archivo original pero cambiando la extensión a `.json`.\n    * *Ejemplo: Si el input es `video_youtube_05.md`, el output debe ser `video_youtube_05.json`.*\n\n**RESTRICCIONES DE SEGURIDAD (CRÍTICO):**\n1.  **SOLO LECTURA:** `templates/` y `input_scripts/`.\n2.  **SOLO ESCRITURA:** `output_projects/`.\n3.  **PROHIBIDO:** No toques, edites ni modifiques NINGÚN archivo de código fuente (`src/`, `js/`, `html`).\n\n**PASOS DE EJECUCIÓN:**\n1.  Identifica el nombre del archivo `.md` en `input_scripts/`.\n2.  Aplica la lógica de transformación definida en `.agent/skills/aia-importer/SKILL.md`.\n3.  Usa `templates/plantilla_maestra.json` para clonar las configs.\n4.  Genera y guarda el JSON final.\n\nAvísame cuando el archivo .json esté listo indicándome su nombre.",
         "type": "prompt",
         "isFavorite": false,
-        "order": 4,
+        "order": 6,
         "variables": []
       },
       {
@@ -65,7 +97,7 @@
         "command": ".\\venv\\Scripts\\Activate.ps1",
         "type": "command",
         "isFavorite": false,
-        "order": 5,
+        "order": 7,
         "copyCount": 1
       }
     ],
@@ -122,7 +154,7 @@
       {
         "id": "cmd-1770804124445-ix97cm65j",
         "label": "Mejoras Para Herramientas",
-        "command": "AIA Studio:\n- Skill de actualización de documentación\n- Skill de auditoría completa del código\n\nAIA Dev-Caddy:\n- Skill de actualización de documentación\n- Skill de auditoría completa del código",
+        "command": "AIA Studio:\n- Skill de actualización de documentación\n- Skill de auditoría completa del código\n- Cambiar ventanas de confirmación, quitar las que tiene por defecto del sistema.\n\nAIA Dev-Caddy:\n- Skill de actualización de documentación\n- Skill de auditoría completa del código",
         "type": "prompt",
         "isFavorite": false,
         "order": 1,

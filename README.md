@@ -25,8 +25,13 @@ Dev-Caddy is a high-performance, **local-first** dashboard designed to organize,
 -   **✨ Smart Duplication**:
     -   Duplicated items appear immediately after the original.
     -   Automatic re-indexing keeps everything organized.
+-   **↺ Undo/Redo Engine**:
+    -   Mistakes happen. `Ctrl+Z` to Undo, `Ctrl+Y` to Redo.
+    -   **State Travel**: Navigate through your editing history with confidence.
+    -   **Debounced Persistence**: Smart saving ensures API performance while typing.
 -   **⌨️ Power User Shortcuts**:
     -   `Ctrl+K`: Focus search
+    -   `Ctrl+Z` / `Ctrl+Y`: Undo / Redo
     -   `Ctrl+Enter` / `Cmd+Enter`: Submit any form instantly
     -   `Esc`: Close any modal without saving
 -   **🎨 Premium UX**:

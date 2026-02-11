@@ -49,7 +49,8 @@ interface AppData {
 | `appStore` | `selectedCategory`, `isEditMode` | LocalStorage |
 | `uiStore` | `isSidebarCollapsed` | LocalStorage |
 
-Data state managed by `useCommands` hook (fetching, saving, toggling favorites).
+Data state managed by `useCommands` hook + `useHistory` (Undo/Redo stack).
+**Persistence**: Hybrid strategy (Debounced API + Immediate LocalStorage).
 
 ### Edit Mode
 A global toggle switch in the Sidebar enables admin features:
@@ -84,6 +85,7 @@ broworks-dev-caddy/
 │   └── data/commands.json
 ├── components/dev-caddy/ # Business components
 ├── hooks/use-commands.ts # Data fetching hook
+├── hooks/use-history.ts  # History stack logic
 ├── store/                # Zustand stores
 ├── types/index.ts        # Centralized types
 ├── lib/schemas.ts        # Zod validation
@@ -105,6 +107,7 @@ broworks-dev-caddy/
 | Shortcut | Context | Action |
 |----------|---------|--------|
 | `Ctrl+K` | Global | Focus search |
+| `Ctrl+Z` / `Ctrl+Y` | Global | Undo / Redo |
 | `Ctrl+Enter` / `Cmd+Enter` | Modals | Submit form |
 | `Esc` | Modals | Close without saving |
 | `↑` / `↓` | Search results | Navigate |

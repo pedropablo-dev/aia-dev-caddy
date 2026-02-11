@@ -48,7 +48,8 @@ broworks-dev-caddy/
 │   └── ui/                   # Shadcn UI components
 │
 ├── hooks/
-│   └── use-commands.ts       # Data fetching + state
+│   ├── use-commands.ts       # Data fetching + state
+│   └── use-history.ts        # Undo/Redo stack logic (Generic)
 │
 ├── lib/
 │   ├── utils.ts              # Utility functions (cn)
@@ -177,18 +178,18 @@ isEditMode: boolean         // Edit mode toggle
 isSidebarCollapsed: boolean // Sidebar toggle
 ```
 
-### Data State (useCommands Hook)
+### Data State (useCommands + useHistory Hook)
 ```typescript
 const { 
   data, 
-  isLoading, 
-  hasMounted, 
-  fetchData, 
-  saveData, 
-  toggleFavorite, 
-  importData 
+  undo, redo, canUndo, canRedo, // History API
+  saveData, // Debounced save (1s) + Immediate Local Backup
+  /* other methods */
 } = useCommands()
 ```
+**Persistence Strategy:**
+1.  **Immediate**: `localStorage` backup on every change (Safety net).
+2.  **Debounced (1s)**: API write to `commands.json` (Performance).
 
 ---
 
@@ -209,6 +210,11 @@ const {
 - **Import:** Upload JSON, validates, restores data
 - Located in Sidebar (Edit Mode)
 
+### Undo/Redo System
+- **Engine**: Custom `useHistory` hook with limit (50 states).
+- **Controls**: Sidebar buttons (footer) + Keyboard Shortcuts.
+- **Safety**: Input-detection prevents accidental undos while typing.
+
 ### Edit Mode Features
 - **Drag & Drop**: Reorder categories and commands
 - **Create**: Floating Action Button (bottom-right)
@@ -226,6 +232,7 @@ const {
 | Shortcut | Context | Action |
 |----------|---------|--------|
 | `Ctrl+K` | Global | Focus search input |
+| `Ctrl+Z` / `Ctrl+Y` | Global | Undo / Redo (except in inputs) |
 | `Ctrl+Enter` / `Cmd+Enter` | Modals | Submit form instantly |
 | `Esc` | Modals | Close without saving |
 | `↑` / `↓` | Search | Navigate results |
@@ -260,4 +267,3 @@ npm start       # Start production server
 
 1. **Single-user:** No authentication
 2. **Local only:** File-based storage (not cloud-synced)
-3. **No undo:** Deletions are permanent, but auto-backup provides recovery option
