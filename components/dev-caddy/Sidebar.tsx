@@ -317,30 +317,32 @@ export function Sidebar({
                 />
 
                 {/* Undo / Redo Buttons */}
-                <div className="flex gap-2">
-                    <Button
-                        onClick={undo}
-                        disabled={!canUndo}
-                        variant="ghost"
-                        className={`flex-1 gap-2 border border-gray-800 bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed`}
-                        size="sm"
-                        title="Deshacer (Ctrl+Z)"
-                    >
-                        <RotateCcw className="h-4 w-4" />
-                        {!isSidebarCollapsed && <span>Deshacer</span>}
-                    </Button>
-                    <Button
-                        onClick={redo}
-                        disabled={!canRedo}
-                        variant="ghost"
-                        className={`flex-1 gap-2 border border-gray-800 bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed`}
-                        size="sm"
-                        title="Rehacer (Ctrl+Y)"
-                    >
-                        <RotateCw className="h-4 w-4" />
-                        {!isSidebarCollapsed && <span>Rehacer</span>}
-                    </Button>
-                </div>
+                {!isSidebarCollapsed && (
+                    <div className="flex gap-2">
+                        <Button
+                            onClick={undo}
+                            disabled={!canUndo}
+                            variant="ghost"
+                            className={`flex-1 gap-2 border border-gray-800 bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed`}
+                            size="sm"
+                            title="Deshacer (Ctrl+Z)"
+                        >
+                            <RotateCcw className="h-4 w-4" />
+                            <span>Deshacer</span>
+                        </Button>
+                        <Button
+                            onClick={redo}
+                            disabled={!canRedo}
+                            variant="ghost"
+                            className={`flex-1 gap-2 border border-gray-800 bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed`}
+                            size="sm"
+                            title="Rehacer (Ctrl+Y)"
+                        >
+                            <RotateCw className="h-4 w-4" />
+                            <span>Rehacer</span>
+                        </Button>
+                    </div>
+                )}
 
                 {/* Import/Export Buttons - Only in Edit Mode */}
                 {isEditMode && !isSidebarCollapsed && (
