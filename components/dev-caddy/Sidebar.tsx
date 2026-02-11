@@ -14,6 +14,7 @@ import {
     Upload,
     RotateCcw,
     RotateCw,
+    LockOpen,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -372,8 +373,20 @@ export function Sidebar({
                 )}
 
                 {/* Edit Mode Toggle */}
-                <div className={`flex items-center gap-3 px-2 py-2 rounded-lg bg-gray-800/50 border border-gray-700 ${isSidebarCollapsed ? 'justify-center' : 'justify-between'}`}>
-                    {!isSidebarCollapsed && (
+                {isSidebarCollapsed ? (
+                    <div className="flex justify-center py-2">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={toggleEditMode}
+                            title={isEditMode ? "Bloquear edición" : "Habilitar edición"}
+                            className={isEditMode ? "text-green-500 hover:text-green-400 hover:bg-gray-800" : "text-gray-500 hover:text-gray-400 hover:bg-gray-800"}
+                        >
+                            {isEditMode ? <LockOpen className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
+                        </Button>
+                    </div>
+                ) : (
+                    <div className="flex items-center justify-between gap-3 px-2 py-2 rounded-lg bg-gray-800/50 border border-gray-700">
                         <Label htmlFor="edit-mode-toggle" className="flex items-center gap-2 text-sm font-semibold text-gray-200 cursor-pointer">
                             {isEditMode ? (
                                 <Unlock className="h-4 w-4 text-green-400" />
@@ -382,14 +395,14 @@ export function Sidebar({
                             )}
                             <span>Modo Edición</span>
                         </Label>
-                    )}
-                    <Switch
-                        id="edit-mode-toggle"
-                        checked={isEditMode}
-                        onCheckedChange={toggleEditMode}
-                        className="data-[state=checked]:bg-green-600"
-                    />
-                </div>
+                        <Switch
+                            id="edit-mode-toggle"
+                            checked={isEditMode}
+                            onCheckedChange={toggleEditMode}
+                            className="data-[state=checked]:bg-green-600"
+                        />
+                    </div>
+                )}
 
                 <Button
                     variant="ghost"
