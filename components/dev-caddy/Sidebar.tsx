@@ -265,7 +265,7 @@ export function Sidebar({
                         >
                             <button
                                 onClick={() => setSelectedCategory(category.id)}
-                                className="flex items-center gap-3 flex-1 text-left w-0 min-w-0"
+                                className={`flex items-center gap-3 flex-1 w-0 min-w-0 ${isSidebarCollapsed ? 'justify-center' : 'text-left'}`}
                             >
                                 <span className="text-lg flex-shrink-0">{category.icon}</span>
                                 <span className={`font-medium truncate flex-1 ${contentClasses}`}>
