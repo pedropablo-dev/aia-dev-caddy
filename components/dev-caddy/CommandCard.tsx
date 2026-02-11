@@ -269,7 +269,7 @@ export function CommandCard({
                             >
                                 {({ className, style, tokens, getLineProps, getTokenProps }) => (
                                     <pre
-                                        className="p-3 rounded-md overflow-x-auto text-sm border border-gray-700 max-w-full line-clamp-3"
+                                        className="p-3 rounded-md whitespace-pre-wrap break-all text-sm border border-gray-700 max-w-full"
                                         style={style}
                                     >
                                         {tokens.map((line, i) => (
@@ -302,7 +302,7 @@ export function CommandCard({
                             >
                                 {({ className, style, tokens, getLineProps, getTokenProps }) => (
                                     <pre
-                                        className="p-3 rounded-md overflow-x-auto text-sm border border-gray-700 max-w-full line-clamp-3"
+                                        className="p-3 rounded-md whitespace-pre-wrap break-all text-sm border border-gray-700 max-w-full"
                                         style={style}
                                     >
                                         {tokens.map((line, i) => (
