@@ -6,7 +6,7 @@ AIA Dev Caddy es un panel de control de alto rendimiento y **ejecución local** 
 
 ## 👤 Autoría y Créditos
 Esta herramienta ha sido desarrollada por **Pedro Pablo Miras**, integrante del equipo de **Aplica la IA**. 
-👉 **Conoce más sobre automatización e IA en nuestro canal de YouTube**: [Aplica la IA](https://www.youtube.com/@Aplica_la_IA)
+👉 **Conoce más sobre nuestro canal de YouTube**: [Aplica la IA](https://www.youtube.com/@Aplica_la_IA)
 
 ---
 
